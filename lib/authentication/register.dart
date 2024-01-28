@@ -57,13 +57,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
         await FirebaseFirestore.instance.collection('users').doc(FirebaseAuth.instance.currentUser!.displayName).set({
           'nickname' : nickname,
           'email': email,
-          'money' : 10000,
+          'money' : 100000,
+          'bought' : [],
+          'times' : []
           // Add other user-related data as needed
         });
         print('c');
         await Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => HomeScreen(FirebaseAuth.instance.currentUser!.displayName,email)),
+          MaterialPageRoute(builder: (context) => HomeScreen()),
         );
       }
     } catch (e) {

@@ -57,7 +57,7 @@ class _SignInScreenState extends State<SignInScreen> {
      //userCredential.
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => HomeScreen(FirebaseAuth.instance.currentUser!.displayName,email)),
+          MaterialPageRoute(builder: (context) => HomeScreen()),
         );
       }
     } catch (e) {

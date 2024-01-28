@@ -10,42 +10,41 @@ import 'package:zone_trader/models/country.dart';
 import 'package:zone_trader/models/player.dart';
 
 class HomeScreen extends StatefulWidget {
-  final String? nickname;
-  final String email;
+  ///final String? nickname;
+  ///final String email;
 
-  const HomeScreen(this.nickname, this.email, {super.key});
+  const HomeScreen({super.key});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final List<Country> allcountries = [
-    Country(name: 'Russia', price: 0, income: 0),
-    Country(name: 'Antarctica', price: 0, income: 0),
-    Country(name: 'United States', price: 0, income: 0),
-    Country(name: 'China', price: 0, income: 0),
-    Country(name: 'Brazil', price: 0, income: 0),
-    Country(name: 'Australia', price: 0, income: 0),
-    Country(name: 'India', price: 0, income: 0),
-    Country(name: 'Argentina', price: 0, income: 0),
-    Country(name: 'Kazakhstan', price: 0, income: 0),
-    Country(name: 'Algeria', price: 0, income: 0),
-    Country(name: 'Egypt', price: 0, income: 0),
-    Country(name: 'Venezuela', price: 0, income: 0),
-    Country(name: 'Canada', price: 0, income: 0),
-    Country(name: 'Japan', price: 0, income: 0),
-    Country(name: 'Malaysia', price: 0, income: 0),
-    Country(name: 'Mexico', price: 0, income: 0),
-    Country(name: 'Peru', price: 0, income: 0),
-    Country(name: 'Philippines', price: 0, income: 0),
-  ];
+  //final List<Country> allcountries = [
+  //  Country(name: 'Russia', price: 0, income: 0),
+  //  Country(name: 'Antarctica', price: 0, income: 0),
+  //  Country(name: 'United States', price: 0, income: 0),
+  //  Country(name: 'China', price: 0, income: 0),
+  //  Country(name: 'Brazil', price: 0, income: 0),
+  //  Country(name: 'Australia', price: 0, income: 0),
+  //  Country(name: 'India', price: 0, income: 0),
+  //  Country(name: 'Argentina', price: 0, income: 0),
+  //  Country(name: 'Kazakhstan', price: 0, income: 0),
+  //  Country(name: 'Algeria', price: 0, income: 0),
+  //  Country(name: 'Egypt', price: 0, income: 0),
+  //  Country(name: 'Venezuela', price: 0, income: 0),
+  //  Country(name: 'Canada', price: 0, income: 0),
+  //  Country(name: 'Japan', price: 0, income: 0),
+  //  Country(name: 'Malaysia', price: 0, income: 0),
+  //  Country(name: 'Mexico', price: 0, income: 0),
+  //  Country(name: 'Peru', price: 0, income: 0),
+  //  Country(name: 'Philippines', price: 0, income: 0),
+  //];
   List<Country> countries = []; //
   int money = 10000;
   bool countryBreaker = false;
   Player player = Player('', '', 0,[],[]);
-  List<bool> bought = [];
-  List<Timer> timers = [];
+  List<bool> bought = List<bool>.filled(48, false);
   List<Map<String,dynamic>> boughttimes = List<Map<String,dynamic>>.filled(48, {'60':60});
 
   @override
@@ -68,14 +67,9 @@ class _HomeScreenState extends State<HomeScreen> {
     updateBought();
     super.initState();
   }
- // @override
- // void dispose() {
- //   for (var timer in timers) {
- //     timer.cancel();
- //   }
- //   super.dispose();
- // }
   Future<void> updateBought()async{
+      //await FBOp.resetTimesFB(boughttimes); //RESETS TIMES FB---RESET!!!
+      //await FBOp.updateCountryOwners(); //ADDS OWNER FIELDS TO ALL COUNTRIES FB---RESET!!!
       //await FBOp.updateBoughtColorsFB(List<bool>.filled(48, false)); // ALL COUNTRIES ARE NOT BOUGHT---RESET!!!
       //await FBOp.updateCountriesIncomesFB(); // MAKE ALL INCOMES 20% OF THE PRICES FB---RESET!!!
       //await FBOp.changeSamePricesFB(); // CHANGE SAME PRICES FB---RESET!!!
@@ -125,6 +119,7 @@ class _HomeScreenState extends State<HomeScreen> {
     showDialog(
       context: context,
       builder: (context) {
+        
         return AlertDialog(
           title: Center(child: Text(country.name)),
           content: Column(
@@ -133,24 +128,26 @@ class _HomeScreenState extends State<HomeScreen> {
             children: [
               Text('Price: \$${country.price.toStringAsFixed(2)}'),
               Text('Income: \$${country.income.toStringAsFixed(2)}'),
+              Text('Owner: ${country.owner.toString()}'),
             ],
           ),
           actions: [
             Row(children: [
-              bought[index] ? const Text('') :
+              bought[index] || country.owner.isNotEmpty ? const Text('') :
               TextButton(
               onPressed:
               money < country.price.floor() ? null :
               ()async{ 
                 //print(country.price.floor());
-                money < country.price.floor() ? null : buythiscard(country,index);
+                money < country.price.floor() ? null : 
+                buythiscard(context,country,index);
                 DateTime now = DateTime.now();
                 await FBOp.fetchUserTimesFB().then((value){ //FETCH TIMES FROM FB
                   setState(() {
                     boughttimes = value;
                   });});
                 boughttimes[index] = {now.hour.toString().trim() : now.minute};
-                await FBOp.updateUserTimesFB(boughttimes); // UPDATE TIMES IN FB
+                await FBOp.updateUserTimesAndOwnerFB(boughttimes,index); // UPDATE TIMES AND OWNER IN FB
                 await greenBGColorFiller(); // WHEN COUNTRY IS BOUGHT UPDATE COLORS IN FB
               },
               child: Text(
@@ -204,8 +201,8 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  Text('You earned from countries', style: TextStyle(color: Colors.white,fontSize: 19),),
-                  Text('\$$moneychange', style: TextStyle(color: Colors.white,fontSize: 19),),
+                  const Text('You earned from countries', style: TextStyle(color: Colors.white,fontSize: 19),),
+                  Text('\$$moneychange', style: const TextStyle(color: Colors.white,fontSize: 19),),
                 ],
               ),
             ),
@@ -216,8 +213,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                child: Center(
-                  child: const Text(
+                child: const Center(
+                  child: Text(
                     'Close',
                     style: TextStyle(color: Colors.red, fontSize: 20),
                   ),
@@ -245,7 +242,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  void buythiscard(Country country,int index)async {
+  void buythiscard(BuildContext context,Country country,int index)async {
     
     if(money >= country.price.floor()){
       setState(() {
@@ -261,6 +258,10 @@ class _HomeScreenState extends State<HomeScreen> {
     });
     await FBOp.updateMoneyFB(money);
     Navigator.of(context).pop();
+    
+    //Navigator.push(
+    //  this.context,MaterialPageRoute(builder: (BuildContext context) => HomeScreen()),
+    //);
   }
 
   @override
@@ -272,7 +273,7 @@ class _HomeScreenState extends State<HomeScreen> {
           return SafeArea(
             child: Scaffold(
               appBar: AppBar(
-                title: Text(widget.nickname ?? ''),
+                title: Text(FirebaseAuth.instance.currentUser!.displayName ?? ''),
                 backgroundColor: Colors.blue,
               ),
               body: const CircularProgressIndicator(),
@@ -288,7 +289,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 return SafeArea(
                   child: Scaffold(
                     appBar: AppBar(
-                      title: Text(widget.nickname ?? ''),
+                      title: Text(FirebaseAuth.instance.currentUser!.displayName ?? ''),
                       backgroundColor: Colors.blue,
                     ),
                     body: const CircularProgressIndicator(),
@@ -298,7 +299,7 @@ class _HomeScreenState extends State<HomeScreen> {
               
               if(!countryBreaker){
                 for (var doc in countriessnapshot.data!.docs) {
-                 countries.add(Country(name: doc.data()['name'], price: doc.data()['price'], income: doc.data()['income'])); 
+                 countries.add(Country(name: doc.data()['name'], price: doc.data()['price'], income: doc.data()['income'], owner: doc.data()['owner'])); 
                 }
                 //print(countries.length);
                 //bought = List<bool>.generate(countries.length, (index) => false);
@@ -316,7 +317,7 @@ class _HomeScreenState extends State<HomeScreen> {
               for (var doc in userssnapshot.data!.docs) {
                 var map = doc.data() as Map<String, dynamic>;
                 
-                if (map['nickname'] == widget.nickname) {
+                if (map['nickname'] == FirebaseAuth.instance.currentUser!.displayName) {
                     //print(map['bought'].runtimeType);
                     player = Player(map['nickname'], map['email'], map['money'], List<bool>.from(map['bought']) , List<Map<String,dynamic>>.from(map['times'])).getPlayer;
                     
@@ -330,7 +331,7 @@ class _HomeScreenState extends State<HomeScreen> {
               
               return Scaffold(
                 appBar: AppBar(
-                  //leading: 
+                  automaticallyImplyLeading: false,
                   title: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -345,15 +346,23 @@ class _HomeScreenState extends State<HomeScreen> {
                                       ),
                                     ),
                       ),
-                      SizedBox(width: 110,height: 50, child: Center(child: Text('${widget.nickname ?? player.nickname}', style: const TextStyle(fontSize: 22, color: Colors.white),))),
-                      const SizedBox(
-                        width: 20,
-                      ),
+                      SizedBox(width: 100,height: 50, child: Center(child: Text('${FirebaseAuth.instance.currentUser!.displayName ?? player.nickname}', style: const TextStyle(fontSize: 22, color: Colors.white),))),
+                      
                     ],
                   ),
                   centerTitle: true,
                   backgroundColor: Colors.blue[400],
                   actions: [
+                    IconButton(
+                      icon: const Icon(Icons.replay,color: Colors.white,),
+                      onPressed: () {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const HomeScreen()),
+                        );
+                      },
+                    ),
                     IconButton(
                       icon: const Icon(Icons.list,color: Colors.white,),
                       onPressed: () {
@@ -365,7 +374,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       },
                     ),
                     IconButton(
-                      icon: const Icon(Icons.exit_to_app,color: Colors.white,),
+                      icon: const Icon(Icons.exit_to_app,color: Colors.red,),
                       onPressed: () => _signOut(context),
                     ),
                   ],
@@ -374,7 +383,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     height: MediaQuery.of(context).size.height,
                     child: GridView.builder(
                       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 3,
+                        crossAxisCount: 4,
                         crossAxisSpacing: 8.0,
                         mainAxisSpacing: 8.0,
                       ),
@@ -393,12 +402,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                 borderRadius: const BorderRadius.all(Radius.circular(10.0)),
                               ),
                               child: Card(
-                                color: bought[index] ? Colors.green : Colors.white,
+                                color: bought[index] || countries[index].owner != '' ? Colors.green : Colors.white,
                                 elevation: 5,
                                 child: Center(
                                   child: Text(
-                                    countries[index].name,
-                                    style: const TextStyle(fontSize: 16),
+                                    countries[index].name.contains(' ') ? countries[index].name.split(' ').join('\n') : countries[index].name,
+                                    style: const TextStyle(fontSize: 15),
                                   ),
                                 ),
                               ),

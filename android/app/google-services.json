@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "695924119809",
+    "project_id": "zone-trader",
+    "storage_bucket": "zone-trader.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:695924119809:android:267ba3c155e3c3386d6300",
+        "android_client_info": {
+          "package_name": "com.zelix.zone_trader"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyASOup4EQbXqsDWFWjp9DCyr4YlC7y3FMc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

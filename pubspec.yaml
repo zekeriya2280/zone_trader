@@ -62,8 +62,60 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  # assets:
-  #   - images/a_dot_burr.jpeg
+  assets:
+    - images/Australia.jpeg
+    - images/arabia.jpeg
+    - images/Algeria.jpeg
+    - images/India.jpeg
+    - images/Antarctica.jpeg
+    - images/Romania.jpeg
+    - images/Mexico.jpeg
+    - images/Argentina.jpeg
+    - images/China.jpeg
+    - images/Canada.jpeg
+    - images/Egypt.jpeg
+    - images/Malaysia.jpeg
+    - images/Russia.jpeg
+    - images/USA.jpeg
+    - images/Brazil.jpeg
+    - images/Kazakhstan.jpeg
+    - images/Philippines.jpeg
+    - images/Congo.jpeg
+    - images/Greenland.jpeg
+    - images/Peru.jpeg
+    - images/indonesia.jpeg
+    - images/Sweden.jpeg
+    - images/Venezuela.jpeg
+    - images/Libya.jpeg
+    - images/Iran.jpeg
+    - images/Mongolia.jpeg
+    - images/Chad.jpeg
+    - images/Niger.jpeg
+    - images/Mali.jpeg
+    - images/Africa.jpeg
+    - images/Ethiopia.jpeg
+    - images/Pakistan.jpeg
+    - images/Turkey.jpeg
+    - images/Chile.jpeg
+    - images/Myanmar.jpeg
+    - images/Afghanistan.jpeg
+    - images/Ukraine.jpeg
+    - images/Kenya.jpeg
+    - images/France.jpeg
+    - images/Yemen.jpeg
+    - images/Spain.jpeg
+    - images/Turkmenistan.jpeg
+    - images/Guinea.jpeg
+    - images/Morocco.jpeg
+    - images/Sweden.jpeg
+    - images/Norway.jpeg
+    - images/Poland.jpeg
+    - images/Italy.jpeg
+   #- images/Poland.jpeg
+   #- images/Spain.jpeg
+   #- images/France.jpeg
+   #- images/Italy.jpeg
+
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

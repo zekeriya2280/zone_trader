@@ -57,7 +57,7 @@ class _SignInScreenState extends State<SignInScreen> {
      //userCredential.
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => HomeScreen()),
+          MaterialPageRoute(builder: (context) => const HomeScreen()),
         );
       }
     } catch (e) {

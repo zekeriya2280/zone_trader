@@ -65,7 +65,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         print('c');
         await Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => HomeScreen()),
+          MaterialPageRoute(builder: (context) => const HomeScreen()),
         );
       }
     } catch (e) {

@@ -9,6 +9,7 @@ import 'package:zone_trader/firebase/FBOp.dart';
 import 'package:zone_trader/main.dart';
 import 'package:zone_trader/models/country.dart';
 import 'package:zone_trader/models/player.dart';
+import 'package:zone_trader/screens/myCountryList.dart';
 
 class HomeScreen extends StatefulWidget {
   ///final String? nickname;
@@ -423,10 +424,10 @@ class _HomeScreenState extends State<HomeScreen> {
                         color: Colors.white,
                       ),
                       onPressed: () {
-                        Navigator.push(
+                        Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const GoodsListScreen()),
+                              builder: (context) => const MyCountryList()),
                         );
                       },
                     ),
@@ -434,6 +435,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       icon: const Icon(
                         Icons.exit_to_app,
                         color: Colors.red,
+                        size: 16,
                       ),
                       onPressed: () => _signOut(context),
                     ),

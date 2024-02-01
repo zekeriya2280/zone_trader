@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:zone_trader/authentication/signin.dart';
 import 'package:zone_trader/constants/countryImageNames.dart';
 import 'package:zone_trader/firebase/FBOp.dart';
-import 'package:zone_trader/main.dart';
 import 'package:zone_trader/models/country.dart';
 import 'package:zone_trader/models/player.dart';
 import 'package:zone_trader/screens/myCountryList.dart';
@@ -22,26 +21,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  //final List<Country> allcountries = [
-  //  Country(name: 'Russia', price: 0, income: 0),
-  //  Country(name: 'Antarctica', price: 0, income: 0),
-  //  Country(name: 'United States', price: 0, income: 0),
-  //  Country(name: 'China', price: 0, income: 0),
-  //  Country(name: 'Brazil', price: 0, income: 0),
-  //  Country(name: 'Australia', price: 0, income: 0),
-  //  Country(name: 'India', price: 0, income: 0),
-  //  Country(name: 'Argentina', price: 0, income: 0),
-  //  Country(name: 'Kazakhstan', price: 0, income: 0),
-  //  Country(name: 'Algeria', price: 0, income: 0),
-  //  Country(name: 'Egypt', price: 0, income: 0),
-  //  Country(name: 'Venezuela', price: 0, income: 0),
-  //  Country(name: 'Canada', price: 0, income: 0),
-  //  Country(name: 'Japan', price: 0, income: 0),
-  //  Country(name: 'Malaysia', price: 0, income: 0),
-  //  Country(name: 'Mexico', price: 0, income: 0),
-  //  Country(name: 'Peru', price: 0, income: 0),
-  //  Country(name: 'Philippines', price: 0, income: 0),
-  //];
   List<Country> countries = []; //
   int money = 10000;
   bool countryBreaker = false;
@@ -52,21 +31,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void initState() {
-    //countries = List.generate(
-    //  10,
-    //  (index) => Country(
-    //    name: allcountries.reversed.toList()[index].name,
-    //    price: 1000.0 + index * 500.0,
-    //    income: 500.0 + index * 300.0,
-    //  ),
-    //);
-    //for (var i = 0; i < allcountries.length; i++) {
-    //   if(!countries.any((val) => val.name == allcountries[i].name)){
-    //     FBOp.addCountryTOFB(allcountries[i].name, 1000+i*500, 300+ i*500);
-    //   }
-    //
-    // }
-
     updateBought();
     super.initState();
   }
@@ -103,7 +67,7 @@ class _HomeScreenState extends State<HomeScreen> {
     await FBOp.findCountryIncomeAndAddFB(howmanyincomes)
         .then((value) => moneychange = value);
     //print(moneychange);
-    _showMoneyChange(context, moneychange);
+    moneychange != 0 ? _showMoneyChange(context, moneychange) : false;
   }
 
   //void updateFirebase
@@ -127,16 +91,19 @@ class _HomeScreenState extends State<HomeScreen> {
         return AlertDialog(
           title: Center(child: Text(country.name)),
           content: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text('Price: \$${country.price.floor()}'),
-              Text('Income: \$${country.income.floor()}'),
-              Text('Owner: ${country.owner}'),
+              Text('Price:           \$${country.price.floor()}'),
+              Text('Income:        \$${country.income.floor()}'),
+              Text('Owner:         ${country.owner}'),
               Image.asset(
                 CountryImageNames.countryImageNames[index],
                 alignment: Alignment.center,
               ),
+              SizedBox(child: Container(height: 10,)),
+              country.owner.isNotEmpty ? const Text('') :
+              Center(child: Text('You should reload home page after buying!!', style: const TextStyle(fontSize: 15,color: Colors.red,fontWeight: FontWeight.bold),)),
             ],
           ),
           actions: [
@@ -337,17 +304,6 @@ class _HomeScreenState extends State<HomeScreen> {
                       income: doc.data()['income'],
                       owner: doc.data()['owner']));
                 }
-                //print(countries.length);
-                //bought = List<bool>.generate(countries.length, (index) => false);
-
-                // for (var element in userssnapshot.data!.docs) {
-                //   Map<String, dynamic> dt = element.data() as Map<String, dynamic>;
-                //   if(dt['nickname'] == widget.nickname){
-                //     FirebaseFirestore.instance.collection('users').doc(widget.nickname).update({'bought': List<bool>.generate(countries.length, (index) => false)});
-                //     //dt['bought'] = List<bool>.generate(countries.length, (index) => false);
-                //   }
-                // }
-
                 countryBreaker = true;
               }
               for (var doc in userssnapshot.data!.docs) {
@@ -364,14 +320,11 @@ class _HomeScreenState extends State<HomeScreen> {
                           List<Map<String, dynamic>>.from(map['times']))
                       .getPlayer;
                 }
-
-                // if (doc.data()['nickname'] == widget.nickname) {
-                //
-                // }
               }
               money = player.money!;
 
               return Scaffold(
+                backgroundColor: const Color.fromARGB(255, 169, 197, 246),
                 appBar: AppBar(
                   automaticallyImplyLeading: false,
                   title: Row(

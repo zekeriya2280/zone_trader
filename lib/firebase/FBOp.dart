@@ -163,24 +163,20 @@ class FBOp {
   }
   static Future<void> sellCountryFB(Country country)async{
     int index = 0;
-    await fb2.get().then((value) {
+    //print(country.price);
+    await fb2.get().then((value)async { 
       for (var i = 0; i < value.docs.length; i++) {
         if (value.docs[i].data()['name'] == country.name) {
           index = i;
         }
       }
+      await fb2.doc(value.docs[index].id).update({
+        'owner' : '',
+      });
     });
-    print(country.price);
-    await fb2.get().then((value) => fb2.doc(value.docs[index].id).update({
-      'owner' : '',
-    }));
     await fb.get().then((value) => fb.doc(FirebaseAuth.instance.currentUser!.displayName).get().then((value2) => fb.doc(FirebaseAuth.instance.currentUser!.displayName).update({
       'money' : value2.data()!['money'] + country.price,
-    })));
-    await fb.get().then((value) => fb.doc(FirebaseAuth.instance.currentUser!.displayName).get().then((value2) => fb.doc(FirebaseAuth.instance.currentUser!.displayName).update({
       'bought' : List.from(value2.data()!['bought'])..[index] = false,
-    })));
-    await fb.get().then((value) => fb.doc(FirebaseAuth.instance.currentUser!.displayName).get().then((value2) => fb.doc(FirebaseAuth.instance.currentUser!.displayName).update({
       'times' : List.from(value2.data()!['times'])..[index] = {'60' : 60},
     })));
   }

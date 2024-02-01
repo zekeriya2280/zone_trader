@@ -35,7 +35,7 @@ class MyCountryList extends StatelessWidget {
         return Scaffold(
           backgroundColor: const Color.fromARGB(255, 169, 197, 246),
           appBar: AppBar(
-            title: const Text('My Country List'),
+            title: const Text('My Country List',style: TextStyle(color: Colors.white,fontSize: 22,fontWeight: FontWeight.bold,letterSpacing: 2),),
             centerTitle: true,
             backgroundColor: Colors.blue,
             actions: [
@@ -43,14 +43,16 @@ class MyCountryList extends StatelessWidget {
                 padding: const EdgeInsets.only(right:18.0),
                 child: IconButton(
                   icon: const Icon(Icons.home,size: 30,color: Colors.white,), 
-                  onPressed: () { 
-                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const HomeScreen()));
+                  onPressed: ()async{ 
+                    await Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const HomeScreen()));
                    },
                 ),
               )
             ]
           ),
-          body: ListView.builder(
+          body: 
+          myCountryList.isEmpty ? const Center(child: Text('You have no country',style: TextStyle(fontSize: 22,color: Colors.white,fontWeight: FontWeight.bold),)) :
+          ListView.builder(
             itemCount: myCountryList.length,
             itemBuilder: (context, index) {
               return Card(
@@ -82,13 +84,15 @@ class MyCountryList extends StatelessWidget {
         return AlertDialog(
           title: Center(child: Text(country.name,style: const TextStyle(fontSize: 20,fontWeight: FontWeight.bold),)),
           content: SizedBox(
-            height: MediaQuery.of(context).size.height * 0.1,
+            height: MediaQuery.of(context).size.height * 0.15,
             child: Column(
               children: [
                 
                 Text('Price: ${country.price}'),
                 Text('Income: ${country.income}'),
                 Text('Owner: ${country.owner}'),
+                Expanded(child: Container()),
+                Center(child: Text('You should reload home page after selling', style: const TextStyle(fontSize: 13,color: Colors.red,fontWeight: FontWeight.bold),)),
               ],
             ),
           ),
@@ -118,29 +122,4 @@ class MyCountryList extends StatelessWidget {
       },
     );
   }
-
- // void _buyGoods(BuildContext context, Country country) async {
- //   try {
- //     // Add the selected goods to the 'mygoods' collection
- //     String userId = FirebaseAuth.instance.currentUser!.uid;
- //     int lastamount = 1;
- //     await FirebaseFirestore.instance.collection('users').doc(userId).get().then((value) => lastamount = value.data()![country.name]['amount']);
- //     await FirebaseFirestore.instance.collection('users').doc(userId).update({country.name : {
- //       'name': country.name,
- //       'amount':  lastamount+1,
- //       'price': country.price,
- //     }});
-//
- //     Navigator.of(context).pop(); // Close the popup
-//
- //     // Show a snackbar or other indication that the goods have been bought successfully
- //     ScaffoldMessenger.of(context).showSnackBar(
- //       SnackBar(
- //         content: Text('${country.name} bought successfully!'),
- //       ),
- //     );
- //   } catch (e) {
- //     print("Error buying goods: $e");
- //   }
- // }
 }

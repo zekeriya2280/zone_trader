@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:zone_trader/authentication/signin.dart';
-import 'package:zone_trader/screens/home.dart';
+import 'package:zone_trader/screens/startpage.dart';
 
 class AuthWrapper extends StatelessWidget {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -17,9 +17,7 @@ class AuthWrapper extends StatelessWidget {
           return const CircularProgressIndicator();
         } else {
           if (snapshot.hasData && snapshot.data != null) {
-            // User is signed in
-            User? user = snapshot.data;
-            return const HomeScreen();
+            return const StartPage();
           } else {
             // User is not signed in
             return const SignInScreen();

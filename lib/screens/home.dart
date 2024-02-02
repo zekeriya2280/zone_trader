@@ -11,8 +11,6 @@ import 'package:zone_trader/models/player.dart';
 import 'package:zone_trader/screens/myCountryList.dart';
 
 class HomeScreen extends StatefulWidget {
-  ///final String? nickname;
-  ///final String email;
 
   const HomeScreen({super.key});
 
@@ -75,13 +73,14 @@ class _HomeScreenState extends State<HomeScreen> {
     await FBOp.updateBoughtColorsFB(bought);
     //print(countries);
   }
-
-  Future<void> _signOut(BuildContext context) async {
-    await FirebaseAuth.instance.signOut();
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => const SignInScreen()),
-    ); // Go back to the sign-in screen
+  Future<void> signOut(BuildContext context) async {
+    await FirebaseAuth.instance
+        .signOut()
+        .then((value) async => await Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const SignInScreen()),
+            ));
+    // Go back to the sign-in screen
   }
 
   void _showCountryDetails(BuildContext context, Country country, int index) {
@@ -101,9 +100,20 @@ class _HomeScreenState extends State<HomeScreen> {
                 CountryImageNames.countryImageNames[index],
                 alignment: Alignment.center,
               ),
-              SizedBox(child: Container(height: 10,)),
-              country.owner.isNotEmpty ? const Text('') :
-              Center(child: Text('You should reload home page after buying!!', style: const TextStyle(fontSize: 15,color: Colors.red,fontWeight: FontWeight.bold),)),
+              SizedBox(
+                  child: Container(
+                height: 10,
+              )),
+              country.owner.isNotEmpty
+                  ? const Text('')
+                  : Center(
+                      child: Text(
+                      'You should reload home page after buying!!',
+                      style: const TextStyle(
+                          fontSize: 15,
+                          color: Colors.red,
+                          fontWeight: FontWeight.bold),
+                    )),
             ],
           ),
           actions: [
@@ -390,7 +400,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         color: Colors.red,
                         size: 16,
                       ),
-                      onPressed: () => _signOut(context),
+                      onPressed: () => signOut(context),
                     ),
                   ],
                 ),

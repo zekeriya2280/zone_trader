@@ -111,6 +111,8 @@ flutter:
     - images/Norway.jpeg
     - images/Poland.jpeg
     - images/Italy.jpeg
+    - images/start.jpeg
+    - images/intro.jpeg
    #- images/Poland.jpeg
    #- images/Spain.jpeg
    #- images/France.jpeg

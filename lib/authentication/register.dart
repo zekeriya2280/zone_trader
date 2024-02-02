@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:zone_trader/authentication/signin.dart';
 import 'package:zone_trader/screens/home.dart';
+import 'package:zone_trader/screens/startpage.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -65,7 +66,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         print('c');
         await Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const HomeScreen()),
+          MaterialPageRoute(builder: (context) => const StartPage()),
         );
       }
     } catch (e) {

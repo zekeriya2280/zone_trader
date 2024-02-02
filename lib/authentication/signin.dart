@@ -2,7 +2,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:zone_trader/authentication/register.dart';
-import 'package:zone_trader/screens/home.dart';
 import 'package:zone_trader/screens/startpage.dart';
 
 class SignInScreen extends StatefulWidget {

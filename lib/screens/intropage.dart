@@ -84,7 +84,7 @@ class _IntroPageState extends State<IntroPage> {
                                   builder: (context) => const HomeScreen()));
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Color.fromARGB(162, 33, 149, 243),
+                          backgroundColor: const Color.fromARGB(162, 33, 149, 243),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(50),
                           ),
@@ -104,7 +104,7 @@ class _IntroPageState extends State<IntroPage> {
                                   builder: (context) => const HomeScreen()));
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Color.fromARGB(162, 33, 149, 243),
+                          backgroundColor: const Color.fromARGB(162, 33, 149, 243),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(50),
                           ),
@@ -124,7 +124,7 @@ class _IntroPageState extends State<IntroPage> {
                                   builder: (context) => const HomeScreen()));
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Color.fromARGB(162, 33, 149, 243),
+                          backgroundColor: const Color.fromARGB(162, 33, 149, 243),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(50),
                           ),

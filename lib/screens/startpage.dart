@@ -21,8 +21,8 @@ class _StartPageState extends State<StartPage> {
   }
 
   void startTimer() {
-    const oneSec = const Duration(seconds: 1);
-    _timer = new Timer.periodic(
+    const oneSec = Duration(seconds: 1);
+    _timer = Timer.periodic(
       oneSec,
       (Timer timer) {
         if (_start == 0) {
@@ -55,7 +55,7 @@ class _StartPageState extends State<StartPage> {
 
   @override
   Widget build(BuildContext context) {
-    print(_start);
+    //print(_start);
     waitFiveSeconds();
     return Scaffold(
         body: Stack(
@@ -76,7 +76,7 @@ class _StartPageState extends State<StartPage> {
                     top: MediaQuery.of(context).size.height * 0.1,
                     left: MediaQuery.of(context).size.width * 0.2,
                     child: Container(
-                        child: Text(
+                        child: const Text(
                       'Zone',
                       style: TextStyle(
                           color: Colors.white,
@@ -100,7 +100,7 @@ class _StartPageState extends State<StartPage> {
                   height: MediaQuery.of(context).size.height,
                   width: MediaQuery.of(context).size.width,
                   color: Colors.black38,
-                  child: Text(
+                  child: const Text(
                     'Trader',
                     style: TextStyle(
                         color: Colors.white,

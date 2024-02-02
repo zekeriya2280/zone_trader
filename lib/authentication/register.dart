@@ -3,7 +3,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:zone_trader/authentication/signin.dart';
-import 'package:zone_trader/screens/home.dart';
 import 'package:zone_trader/screens/startpage.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -59,8 +58,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
           'nickname' : nickname,
           'email': email,
           'money' : 100000,
-          'bought' : [],
-          'times' : []
+          'bought' : List<bool>.filled(48, false),
+          'times' : List<Map<String,dynamic>>.filled(48, {'60':60}),
           // Add other user-related data as needed
         });
         print('c');

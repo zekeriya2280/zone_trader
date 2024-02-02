@@ -1,13 +1,29 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:zone_trader/firebase/FBOp.dart';
 import 'package:zone_trader/models/country.dart';
 import 'package:zone_trader/screens/home.dart';
 
-class MyCountryList extends StatelessWidget {
+class MyCountryList extends StatefulWidget {
   const MyCountryList({super.key});
 
+  @override
+  State<MyCountryList> createState() => _MyCountryListState();
+}
+
+class _MyCountryListState extends State<MyCountryList> {
+  @override
+  void initState() {
+    playSampleSound('assets/sounds/pagechanged.mp3');
+    super.initState();
+  }
+  void playSampleSound(String path) async {
+     AudioPlayer player = AudioPlayer();
+    await player.setAsset(path);
+    await player.play();
+  }
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
@@ -92,7 +108,7 @@ class MyCountryList extends StatelessWidget {
                 Text('Income: ${country.income}'),
                 Text('Owner: ${country.owner}'),
                 Expanded(child: Container()),
-                Center(child: Text('You should reload home page after selling', style: const TextStyle(fontSize: 13,color: Colors.red,fontWeight: FontWeight.bold),)),
+                const Center(child: Text('You should reload home page after selling', style: TextStyle(fontSize: 13,color: Colors.red,fontWeight: FontWeight.bold),)),
               ],
             ),
           ),
@@ -102,6 +118,7 @@ class MyCountryList extends StatelessWidget {
               child: TextButton(
                 style: ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.red)),
                 onPressed: () {
+                  playSampleSound('assets/sounds/close.mp3');
                   Navigator.of(context).pop(); // Cancel button
                 },
                 child: const Text('Cancel',style: TextStyle(color: Colors.white),),
@@ -112,7 +129,9 @@ class MyCountryList extends StatelessWidget {
               child: TextButton(
                 style: ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.green)),
               onPressed: ()async {
-               await FBOp.sellCountryFB(country).then((value) => Navigator.of(context).pop());
+               await FBOp.sellCountryFB(country).then((value) { 
+                playSampleSound('assets/sounds/bought.mp3');
+                Navigator.of(context).pop();});
               },
               child: const Text('Sell',style: TextStyle(color: Colors.white),),
             ),

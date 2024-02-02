@@ -1,8 +1,8 @@
 import 'dart:async';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:zone_trader/authentication/signin.dart';
 import 'package:zone_trader/constants/countryImageNames.dart';
 import 'package:zone_trader/firebase/FBOp.dart';
@@ -31,6 +31,11 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     updateBought();
     super.initState();
+  }
+  void playSampleSound(String path) async {
+     AudioPlayer player = AudioPlayer();
+    await player.setAsset(path);
+    await player.play();
   }
 
   Future<void> updateBought() async {
@@ -64,8 +69,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
     await FBOp.findCountryIncomeAndAddFB(howmanyincomes)
         .then((value) => moneychange = value);
-    //print(moneychange);
+    playSampleSound('assets/sounds/homeinitpopup.mp3');
+    //AudioCache cache = AudioCache();
+    //const alarmAudioPath = "sounds/homeinitpopup.mp3";
+    //await cache.load(alarmAudioPath).then((value) => cache.clear(alarmAudioPath));
     moneychange != 0 ? _showMoneyChange(context, moneychange) : false;
+    
   }
 
   //void updateFirebase
@@ -106,10 +115,10 @@ class _HomeScreenState extends State<HomeScreen> {
               )),
               country.owner.isNotEmpty
                   ? const Text('')
-                  : Center(
+                  : const Center(
                       child: Text(
                       'You should reload home page after buying!!',
-                      style: const TextStyle(
+                      style: TextStyle(
                           fontSize: 15,
                           color: Colors.red,
                           fontWeight: FontWeight.bold),
@@ -129,6 +138,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 money < country.price.floor()
                                     ? null
                                     : buythiscard(context, country, index);
+                                playSampleSound('assets/sounds/bought.mp3');
                                 DateTime now = DateTime.now();
                                 await FBOp.fetchUserTimesFB().then((value) {
                                   //FETCH TIMES FROM FB
@@ -143,6 +153,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     boughttimes,
                                     index); // UPDATE TIMES AND OWNER IN FB
                                 await greenBGColorFiller(); // WHEN COUNTRY IS BOUGHT UPDATE COLORS IN FB
+                                
                               },
                         child: Text(
                           'Buy',
@@ -159,7 +170,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 TextButton(
                   onPressed: () {
-                    Navigator.of(context).pop();
+                    playSampleSound('assets/sounds/close.mp3');
+                    Navigator.of(context).pop();                                     
                   },
                   child: const Text(
                     'Close',
@@ -270,7 +282,9 @@ class _HomeScreenState extends State<HomeScreen> {
     //  this.context,MaterialPageRoute(builder: (BuildContext context) => HomeScreen()),
     //);
   }
-
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
@@ -342,7 +356,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     children: [
                       SizedBox(
                         //color: Colors.red,
-                        width: 130,
+                        width: 120,
                         height: 50,
                         child: Center(
                           child: Text(
@@ -355,7 +369,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                       SizedBox(
-                          width: 100,
+                          width: 90,
                           height: 50,
                           child: Center(
                               child: Text(

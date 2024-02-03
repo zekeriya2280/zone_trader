@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zone_trader/screens/wrapper.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -12,6 +13,7 @@ void main() async {
      messagingSenderId: '695924119809', 
      projectId: 'zone-trader')
   );
+  SharedPreferences.setMockInitialValues({});
   runApp(const MyApp());
 }
 

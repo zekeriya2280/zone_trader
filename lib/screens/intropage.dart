@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zone_trader/authentication/signin.dart';
 import 'package:zone_trader/screens/home.dart';
 import 'package:zone_trader/screens/optionspage.dart';
@@ -13,10 +14,33 @@ class IntroPage extends StatefulWidget {
 
 class _IntroPageState extends State<IntroPage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  Color appBarColor = Colors.blue;
+  Color bgcolor = Colors.white;
+
+  @override
+  void initState() {
+    colorProducer();
+    super.initState();
+  }
 
   Future<void> signOut(BuildContext context) async {
     await FirebaseAuth.instance.signOut();
-    // Go back to the sign-in screen
+  }
+
+  colorProducer() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      appBarColor = Color.fromARGB(
+          255,
+          int.parse(prefs.getStringList('appcolor') == null ? '0' : prefs.getStringList('appcolor')![1]),
+          int.parse(prefs.getStringList('appcolor') == null ? '0' : prefs.getStringList('appcolor')![2]),
+          int.parse(prefs.getStringList('appcolor') == null ? '255' : prefs.getStringList('appcolor')![3]));
+      bgcolor = Color.fromARGB(
+          255,
+          int.parse(prefs.getStringList('bgcolor') == null ? '255' : prefs.getStringList('bgcolor')![1]),
+          int.parse(prefs.getStringList('bgcolor') == null ? '255' : prefs.getStringList('bgcolor')![2]),
+          int.parse(prefs.getStringList('bgcolor') == null ? '255' : prefs.getStringList('bgcolor')![3]));
+    });
   }
 
   @override
@@ -35,20 +59,26 @@ class _IntroPageState extends State<IntroPage> {
                           builder: (context) => const SignInScreen()),
                     ));
           }
+
           return Scaffold(
+              //backgroundColor: bgcolor,
               appBar: AppBar(
-                  backgroundColor: Colors.blue,
-                  title: const Center(
+                  backgroundColor: appBarColor,
+                  title: const SizedBox(
+                    width: 250,
+                    child: Center(
                       child: Text(
-                    'Zone Trader',
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 30,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: 'Times New Roman',
-                        fontStyle: FontStyle.italic,
-                        letterSpacing: 2),
-                  )),
+                        'Zone Trader',
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 30,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'Times New Roman',
+                            fontStyle: FontStyle.italic,
+                            letterSpacing: 2),
+                      ),
+                    ),
+                  ),
                   centerTitle: true,
                   automaticallyImplyLeading: false,
                   actions: [
@@ -63,78 +93,106 @@ class _IntroPageState extends State<IntroPage> {
                       },
                     )
                   ]),
-              body: Stack(fit: StackFit.expand, children: [
+              body: Stack( fit: StackFit.expand, children: [
                 Container(
-                    decoration: const BoxDecoration(
-                        image: DecorationImage(
+                    decoration: BoxDecoration(
+                        color: bgcolor,
+                        image: const DecorationImage(
                             image: AssetImage('images/intro.jpeg'),
                             fit: BoxFit.cover,
-                            opacity: 0.2))),
+                            opacity: 0.5))),
                 Center(
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                  SizedBox(
-                    height: 90,
-                    width: MediaQuery.of(context).size.width * 0.8,
-                    child: ElevatedButton(
-                        onPressed: () async {
-                          await Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const HomeScreen()));
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color.fromARGB(162, 33, 149, 243),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(50),
-                          ),
-                          elevation: 5,
-                        ),
-                        child: const Text('Start',style: TextStyle(color: Colors.white,fontSize: 30,fontFamily: 'Times New Roman',
-                        fontStyle: FontStyle.italic,fontWeight: FontWeight.bold),)),
-                  ),
-                  SizedBox(
-                    height: 90,
-                    width: MediaQuery.of(context).size.width * 0.8,
-                    child: ElevatedButton(
-                        onPressed: () async {
-                          await Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const HomeScreen()));
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color.fromARGB(162, 33, 149, 243),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(50),
-                          ),
-                          elevation: 5,
-                        ),
-                        child: const Text('How to Play',style: TextStyle(color: Colors.white,fontSize: 30,fontFamily: 'Times New Roman',
-                        fontStyle: FontStyle.italic,fontWeight: FontWeight.bold),)),
-                  ),
-                  SizedBox(
-                    height: 90,
-                    width: MediaQuery.of(context).size.width * 0.8,
-                    child: ElevatedButton(
-                        onPressed: () async {
-                          await Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const OptionsPage()));
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color.fromARGB(162, 33, 149, 243),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(50),
-                          ),
-                          elevation: 5,
-                        ),
-                        child: const Text('Options',style: TextStyle(color: Colors.white,fontSize: 30,fontFamily: 'Times New Roman',
-                        fontStyle: FontStyle.italic,fontWeight: FontWeight.bold),)),
-                  ),
-                ]))
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                      SizedBox(
+                        height: 90,
+                        width: MediaQuery.of(context).size.width * 0.8,
+                        child: ElevatedButton(
+                            onPressed: () async {
+                              await Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const HomeScreen()));
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor:
+                                  Color.fromARGB(210, 33, 149, 243),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(50),
+                              ),
+                              elevation: 5,
+                            ),
+                            child: const Text(
+                              'Start',
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 30,
+                                  fontFamily: 'Times New Roman',
+                                  fontStyle: FontStyle.italic,
+                                  fontWeight: FontWeight.bold),
+                            )),
+                      ),
+                      SizedBox(
+                        height: 90,
+                        width: MediaQuery.of(context).size.width * 0.8,
+                        child: ElevatedButton(
+                            onPressed: () async {
+                              await Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const HomeScreen()));
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor:
+                                  Color.fromARGB(210, 33, 149, 243),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(50),
+                              ),
+                              elevation: 5,
+                            ),
+                            child: const Text(
+                              'How to Play',
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 30,
+                                  fontFamily: 'Times New Roman',
+                                  fontStyle: FontStyle.italic,
+                                  fontWeight: FontWeight.bold),
+                            )),
+                      ),
+                      SizedBox(
+                        height: 90,
+                        width: MediaQuery.of(context).size.width * 0.8,
+                        child: ElevatedButton(
+                            onPressed: () async {
+                              await Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const OptionsPage()));
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor:
+                                  Color.fromARGB(210, 33, 149, 243),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(50),
+                              ),
+                              elevation: 5,
+                            ),
+                            child: const Text(
+                              'Options',
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 30,
+                                  fontFamily: 'Times New Roman',
+                                  fontStyle: FontStyle.italic,
+                                  fontWeight: FontWeight.bold),
+                            )),
+                      ),
+                    ]))
               ]));
         });
   }

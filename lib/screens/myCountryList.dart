@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zone_trader/firebase/FBOp.dart';
 import 'package:zone_trader/models/country.dart';
 import 'package:zone_trader/screens/home.dart';
@@ -14,15 +15,33 @@ class MyCountryList extends StatefulWidget {
 }
 
 class _MyCountryListState extends State<MyCountryList> {
+  Color appBarColor = Colors.blue;
+  Color bgcolor = Colors.white;
   @override
   void initState() {
     playSampleSound('assets/sounds/pagechanged.mp3');
+    colorProducer();
     super.initState();
   }
   void playSampleSound(String path) async {
      AudioPlayer player = AudioPlayer();
     await player.setAsset(path);
     await player.play();
+  }
+  colorProducer() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      appBarColor = Color.fromARGB(
+          255,
+          int.parse(prefs.getStringList('appcolor')![1]),
+          int.parse(prefs.getStringList('appcolor')![2]),
+          int.parse(prefs.getStringList('appcolor')![3]));
+      bgcolor = Color.fromARGB(
+          255,
+          int.parse(prefs.getStringList('bgcolor')![1]),
+          int.parse(prefs.getStringList('bgcolor')![2]),
+          int.parse(prefs.getStringList('bgcolor')![3]));
+    });
   }
   @override
   Widget build(BuildContext context) {
@@ -49,11 +68,11 @@ class _MyCountryListState extends State<MyCountryList> {
         }
 
         return Scaffold(
-          backgroundColor: const Color.fromARGB(255, 169, 197, 246),
+          backgroundColor: bgcolor,
           appBar: AppBar(
             title: const Text('My Country List',style: TextStyle(color: Colors.white,fontSize: 22,fontWeight: FontWeight.bold,letterSpacing: 2),),
             centerTitle: true,
-            backgroundColor: Colors.blue,
+            backgroundColor: appBarColor,
             actions: [
               Padding(
                 padding: const EdgeInsets.only(right:18.0),

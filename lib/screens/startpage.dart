@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zone_trader/screens/intropage.dart';
 
 class StartPage extends StatefulWidget {
@@ -12,14 +13,19 @@ class StartPage extends StatefulWidget {
 
 class _StartPageState extends State<StartPage> {
   int _start = 5;
-
   Timer _timer = Timer(const Duration(seconds: 5), () {});
+  
   @override
   void initState() {
     startTimer();
+    startSharedPreferences();
     super.initState();
   }
-
+  startSharedPreferences() async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setInt('start', 5);
+    
+  }
   void startTimer() {
     const oneSec = Duration(seconds: 1);
     _timer = Timer.periodic(
@@ -48,7 +54,7 @@ class _StartPageState extends State<StartPage> {
     if (_start == 0) {
       await Future.delayed(const Duration(milliseconds: 200), () =>
            Navigator.of(context).pushReplacement<void, void>(
-            MaterialPageRoute<void>(builder: (context) => const IntroPage()),
+            MaterialPageRoute<void>(builder: (context) =>  const IntroPage()),
           ));
     }
   }

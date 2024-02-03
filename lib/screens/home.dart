@@ -3,11 +3,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zone_trader/authentication/signin.dart';
 import 'package:zone_trader/constants/countryImageNames.dart';
 import 'package:zone_trader/firebase/FBOp.dart';
 import 'package:zone_trader/models/country.dart';
 import 'package:zone_trader/models/player.dart';
+import 'package:zone_trader/screens/intropage.dart';
 import 'package:zone_trader/screens/myCountryList.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -26,16 +28,34 @@ class _HomeScreenState extends State<HomeScreen> {
   List<bool> bought = List<bool>.filled(48, false);
   List<Map<String, dynamic>> boughttimes =
       List<Map<String, dynamic>>.filled(48, {'60': 60});
+  Color appBarColor = Colors.blue;
+  Color bgcolor = Colors.white;
 
   @override
   void initState() {
     updateBought();
+    colorProducer();
     super.initState();
   }
   void playSampleSound(String path) async {
      AudioPlayer player = AudioPlayer();
     await player.setAsset(path);
     await player.play();
+  }
+  colorProducer() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      appBarColor = Color.fromARGB(
+          255,
+          int.parse(prefs.getStringList('appcolor')![1]),
+          int.parse(prefs.getStringList('appcolor')![2]),
+          int.parse(prefs.getStringList('appcolor')![3]));
+      bgcolor = Color.fromARGB(
+          255,
+          int.parse(prefs.getStringList('bgcolor')![1]),
+          int.parse(prefs.getStringList('bgcolor')![2]),
+          int.parse(prefs.getStringList('bgcolor')![3]));
+    });
   }
 
   Future<void> updateBought() async {
@@ -353,7 +373,7 @@ class _HomeScreenState extends State<HomeScreen> {
               money = player.money!;
 
               return Scaffold(
-                backgroundColor: const Color.fromARGB(255, 169, 197, 246),
+                backgroundColor: bgcolor,
                 appBar: AppBar(
                   automaticallyImplyLeading: false,
                   title: Row(
@@ -385,7 +405,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ],
                   ),
                   centerTitle: true,
-                  backgroundColor: Colors.blue[400],
+                  backgroundColor: appBarColor,
                   actions: [
                     IconButton(
                       icon: const Icon(
@@ -415,11 +435,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     IconButton(
                       icon: const Icon(
-                        Icons.exit_to_app,
-                        color: Colors.red,
-                        size: 16,
+                        Icons.home,
+                        color: Colors.white,
                       ),
-                      onPressed: () => signOut(context),
+                      onPressed: () => Navigator.pushReplacement( context, MaterialPageRoute(builder: (context) => const IntroPage()),),
                     ),
                   ],
                 ),

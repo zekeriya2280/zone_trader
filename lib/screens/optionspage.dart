@@ -1,7 +1,7 @@
-import 'dart:math';
 
+import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:zone_trader/screens/home.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zone_trader/screens/intropage.dart';
 
 class OptionsPage extends StatefulWidget {
@@ -32,42 +32,44 @@ class _OptionsPageState extends State<OptionsPage> {
     super.initState();
   }
 
-  void colorProducer() {
+  void colorProducer(){
     for (int i = 0; i < 6; i++) {
-      randcol1 = Color.fromRGBO(Random().nextInt(255), Random().nextInt(255),
-          Random().nextInt(255), Random().nextDouble());
-      randcol2 = Color.fromRGBO(Random().nextInt(255), Random().nextInt(255),
-          Random().nextInt(255), Random().nextDouble());
+      randcol1 = Color.fromARGB(255 ,Random().nextInt(255), Random().nextInt(255),
+          Random().nextInt(255), );
+      randcol2 = Color.fromARGB(255 ,Random().nextInt(255), Random().nextInt(255),
+          Random().nextInt(255));
       setState(() {
         colors.add({randcol1: randcol2});
       });
-    }
+     }
+ 
   }
 
   @override
   Widget build(BuildContext context) {
+    
     switch (slidervalue) {
       case 0.0:
         appbarcolor = colors[0].keys.first;
         scfoldbgcolor = colors[0].values.first;
         break;
-      case 2.0:
+      case 1.0:
         appbarcolor = colors[1].keys.first;
         scfoldbgcolor = colors[1].values.first;
         break;
-      case 4.0:
+      case 2.0:
         appbarcolor = colors[2].keys.first;
         scfoldbgcolor = colors[2].values.first;
         break;
-      case 6.0:
+      case 3.0:
         appbarcolor = colors[3].keys.first;
         scfoldbgcolor = colors[3].values.first;
         break;
-      case 8.0:
+      case 4.0:
         appbarcolor = colors[4].keys.first;
         scfoldbgcolor = colors[4].values.first;
         break;
-      case 10.0:
+      case 5.0:
         appbarcolor = colors[5].keys.first;
         scfoldbgcolor = colors[5].values.first;
         break;
@@ -106,7 +108,7 @@ class _OptionsPageState extends State<OptionsPage> {
                   await Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => const IntroPage()));
+                          builder: (context) =>  const IntroPage()));
                 })
           ]),
       body: SingleChildScrollView(
@@ -151,10 +153,11 @@ class _OptionsPageState extends State<OptionsPage> {
                       height: 50,
                       child: Text('Change Color Theme',
                           style: TextStyle(
-                              fontSize: 20,
-                              fontFamily: 'Times New Roman',
-                              letterSpacing: 2,
-                              color: textcolors,)),
+                            fontSize: 20,
+                            fontFamily: 'Times New Roman',
+                            letterSpacing: 2,
+                            color: textcolors,
+                          )),
                     ),
                   ),
                   SizedBox(
@@ -176,16 +179,18 @@ class _OptionsPageState extends State<OptionsPage> {
                       child: Slider(
                           value: slidervalue,
                           min: 0,
-                          max: 10,
+                          max: 5,
                           divisions: 5,
                           thumbColor: Colors.pink,
-                          label: ((slidervalue.floor() / 2).floor() + 1)
+                          label: (slidervalue.floor() + 1)
                               .toString(),
-                          overlayColor: const MaterialStatePropertyAll(Colors.orange),
+                          overlayColor:
+                              const MaterialStatePropertyAll(Colors.orange),
                           inactiveColor: Colors.grey,
                           //activeColor: Color.fromARGB(228, 0, 0, 0),
                           onChanged: (value) => setState(() {
                                 slidervalue = value;
+                                
                                 textcolors = Colors.white;
                               })),
                     ),
@@ -213,12 +218,16 @@ class _OptionsPageState extends State<OptionsPage> {
                         alignment: Alignment.center,
                         iconEnabledColor: Colors.white,
                         value: dropdownvalue,
-                        padding: const EdgeInsets.only(left:18),
+                        padding: const EdgeInsets.only(left: 18),
                         icon: const Icon(Icons.keyboard_arrow_down),
                         items: dropdownitems.map((String items) {
                           return DropdownMenuItem(
                             value: items,
-                            child: Center(child: Text(items,style: TextStyle(color: textcolors),)),
+                            child: Center(
+                                child: Text(
+                              items,
+                              style: TextStyle(color: textcolors),
+                            )),
                           );
                         }).toList(),
                         onChanged: (String? newValue) {
@@ -232,18 +241,39 @@ class _OptionsPageState extends State<OptionsPage> {
                   SizedBox(
                       height: MediaQuery.of(context).size.height * 0.09,
                       child: Container()),
-                   ElevatedButton(
-                        onPressed: () {
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color.fromARGB(162, 33, 149, 243),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(50),
-                          ),
-                          elevation: 5,
+                  ElevatedButton(
+                      onPressed: () async{
+                        SharedPreferences prefs = await SharedPreferences.getInstance();
+                        await prefs.setStringList('appcolor', [
+                           '255',
+                           appbarcolor.red.toString(),
+                           appbarcolor.green.toString(),
+                           appbarcolor.blue.toString()]);
+                        await prefs.setStringList('bgcolor', [
+                           '255',
+                           scfoldbgcolor.red.toString(),
+                           scfoldbgcolor.green.toString(),
+                           scfoldbgcolor.blue.toString()]);
+                        await prefs.setString('lang', dropdownvalue).then((value) async=> 
+                                await Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const IntroPage())));
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor:
+                            const Color.fromARGB(162, 33, 149, 243),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(50),
                         ),
-                        child: const Text('SAVE',style: TextStyle(color: Colors.white,fontSize: 40,fontFamily: 'Times New Roman',
-                        fontStyle: FontStyle.italic,fontWeight: FontWeight.bold),)),
+                        elevation: 5,
+                      ),
+                      child: const Text(
+                        'SAVE',
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 40,
+                            fontFamily: 'Times New Roman',
+                            fontStyle: FontStyle.italic,
+                            fontWeight: FontWeight.bold),
+                      )),
                   SizedBox(height: 50, child: Container())
                 ]),
           ],

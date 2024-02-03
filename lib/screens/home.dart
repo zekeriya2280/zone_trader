@@ -57,9 +57,14 @@ class _HomeScreenState extends State<HomeScreen> {
     //print('oldtimelist $oldtimelist');
     List<int> allsubmin = [];
     for (var time in oldtimelist) {
-      allsubmin.add(
+      if(now.hour < int.parse(time.keys.first)){
+        allsubmin.add((now.minute + (24 - (int.parse(time.keys.first) - now.hour)) * 60) - time.values.first);
+      }
+      else{
+        allsubmin.add(
           ((now.minute + (now.hour - int.parse(time.keys.first)) * 60) -
               time.values.first));
+      }
     }
     //print('allsubmin $allsubmin');
     List<double> howmanyincomes = [];

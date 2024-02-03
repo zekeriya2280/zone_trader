@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:zone_trader/authentication/signin.dart';
 import 'package:zone_trader/screens/home.dart';
+import 'package:zone_trader/screens/optionspage.dart';
 
 class IntroPage extends StatefulWidget {
   const IntroPage({super.key});
@@ -121,7 +122,7 @@ class _IntroPageState extends State<IntroPage> {
                           await Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => const HomeScreen()));
+                                  builder: (context) => const OptionsPage()));
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color.fromARGB(162, 33, 149, 243),

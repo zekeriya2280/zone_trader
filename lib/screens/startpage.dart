@@ -80,6 +80,7 @@ class _StartPageState extends State<StartPage> {
                       'Zone',
                       style: TextStyle(
                           color: Colors.white,
+                          fontFamily: 'Times New Roman',
                           fontSize: 50,
                           fontWeight: FontWeight.bold),
                     ))),
@@ -104,6 +105,7 @@ class _StartPageState extends State<StartPage> {
                     'Trader',
                     style: TextStyle(
                         color: Colors.white,
+                        fontFamily: 'Times New Roman',
                         fontSize: 50,
                         fontWeight: FontWeight.bold),
                   ))),

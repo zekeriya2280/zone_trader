@@ -114,6 +114,7 @@ flutter:
     - images/Italy.jpeg
     - images/start.jpeg
     - images/intro.jpeg
+    - images/up.png
     - assets/sounds/bought.mp3
     - assets/sounds/homeinitpopup.mp3
     - assets/sounds/pagechanged.mp3

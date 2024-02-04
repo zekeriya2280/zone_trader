@@ -35,7 +35,6 @@ dependencies:
   firebase_auth: ^4.2.0
   cupertino_icons: ^1.0.2
   just_audio: ^0.9.36
-  shared_preferences: ^2.2.2
 
 dev_dependencies:
   flutter_test:

@@ -3,9 +3,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zone_trader/authentication/signin.dart';
 import 'package:zone_trader/constants/countryImageNames.dart';
+import 'package:zone_trader/constants/languages.dart';
 import 'package:zone_trader/firebase/FBOp.dart';
 import 'package:zone_trader/models/country.dart';
 import 'package:zone_trader/models/player.dart';
@@ -13,7 +13,6 @@ import 'package:zone_trader/screens/intropage.dart';
 import 'package:zone_trader/screens/myCountryList.dart';
 
 class HomeScreen extends StatefulWidget {
-
   const HomeScreen({super.key});
 
   @override
@@ -30,32 +29,51 @@ class _HomeScreenState extends State<HomeScreen> {
       List<Map<String, dynamic>>.filled(48, {'60': 60});
   Color appBarColor = Colors.blue;
   Color bgcolor = Colors.white;
+  int langindex = 0;
+  var langs = [
+    'ENG',
+    'TR',
+    'ES',
+    'JP',
+  ];
+  String nickname = "";
+  String chooseAUniqueNickname = "";
 
   @override
   void initState() {
     updateBought();
+    getLang();
+    updateNickname();
     colorProducer();
     super.initState();
   }
-  void playSampleSound(String path) async {
-     AudioPlayer player = AudioPlayer();
-    await player.setAsset(path);
-    await player.play();
+  void getLang()async{
+    await FBOp.getLanguage().then((value) {
+      setState(() {
+        langindex = langs.indexOf(value);
+      });
+    });
+  }
+  updateNickname() async {
+    await FBOp.updateNicknameHelper(nickname);
   }
   colorProducer() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      appBarColor = Color.fromARGB(
-          255,
-          int.parse(prefs.getStringList('appcolor')![1]),
-          int.parse(prefs.getStringList('appcolor')![2]),
-          int.parse(prefs.getStringList('appcolor')![3]));
-      bgcolor = Color.fromARGB(
-          255,
-          int.parse(prefs.getStringList('bgcolor')![1]),
-          int.parse(prefs.getStringList('bgcolor')![2]),
-          int.parse(prefs.getStringList('bgcolor')![3]));
+    await FBOp.getAppColorTheme().then((value) {
+      setState(() {
+        appBarColor = Color.fromARGB(255, value[0], value[1], value[2]);
+      });
     });
+    await FBOp.getBGColorTheme().then((value) {
+      setState(() {
+        bgcolor = Color.fromARGB(255, value[0], value[1], value[2]);
+      });
+    });
+  }
+
+  void playSampleSound(String path) async {
+    AudioPlayer player = AudioPlayer();
+    await player.setAsset(path);
+    await player.play();
   }
 
   Future<void> updateBought() async {
@@ -77,13 +95,14 @@ class _HomeScreenState extends State<HomeScreen> {
     //print('oldtimelist $oldtimelist');
     List<int> allsubmin = [];
     for (var time in oldtimelist) {
-      if(now.hour < int.parse(time.keys.first)){
-        allsubmin.add((now.minute + (24 - (int.parse(time.keys.first) - now.hour)) * 60) - time.values.first);
-      }
-      else{
+      if (now.hour < int.parse(time.keys.first)) {
         allsubmin.add(
-          ((now.minute + (now.hour - int.parse(time.keys.first)) * 60) -
-              time.values.first));
+            (now.minute + (24 - (int.parse(time.keys.first) - now.hour)) * 60) -
+                time.values.first);
+      } else {
+        allsubmin.add(
+            ((now.minute + (now.hour - int.parse(time.keys.first)) * 60) -
+                time.values.first));
       }
     }
     //print('allsubmin $allsubmin');
@@ -99,7 +118,6 @@ class _HomeScreenState extends State<HomeScreen> {
     //const alarmAudioPath = "sounds/homeinitpopup.mp3";
     //await cache.load(alarmAudioPath).then((value) => cache.clear(alarmAudioPath));
     moneychange != 0 ? _showMoneyChange(context, moneychange) : false;
-    
   }
 
   //void updateFirebase
@@ -107,6 +125,7 @@ class _HomeScreenState extends State<HomeScreen> {
     await FBOp.updateBoughtColorsFB(bought);
     //print(countries);
   }
+
   Future<void> signOut(BuildContext context) async {
     await FirebaseAuth.instance
         .signOut()
@@ -127,9 +146,9 @@ class _HomeScreenState extends State<HomeScreen> {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text('Price:           \$${country.price.floor()}'),
-              Text('Income:        \$${country.income.floor()}'),
-              Text('Owner:         ${country.owner}'),
+              Text('${Languages.price[langindex]}: \$${country.price.floor()}'),
+              Text('${Languages.income[langindex]}: \$${country.income.floor()}'),
+              Text(country.owner.isEmpty ? '${Languages.owner[langindex]}: ${Languages.yok[langindex]}' : '${Languages.owner[langindex]}: ${country.owner}'),
               Image.asset(
                 CountryImageNames.countryImageNames[index],
                 alignment: Alignment.center,
@@ -140,10 +159,10 @@ class _HomeScreenState extends State<HomeScreen> {
               )),
               country.owner.isNotEmpty
                   ? const Text('')
-                  : const Center(
+                  : Center(
                       child: Text(
-                      'You should reload home page after buying!!',
-                      style: TextStyle(
+                      Languages.youshouldreloadReminderBuying[langindex],
+                      style: const TextStyle(
                           fontSize: 15,
                           color: Colors.red,
                           fontWeight: FontWeight.bold),
@@ -152,6 +171,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           actions: [
             Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 bought[index] || country.owner.isNotEmpty
                     ? const Text('')
@@ -178,10 +198,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                     boughttimes,
                                     index); // UPDATE TIMES AND OWNER IN FB
                                 await greenBGColorFiller(); // WHEN COUNTRY IS BOUGHT UPDATE COLORS IN FB
-                                
                               },
                         child: Text(
-                          'Buy',
+                          Languages.buy[langindex],
                           style: TextStyle(
                               color: money >= country.price.floor()
                                   ? Colors.green
@@ -190,17 +209,17 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                 const SizedBox(
-                  width: 110,
+                  width: 60,
                   child: Text(''),
                 ),
                 TextButton(
                   onPressed: () {
                     playSampleSound('assets/sounds/close.mp3');
-                    Navigator.of(context).pop();                                     
+                    Navigator.of(context).pop();
                   },
-                  child: const Text(
-                    'Close',
-                    style: TextStyle(color: Colors.red, fontSize: 20),
+                  child:  Text(
+                    Languages.cancel[langindex],
+                    style: const TextStyle(color: Colors.red, fontSize: 20),
                   ),
                 ),
               ],
@@ -211,9 +230,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       onPressed: () {
                         Navigator.of(context).pop();
                       },
-                      child: const Text(
-                        'NOT ENOUGH MONEY',
-                        style: TextStyle(color: Colors.red, fontSize: 15),
+                      child:  Text(
+                        Languages.notenoughtmoney[langindex],
+                        style: const TextStyle(color: Colors.red, fontSize: 15),
                       ),
                     ),
                   )
@@ -230,10 +249,10 @@ class _HomeScreenState extends State<HomeScreen> {
       builder: (context) {
         return AlertDialog(
           backgroundColor: Colors.lightGreen[300],
-          title: const Center(
+          title: Center(
               child: Text(
-            'Congratulations!!!',
-            style: TextStyle(color: Colors.white, fontSize: 30),
+            Languages.congratulations[langindex],
+            style: const TextStyle(color: Colors.white, fontSize: 30),
           )),
           content: SizedBox(
             height: MediaQuery.of(context).size.height * 0.1,
@@ -241,9 +260,9 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  const Text(
-                    'You earned from countries',
-                    style: TextStyle(color: Colors.white, fontSize: 19),
+                  Text(
+                    Languages.youearnedfromcountries[langindex],
+                    style: const TextStyle(color: Colors.white, fontSize: 19),
                   ),
                   Text(
                     '\$$moneychange',
@@ -259,29 +278,80 @@ class _HomeScreenState extends State<HomeScreen> {
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                child: const Center(
+                child: Center(
                   child: Text(
-                    'Close',
-                    style: TextStyle(color: Colors.red, fontSize: 20),
+                    Languages.cancel[langindex],                    
+                    style: const TextStyle(color: Colors.red, fontSize: 20),
                   ),
                 ),
               ),
             ),
-            /*
-            money < country.price.floor() ? 
-            Center(
-              child: TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: const Text(
-                  'NOT ENOUGH MONEY',
-                  style: TextStyle(color: Colors.red, fontSize: 15),
-                ),
+          ],
+        );
+      },
+    );
+  }
+  void _userNameChange(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          backgroundColor: Colors.lightGreen[300],
+          title: Center(
+              child: Text(
+            Languages.changeUserNickname[langindex],
+            style: const TextStyle(color: Colors.white, fontSize: 19),
+          )),
+          content: SizedBox(
+            height: MediaQuery.of(context).size.height * 0.1,
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.5,
+                    child: TextField(
+                      onChanged: (value) {
+                        setState(() {
+                          nickname = value;
+                        });
+                      }
+                    ),
+                  ),
+                  Center(child: Text(
+                      Languages.chooseAUniqueNickname[langindex],
+                      style: const TextStyle(color: Colors.red, fontSize: 14),)),
+                ],
               ),
-            )
-            : const Text(''),
-            */
+            ),
+          ),
+          actions: [
+            Center(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  TextButton(
+                    onPressed: () async{
+                      if(nickname.isNotEmpty){
+                        
+                        await FBOp.changeUserNickname(nickname).then((value) => {
+                          Navigator.of(context).pop()
+                        });
+                      }
+                      else{
+                        Navigator.of(context).pop();
+                      }
+                    },
+                    child: Center(
+                      child: Text(
+                        Languages.ok[langindex],                    
+                        style: const TextStyle(color: Colors.red, fontSize: 20),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ],
         );
       },
@@ -307,11 +377,13 @@ class _HomeScreenState extends State<HomeScreen> {
     //  this.context,MaterialPageRoute(builder: (BuildContext context) => HomeScreen()),
     //);
   }
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-///
+  ///
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   @override
   Widget build(BuildContext context) {
+    
     return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
       stream: FirebaseFirestore.instance.collection('users').snapshots(),
       builder: (context, AsyncSnapshot<QuerySnapshot> userssnapshot) {
@@ -397,11 +469,14 @@ class _HomeScreenState extends State<HomeScreen> {
                           width: 90,
                           height: 50,
                           child: Center(
-                              child: Text(
-                            '${FirebaseAuth.instance.currentUser!.displayName ?? player.nickname}',
-                            style: const TextStyle(
-                                fontSize: 22, color: Colors.white),
-                          ))),
+                              child: InkWell(
+                                onTap: () => _userNameChange(context),
+                                child: Text(
+                                                            '${FirebaseAuth.instance.currentUser!.displayName ?? player.nickname}',
+                                                            style: const TextStyle(
+                                  fontSize: 22, color: Colors.white),
+                                                          ),
+                              ))),
                     ],
                   ),
                   centerTitle: true,
@@ -438,7 +513,11 @@ class _HomeScreenState extends State<HomeScreen> {
                         Icons.home,
                         color: Colors.white,
                       ),
-                      onPressed: () => Navigator.pushReplacement( context, MaterialPageRoute(builder: (context) => const IntroPage()),),
+                      onPressed: () => Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const IntroPage()),
+                      ),
                     ),
                   ],
                 ),

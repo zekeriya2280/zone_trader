@@ -3,10 +3,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:zone_trader/authentication/signin.dart';
+import 'package:zone_trader/constants/languages.dart';
 import 'package:zone_trader/screens/startpage.dart';
 
 class RegisterScreen extends StatefulWidget {
-  const RegisterScreen({super.key});
+  int? langindex;
+  RegisterScreen({langindex,super.key});
 
   @override
   _RegisterScreenState createState() => _RegisterScreenState();
@@ -16,53 +18,58 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController _nicknameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  int langindex = 0;
+  String dropdownvalue = 'ENG';
+  var dropdownitems = [
+    'ENG',
+    'TR',
+    'ES',
+    'JP',
+  ];
+
+  @override
+  void initState() {
+    langChecker();
+    super.initState();
+  }
+  void langChecker()async{
+  }
 
   Future<void> _register() async {
     try {
       String email = _emailController.text;
       String password = _passwordController.text;
       String nickname = _nicknameController.text;
-      //QuerySnapshot nicknameQuery = await FirebaseFirestore.instance
-      //    .collection('users')
-      //    .where('nickname', isEqualTo: nickname)
-      //    .get();
-
-      if (email == '' || password == '' || nickname == ''/*nicknameQuery.docs.isNotEmpty*/) {
-        // The nickname is already in use, handle accordingly
+      if (email == '' || password == '' || nickname == '') {
         showDialog(
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
-              title: const Text('Please enter a valid nickname, email and password'),
-              //content: Text('Please choose a different nickname.'),
+              title:  Text(Languages.pleaseenteravalidnicknameemailpass[langindex]),
               actions: [
                 TextButton(
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
-                  child: const Text('OK'),
+                  child:  Text(Languages.ok[langindex]),
                 ),
               ],
             );
           },
         );
       } else {
-        print('aaaaa');
-        // The nickname is available, proceed with signing in
         UserCredential userCredential = await _auth.createUserWithEmailAndPassword(email: email,password: password);
-        //String userId = userCredential.user!.uid;
-        print('a');
         await userCredential.user!.updateDisplayName(nickname);
-        print('b');
         await FirebaseFirestore.instance.collection('users').doc(FirebaseAuth.instance.currentUser!.displayName).set({
           'nickname' : nickname,
           'email': email,
           'money' : 100000,
           'bought' : List<bool>.filled(48, false),
           'times' : List<Map<String,dynamic>>.filled(48, {'60':60}),
-          // Add other user-related data as needed
+          'language' : dropdownvalue,
+          'appcolorTheme' : [],
+          'bgcolorTheme' : []
         });
-        print('c');
         await Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const StartPage()),
@@ -72,9 +79,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
       print("Error signing in: $e");
     }
   }
-
-  // Rest of the code remains unchanged
-
   @override
   void dispose() {
     _emailController.dispose();
@@ -90,7 +94,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       backgroundColor: const Color.fromARGB(255, 169, 197, 246),
       appBar: AppBar(
         backgroundColor: Colors.blue,
-        title: const Center(child: Text('Register',style: TextStyle(
+        title:  Center(child: Text( Languages.register[langindex],style: const TextStyle(
             color: Colors.white,
             fontSize: 28,
             fontWeight: FontWeight.bold,
@@ -104,16 +108,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
             children: [
               TextField(
                 controller: _nicknameController,
-                decoration: const InputDecoration(labelText: 'Nickname'),
+                decoration:  InputDecoration(labelText: Languages.nickname[langindex]),
               ),
               TextField(
                 controller: _emailController,
-                decoration: const InputDecoration(labelText: 'Email'),
+                decoration:  InputDecoration(labelText: Languages.email[langindex]),
               ),
               const SizedBox(height: 20),
               TextField(
                 controller: _passwordController,
-                decoration: const InputDecoration(labelText: 'Password'),
+                decoration:  InputDecoration(labelText: Languages.password[langindex]),
               ),
               const SizedBox(height: 20),
               ElevatedButton(
@@ -126,7 +130,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   elevation: 5,
                   minimumSize: const Size(200, 70),
                 ),
-                child: const Text('Register',style: TextStyle(
+                child:  Text(Languages.register[langindex],style: const TextStyle(
               color: Colors.white,
               fontSize: 30,
               fontWeight: FontWeight.bold,
@@ -143,13 +147,58 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       context,MaterialPageRoute(builder: (context) => const SignInScreen()),
                     );
                   },
-                  child: const Text('Sign In',style: TextStyle(
+                  child: Text(Languages.signin[langindex],style: const TextStyle(
               color: Colors.white,
               fontSize: 18,
               fontWeight: FontWeight.bold,
             ),),
                 ),
               ),
+              Row(
+                children: [
+                  Expanded(child: Container(
+                    child: Center(
+                      child: Text(Languages.chooseyourlanguage[langindex],style: const TextStyle(
+                        color: Colors.red,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold
+                      )),
+                    )
+                  )),
+                  Center(
+                    child: SizedBox(
+                      height: 50,
+                      width: MediaQuery.of(context).size.width * 0.2,
+                      child: DropdownButton(
+                        iconDisabledColor: Colors.yellow,
+                        dropdownColor: const Color.fromARGB(252, 155, 99, 210),
+                        alignment: Alignment.center,
+                        iconEnabledColor: Colors.red,
+                        value: dropdownvalue,
+                        padding: const EdgeInsets.only(left: 18),
+                        icon: const Icon(Icons.keyboard_arrow_down),
+                        items: dropdownitems.map((String items) {
+                          return DropdownMenuItem(
+                            value: items,
+                            child: Center(
+                                child: Text(
+                              items,
+                              style: const TextStyle(color: Colors.black),
+                            )),
+                          );
+                        }).toList(),
+                        onChanged: (String? newValue) async{
+                          setState(() {
+                            dropdownvalue = newValue!;
+                            langindex = dropdownitems.indexOf(newValue);
+                          });
+                          
+                        },
+                      ),
+                    ),
+                  ),
+                ],
+              )
             ],
           ),
         ),

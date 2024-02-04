@@ -180,4 +180,62 @@ class FBOp {
       'times' : List.from(value2.data()!['times'])..[index] = {'60' : 60},
     })));
   }
+  static Future<void> changeLanguage(String lang)async{
+    await fb.doc(FirebaseAuth.instance.currentUser!.displayName).update({
+      'language' : lang
+    });
+  }
+  static Future<String> getLanguage()async{
+    String returnvalue = '';
+    await fb.doc(FirebaseAuth.instance.currentUser!.displayName).get().then((value) => returnvalue = value.data()!['language']);
+    return returnvalue;
+  }
+  static Future<void> updateColorTheme(List<int> c1, List<int> c2)async{
+    await fb.doc(FirebaseAuth.instance.currentUser!.displayName).update({
+      'appcolorTheme' : c1,
+      'bgcolorTheme' : c2
+    });
+  }
+  static Future<List<int>> getAppColorTheme()async{
+    List<int> returnvalue = [];
+    await fb.doc(FirebaseAuth.instance.currentUser!.displayName).get().then((value) => returnvalue = List<int>.from(value.data()!['appcolorTheme']));
+    return returnvalue;
+  } 
+  static Future<List<int>> getBGColorTheme()async{
+    List<int> returnvalue = [];
+    await fb.doc(FirebaseAuth.instance.currentUser!.displayName).get().then((value) => returnvalue = List<int>.from(value.data()!['bgcolorTheme']));
+    return returnvalue;
+  } 
+  static Future<String> changeUserNickname(String name)async{
+
+    String? oldname = FirebaseAuth.instance.currentUser!.displayName;
+    QuerySnapshot<Map<String, dynamic>> fbget = await fb.get();
+    if(fbget.docs.every((element) => element.id != name)){
+      await fb.get().then((value) => value.docs.forEach((element) {
+      if(element.id == oldname){
+        fb.doc(oldname).get().then((doc) {
+            if (doc.exists) {
+                var data = doc.data();
+                fb.doc(name).set(data!).then((value) {
+                  fb.doc(oldname).delete();
+                });
+            }
+        });
+      }
+      }));
+      //await fb.doc(name).update({
+      //  'nickname' : name
+      //});
+      await FirebaseAuth.instance.currentUser!.updateDisplayName(name);
+    }
+    else{
+      return '1';
+    }
+    return '0';
+  }
+  static Future<void> updateNicknameHelper(String name)async{
+    await fb.doc(FirebaseAuth.instance.currentUser!.displayName).update({
+      'nickname' : fb.doc(FirebaseAuth.instance.currentUser!.displayName).id
+    });
+  }
 }

@@ -1,7 +1,5 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zone_trader/screens/intropage.dart';
 
 class StartPage extends StatefulWidget {
@@ -18,13 +16,7 @@ class _StartPageState extends State<StartPage> {
   @override
   void initState() {
     startTimer();
-    startSharedPreferences();
     super.initState();
-  }
-  startSharedPreferences() async{
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setInt('start', 5);
-    
   }
   void startTimer() {
     const oneSec = Duration(seconds: 1);
@@ -83,7 +75,7 @@ class _StartPageState extends State<StartPage> {
                     left: MediaQuery.of(context).size.width * 0.2,
                     child: Container(
                         child: const Text(
-                      'Zone',
+                      'Zone ',
                       style: TextStyle(
                           color: Colors.white,
                           fontFamily: 'Times New Roman',
@@ -108,7 +100,7 @@ class _StartPageState extends State<StartPage> {
                   width: MediaQuery.of(context).size.width,
                   color: Colors.black38,
                   child: const Text(
-                    'Trader',
+                    ' Trader',
                     style: TextStyle(
                         color: Colors.white,
                         fontFamily: 'Times New Roman',

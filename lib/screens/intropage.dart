@@ -1,7 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zone_trader/authentication/signin.dart';
+import 'package:zone_trader/constants/languages.dart';
+import 'package:zone_trader/firebase/FBOp.dart';
 import 'package:zone_trader/screens/home.dart';
 import 'package:zone_trader/screens/optionspage.dart';
 
@@ -16,11 +17,26 @@ class _IntroPageState extends State<IntroPage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   Color appBarColor = Colors.blue;
   Color bgcolor = Colors.white;
+  int langindex = 0;
+  var langs = [
+    'ENG',
+    'TR',
+    'ES',
+    'JP',
+  ];
 
   @override
   void initState() {
     colorProducer();
+    getLang();
     super.initState();
+  }
+  void getLang()async{
+    await FBOp.getLanguage().then((value) {
+      setState(() {
+        langindex = langs.indexOf(value);
+      });
+    });
   }
 
   Future<void> signOut(BuildContext context) async {
@@ -28,18 +44,15 @@ class _IntroPageState extends State<IntroPage> {
   }
 
   colorProducer() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      appBarColor = Color.fromARGB(
-          255,
-          int.parse(prefs.getStringList('appcolor') == null ? '0' : prefs.getStringList('appcolor')![1]),
-          int.parse(prefs.getStringList('appcolor') == null ? '0' : prefs.getStringList('appcolor')![2]),
-          int.parse(prefs.getStringList('appcolor') == null ? '255' : prefs.getStringList('appcolor')![3]));
-      bgcolor = Color.fromARGB(
-          255,
-          int.parse(prefs.getStringList('bgcolor') == null ? '255' : prefs.getStringList('bgcolor')![1]),
-          int.parse(prefs.getStringList('bgcolor') == null ? '255' : prefs.getStringList('bgcolor')![2]),
-          int.parse(prefs.getStringList('bgcolor') == null ? '255' : prefs.getStringList('bgcolor')![3]));
+    await FBOp.getAppColorTheme().then((value) {
+      setState(() {
+        appBarColor = Color.fromARGB(255, value[0], value[1], value[2]);
+      });
+    });
+    await FBOp.getBGColorTheme().then((value) {
+      setState(() {
+        bgcolor = Color.fromARGB(255, value[0], value[1], value[2]);
+      });
     });
   }
 
@@ -56,7 +69,7 @@ class _IntroPageState extends State<IntroPage> {
                 const Duration(milliseconds: 200),
                 () => Navigator.of(context).pushReplacement<void, void>(
                       MaterialPageRoute<void>(
-                          builder: (context) => const SignInScreen()),
+                          builder: (context) =>  const SignInScreen()),
                     ));
           }
 
@@ -118,15 +131,15 @@ class _IntroPageState extends State<IntroPage> {
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor:
-                                  Color.fromARGB(210, 33, 149, 243),
+                                  const Color.fromARGB(210, 33, 149, 243),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(50),
                               ),
                               elevation: 5,
                             ),
-                            child: const Text(
-                              'Start',
-                              style: TextStyle(
+                            child:  Text(
+                              Languages.start[langindex],
+                              style: const TextStyle(
                                   color: Colors.white,
                                   fontSize: 30,
                                   fontFamily: 'Times New Roman',
@@ -147,15 +160,15 @@ class _IntroPageState extends State<IntroPage> {
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor:
-                                  Color.fromARGB(210, 33, 149, 243),
+                                  const Color.fromARGB(210, 33, 149, 243),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(50),
                               ),
                               elevation: 5,
                             ),
-                            child: const Text(
-                              'How to Play',
-                              style: TextStyle(
+                            child:  Text(
+                              Languages.howtoplay[langindex],
+                              style: const TextStyle(
                                   color: Colors.white,
                                   fontSize: 30,
                                   fontFamily: 'Times New Roman',
@@ -176,15 +189,15 @@ class _IntroPageState extends State<IntroPage> {
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor:
-                                  Color.fromARGB(210, 33, 149, 243),
+                                  const Color.fromARGB(210, 33, 149, 243),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(50),
                               ),
                               elevation: 5,
                             ),
-                            child: const Text(
-                              'Options',
-                              style: TextStyle(
+                            child:  Text(
+                              Languages.settings[langindex],
+                              style: const TextStyle(
                                   color: Colors.white,
                                   fontSize: 30,
                                   fontFamily: 'Times New Roman',

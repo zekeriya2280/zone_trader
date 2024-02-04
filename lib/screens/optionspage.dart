@@ -1,7 +1,8 @@
 
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:zone_trader/constants/languages.dart';
+import 'package:zone_trader/firebase/FBOp.dart';
 import 'package:zone_trader/screens/intropage.dart';
 
 class OptionsPage extends StatefulWidget {
@@ -26,12 +27,26 @@ class _OptionsPageState extends State<OptionsPage> {
     'ES',
     'JP',
   ];
+   int langindex = 0;
+  var langs = [
+    'ENG',
+    'TR',
+    'ES',
+    'JP',
+  ];
   @override
   void initState() {
     colorProducer();
+    getLang();
     super.initState();
   }
-
+ void getLang()async{
+    await FBOp.getLanguage().then((value) {
+      setState(() {
+        langindex = langs.indexOf(value);
+      });
+    });
+  }
   void colorProducer(){
     for (int i = 0; i < 6; i++) {
       randcol1 = Color.fromARGB(255 ,Random().nextInt(255), Random().nextInt(255),
@@ -78,9 +93,9 @@ class _OptionsPageState extends State<OptionsPage> {
     return Scaffold(
       backgroundColor: scfoldbgcolor,
       appBar: AppBar(
-          title: const Text(
-            'Options',
-            style: TextStyle(
+          title: Text(
+            Languages.settings[langindex],
+            style: const TextStyle(
                 color: Colors.white,
                 fontFamily: 'Times New Roman',
                 fontSize: 22,
@@ -135,7 +150,7 @@ class _OptionsPageState extends State<OptionsPage> {
                 ),
                 Center(
                   child: Text(
-                      "   If you don't want any of these colors just reload page using reload button and see other options",
+                      '    ${Languages.settingsReloadSuggestion[langindex]}',
                       style: TextStyle(
                         fontFamily: 'Times New Roman',
                         fontSize: 20,
@@ -151,7 +166,7 @@ class _OptionsPageState extends State<OptionsPage> {
                   Center(
                     child: SizedBox(
                       height: 50,
-                      child: Text('Change Color Theme',
+                      child: Text(Languages.changecolortheme[langindex],
                           style: TextStyle(
                             fontSize: 20,
                             fontFamily: 'Times New Roman',
@@ -188,12 +203,24 @@ class _OptionsPageState extends State<OptionsPage> {
                               const MaterialStatePropertyAll(Colors.orange),
                           inactiveColor: Colors.grey,
                           //activeColor: Color.fromARGB(228, 0, 0, 0),
-                          onChanged: (value) => setState(() {
+                          onChanged: (value) { setState(() {
                                 slidervalue = value;
-                                
-                                textcolors = Colors.white;
-                              })),
-                    ),
+                              });
+                              if(colors[slidervalue.floor()].values.first.red + 
+                                 colors[slidervalue.floor()].values.first.green +
+                                 colors[slidervalue.floor()].values.first.blue >= 570){
+                                setState(() {
+                                  textcolors = Colors.black;
+                                });
+                              }
+                              else{
+                                setState(() {
+                                  textcolors = Colors.white;
+                                });
+                              }
+                          }
+                          ),
+                        ),
                   ),
                   SizedBox(
                       height: MediaQuery.of(context).size.height * 0.09,
@@ -201,7 +228,7 @@ class _OptionsPageState extends State<OptionsPage> {
                   Center(
                     child: SizedBox(
                       height: 50,
-                      child: Text('Change Language',
+                      child: Text(Languages.changelanguage[langindex],
                           style: TextStyle(
                               fontSize: 20,
                               fontFamily: 'Times New Roman',
@@ -243,18 +270,13 @@ class _OptionsPageState extends State<OptionsPage> {
                       child: Container()),
                   ElevatedButton(
                       onPressed: () async{
-                        SharedPreferences prefs = await SharedPreferences.getInstance();
-                        await prefs.setStringList('appcolor', [
-                           '255',
-                           appbarcolor.red.toString(),
-                           appbarcolor.green.toString(),
-                           appbarcolor.blue.toString()]);
-                        await prefs.setStringList('bgcolor', [
-                           '255',
-                           scfoldbgcolor.red.toString(),
-                           scfoldbgcolor.green.toString(),
-                           scfoldbgcolor.blue.toString()]);
-                        await prefs.setString('lang', dropdownvalue).then((value) async=> 
+                        await FBOp.updateColorTheme([colors[slidervalue.floor()].keys.first.red, 
+                                                     colors[slidervalue.floor()].keys.first.green, 
+                                                     colors[slidervalue.floor()].keys.first.blue],[
+                                                     colors[slidervalue.floor()].values.first.red,
+                                                     colors[slidervalue.floor()].values.first.green,
+                                                     colors[slidervalue.floor()].values.first.blue]);
+                        await FBOp.changeLanguage(dropdownvalue).then((value) async=> 
                                 await Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const IntroPage())));
                       },
                       style: ElevatedButton.styleFrom(
@@ -265,9 +287,9 @@ class _OptionsPageState extends State<OptionsPage> {
                         ),
                         elevation: 5,
                       ),
-                      child: const Text(
-                        'SAVE',
-                        style: TextStyle(
+                      child:  Text(
+                        Languages.save[langindex],
+                        style: const TextStyle(
                             color: Colors.white,
                             fontSize: 40,
                             fontFamily: 'Times New Roman',

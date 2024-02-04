@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:zone_trader/constants/languages.dart';
 import 'package:zone_trader/firebase/FBOp.dart';
 import 'package:zone_trader/models/country.dart';
 import 'package:zone_trader/screens/home.dart';
@@ -17,11 +17,26 @@ class MyCountryList extends StatefulWidget {
 class _MyCountryListState extends State<MyCountryList> {
   Color appBarColor = Colors.blue;
   Color bgcolor = Colors.white;
+  int langindex = 0;
+  var langs = [
+    'ENG',
+    'TR',
+    'ES',
+    'JP',
+  ];
   @override
   void initState() {
     playSampleSound('assets/sounds/pagechanged.mp3');
     colorProducer();
+    getLang();
     super.initState();
+  }
+  void getLang()async{
+    await FBOp.getLanguage().then((value) {
+      setState(() {
+        langindex = langs.indexOf(value);
+      });
+    });
   }
   void playSampleSound(String path) async {
      AudioPlayer player = AudioPlayer();
@@ -29,18 +44,15 @@ class _MyCountryListState extends State<MyCountryList> {
     await player.play();
   }
   colorProducer() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      appBarColor = Color.fromARGB(
-          255,
-          int.parse(prefs.getStringList('appcolor')![1]),
-          int.parse(prefs.getStringList('appcolor')![2]),
-          int.parse(prefs.getStringList('appcolor')![3]));
-      bgcolor = Color.fromARGB(
-          255,
-          int.parse(prefs.getStringList('bgcolor')![1]),
-          int.parse(prefs.getStringList('bgcolor')![2]),
-          int.parse(prefs.getStringList('bgcolor')![3]));
+    await FBOp.getAppColorTheme().then((value) {
+      setState(() {
+        appBarColor = Color.fromARGB(255, value[0], value[1], value[2]);
+      });
+    });
+    await FBOp.getBGColorTheme().then((value) {
+      setState(() {
+        bgcolor = Color.fromARGB(255, value[0], value[1], value[2]);
+      });
     });
   }
   @override
@@ -70,7 +82,7 @@ class _MyCountryListState extends State<MyCountryList> {
         return Scaffold(
           backgroundColor: bgcolor,
           appBar: AppBar(
-            title: const Text('My Country List',style: TextStyle(color: Colors.white,fontSize: 22,fontWeight: FontWeight.bold,letterSpacing: 2),),
+            title: Text(Languages.mycountrylist[langindex],style: const TextStyle(color: Colors.white,fontSize: 22,fontWeight: FontWeight.bold,letterSpacing: 2),),
             centerTitle: true,
             backgroundColor: appBarColor,
             actions: [
@@ -86,7 +98,7 @@ class _MyCountryListState extends State<MyCountryList> {
             ]
           ),
           body: 
-          myCountryList.isEmpty ? const Center(child: Text('You have no country',style: TextStyle(fontSize: 22,color: Colors.white,fontWeight: FontWeight.bold),)) :
+          myCountryList.isEmpty ? Center(child: Text(Languages.youhavenocountry[langindex],style: const TextStyle(fontSize: 22,color: Colors.red,fontWeight: FontWeight.bold),)) :
           ListView.builder(
             itemCount: myCountryList.length,
             itemBuilder: (context, index) {
@@ -99,8 +111,8 @@ class _MyCountryListState extends State<MyCountryList> {
                     title: Center(child: Text(myCountryList[index].name,style: const TextStyle(fontSize: 20,fontWeight: FontWeight.bold),)),
                     subtitle: Center(
                       child: Text(
-                          'Price: ${myCountryList[index].price} - Income: ${myCountryList[index].income} '
-                          '- Owner: ${myCountryList[index].owner}'),
+                          '${Languages.price[langindex]} ${myCountryList[index].price} - ${Languages.income[langindex]}: ${myCountryList[index].income} '
+                          '- ${Languages.owner[langindex]}: ${myCountryList[index].owner}'),
                     ),
                   ),
                 ),
@@ -122,12 +134,11 @@ class _MyCountryListState extends State<MyCountryList> {
             height: MediaQuery.of(context).size.height * 0.15,
             child: Column(
               children: [
-                
-                Text('Price: ${country.price}'),
-                Text('Income: ${country.income}'),
-                Text('Owner: ${country.owner}'),
+                Text('${Languages.price[langindex]}: ${country.price}'),
+                Text('${Languages.income[langindex]}: ${country.income}'),
+                Text('${Languages.owner[langindex]}: ${country.owner}'),
                 Expanded(child: Container()),
-                const Center(child: Text('You should reload home page after selling', style: TextStyle(fontSize: 13,color: Colors.red,fontWeight: FontWeight.bold),)),
+                Center(child: Text(Languages.youshouldreloadReminderSelling[langindex], style: const TextStyle(fontSize: 13,color: Colors.red,fontWeight: FontWeight.bold),)),
               ],
             ),
           ),
@@ -140,7 +151,7 @@ class _MyCountryListState extends State<MyCountryList> {
                   playSampleSound('assets/sounds/close.mp3');
                   Navigator.of(context).pop(); // Cancel button
                 },
-                child: const Text('Cancel',style: TextStyle(color: Colors.white),),
+                child: Text(Languages.cancel[langindex],style: const TextStyle(color: Colors.white),),
               ),
             ),
             SizedBox(
@@ -152,7 +163,7 @@ class _MyCountryListState extends State<MyCountryList> {
                 playSampleSound('assets/sounds/bought.mp3');
                 Navigator.of(context).pop();});
               },
-              child: const Text('Sell',style: TextStyle(color: Colors.white),),
+              child: Text(Languages.sell[langindex],style: const TextStyle(color: Colors.white),),
             ),
             ),
           ],

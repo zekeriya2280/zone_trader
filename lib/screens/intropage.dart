@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:zone_trader/authentication/signin.dart';
 import 'package:zone_trader/constants/languages.dart';
 import 'package:zone_trader/firebase/FBOp.dart';
-import 'package:zone_trader/screens/home.dart';
+import 'package:zone_trader/screens/game.dart';
 import 'package:zone_trader/screens/howtoplay.dart';
 import 'package:zone_trader/screens/optionspage.dart';
 

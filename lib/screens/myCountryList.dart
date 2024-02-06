@@ -5,7 +5,7 @@ import 'package:just_audio/just_audio.dart';
 import 'package:zone_trader/constants/languages.dart';
 import 'package:zone_trader/firebase/FBOp.dart';
 import 'package:zone_trader/models/country.dart';
-import 'package:zone_trader/screens/home.dart';
+import 'package:zone_trader/screens/game.dart';
 
 class MyCountryList extends StatefulWidget {
   const MyCountryList({super.key});

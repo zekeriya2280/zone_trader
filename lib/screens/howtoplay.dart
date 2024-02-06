@@ -22,8 +22,11 @@ class _HowtPlayState extends State<HowtPlay> with TickerProviderStateMixin{
     'ES',
     'JP',
   ];
-  List<String> images = ["images/htp1.png", "images/htp1tr.png", "images/htp1es.png", "images/htp1jp.png",];
-  List<String> imagessignout = ["images/htp1signout.png", "images/htp1trsignout.png", "images/htp1essignout.png", "images/htp1jpsignout.png",];
+  List<String> introimages = ["images/htp1.png", "images/htp1tr.png", "images/htp1es.png", "images/htp1jp.png",];
+  List<String> introimagessignout = ["images/htp1signout.png", "images/htp1trsignout.png", "images/htp1essignout.png", "images/htp1jpsignout.png",];
+  List<String> settingsimages = ['images/settings.png', 'images/settingstr.png', 'images/settingses.png', 'images/settingsjp.png',];
+  List<String> settingsimagesreload = ['images/settingsreload.png', 'images/settingsreloadtr.png', 'images/settingsreloades.png', 'images/settingsreloadjp.png',];
+  List<String> settingsimageshome = ['images/settingshome.png', 'images/settingshometr.png', 'images/settingshomees.png', 'images/settingshomejp.png',];
   late final AnimationController _controller = AnimationController(
     duration: const Duration(seconds: 2),
     vsync: this,
@@ -69,12 +72,13 @@ class _HowtPlayState extends State<HowtPlay> with TickerProviderStateMixin{
     });
   }
   List<Widget> getTextAndPictures(int numberindex,String langtext,double upheight,double downheight) {
-    return [
-      Text('$numberindex ) '+langtext,style: const TextStyle(color: Colors.black,fontSize: 20,fontWeight: FontWeight.bold),),
+    if(numberindex <= 4){
+      return [
+      Text('*   $langtext',style: const TextStyle(color: Colors.black,fontSize: 20,fontWeight: FontWeight.bold),),
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-        Image.asset(numberindex == 1 ? imagessignout[langindex] : images[langindex],width: MediaQuery.of(context).size.width * 0.5,height: 400,),
+        Image.asset(numberindex == 1 ? introimagessignout[langindex] : introimages[langindex],width: MediaQuery.of(context).size.width * 0.5,height: 400,),
         Column(
           children: [
             SizedBox(height: upheight,child: Container()),
@@ -89,6 +93,33 @@ class _HowtPlayState extends State<HowtPlay> with TickerProviderStateMixin{
         ),
       ],),
     ];
+    }
+    else if(numberindex >= 5 && numberindex <= 9){
+      return [
+      Text('*   $langtext',style: const TextStyle(color: Colors.black,fontSize: 20,fontWeight: FontWeight.bold),),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+        Image.asset(numberindex == 5 ? settingsimagesreload[langindex] :  numberindex == 6 ? settingsimageshome[langindex] : settingsimages[langindex],width: MediaQuery.of(context).size.width * 0.5,height: 400,),
+        Column(
+          children: [
+            SizedBox(height: upheight,child: Container()),
+            ScaleTransition(
+              scale: _animation,
+              child: RotationTransition(
+                turns: const AlwaysStoppedAnimation(270 / 360),
+                child: Image(image: AssetImage('images/up.png'),width: 70,height: 150,)),
+            ),
+            SizedBox(height: downheight,child: Container()),
+          ],
+        ),
+      ],),];
+    
+    }else{
+      return [
+        
+      ];
+    }
   }
   @override
   Widget build(BuildContext context) {
@@ -116,16 +147,19 @@ class _HowtPlayState extends State<HowtPlay> with TickerProviderStateMixin{
       body: SingleChildScrollView(
         child: Container(
           padding: const EdgeInsets.all(20),
-          child: Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                ...getTextAndPictures(1, Languages.howtoplaytext1[langindex],1,370),
-                ...getTextAndPictures(2, Languages.howtoplaytext2[langindex],50,250),
-                ...getTextAndPictures(3, Languages.howtoplaytext3[langindex],150,120),
-                ...getTextAndPictures(4, Languages.howtoplaytext4[langindex],270,30),
-              ]
-            ),
+          child: Column(
+            //mainAxisSize: MainAxisSize.min,
+            children: [
+              ...getTextAndPictures(1, Languages.howtoplaytext1[langindex],1,370),
+              ...getTextAndPictures(2, Languages.howtoplaytext2[langindex],50,250),
+              ...getTextAndPictures(3, Languages.howtoplaytext3[langindex],150,120),
+              ...getTextAndPictures(4, Languages.howtoplaytext4[langindex],270,30),
+              ...getTextAndPictures(5, Languages.howtoplaytext5[langindex],1,370),
+              ...getTextAndPictures(6, Languages.howtoplaytext6[langindex],1,370),
+              ...getTextAndPictures(7, Languages.howtoplaytext7[langindex],200,150),
+              ...getTextAndPictures(8, Languages.howtoplaytext8[langindex],270,60),
+              ...getTextAndPictures(9, Languages.howtoplaytext9[langindex],350,10),
+            ]
           ),
         ))
     );

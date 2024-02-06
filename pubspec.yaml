@@ -119,6 +119,18 @@ flutter:
     - images/htp1jpsignout.png
     - images/htp1es.png
     - images/htp1essignout.png
+    - images/settings.png
+    - images/settingsreload.png
+    - images/settingshome.png
+    - images/settingstr.png
+    - images/settingsreloadtr.png
+    - images/settingshometr.png
+    - images/settingses.png
+    - images/settingsreloades.png
+    - images/settingshomees.png
+    - images/settingsjp.png
+    - images/settingsreloadjp.png
+    - images/settingshomejp.png
     - assets/sounds/bought.mp3
     - assets/sounds/homeinitpopup.mp3
     - assets/sounds/pagechanged.mp3

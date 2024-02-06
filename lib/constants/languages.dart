@@ -1,5 +1,5 @@
 class Languages {
-  static var start = ['Start', 'BaŞla', 'Comenzar','スタート'];
+  static var start = ['Start', 'BaŞla', 'Comenzar','プレイ'];
   static var howtoplay = ['How to Play', 'Nasıl Oynanır', '¿Cómo Jugar', 'はじめに'];
   static var settings = ['Settings', 'Ayarlar', 'Configuración', '設定'];
   static var settingsReloadSuggestion = ["If you don't want any of these colors just reload page using reload button and see other options",
@@ -54,4 +54,22 @@ class Languages {
     'Olmayan bir takma ad seçin', 
     'Elige un apodo único', 
     'ユニークなニックネームを選択'];
+  static var howtoplaytext1 = ['You can change account by clicking Sign Out button.',
+  'Sign Out butonuna tıklayarak hesabınızı değiştirebilirsiniz.',
+  'Puede cambiar de cuenta haciendo clic en el botón Cerrar sesión',
+  'サインアウトボタンをクリックしてアカウントを変更できます'];
+  static var howtoplaytext2 = ['You can enter the game clicking Start.', 
+  "Oyuna Start'a tıklayarak baŞlayabilirsiniz.", 
+  'Puedes entrar al juego haciendo clic Comenzar.', 
+  'プレイにクリックするとゲームに参加できます'];
+  static var howtoplaytext3 = ['You can learn how to play the game by clicking How To Play button.',
+  'How To Play butonuna tıklayarak oyunun nasıl oynanacağınızı öğrenebilirsiniz.',
+  'Puedes aprender como jugar el juego haciendo clic en el botón Como jugar',
+  'ゲームをプレイするには、How To Play ボタンをクリックしてください'];
+  static var howtoplaytext4 = ['You can change game settings by clicking Settings button.',
+  'Settings butonuna tıklayarak oyun ayarlarını değiştirebilirsiniz.',
+  'Puedes cambiar ajustes del juego haciendo clic en el botón Ajustes',
+  'ゲームの設定を変更するには、Settings ボタンをクリックしてください'];
+
 }
+                                          

@@ -86,8 +86,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
     _nicknameController.dispose();
     super.dispose();
   }
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

@@ -111,6 +111,14 @@ flutter:
     - images/start.jpeg
     - images/intro.jpeg
     - images/up.png
+    - images/htp1.png
+    - images/htp1signout.png
+    - images/htp1tr.png
+    - images/htp1trsignout.png
+    - images/htp1jp.png
+    - images/htp1jpsignout.png
+    - images/htp1es.png
+    - images/htp1essignout.png
     - assets/sounds/bought.mp3
     - assets/sounds/homeinitpopup.mp3
     - assets/sounds/pagechanged.mp3

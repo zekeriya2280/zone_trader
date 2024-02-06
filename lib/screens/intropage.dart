@@ -4,6 +4,7 @@ import 'package:zone_trader/authentication/signin.dart';
 import 'package:zone_trader/constants/languages.dart';
 import 'package:zone_trader/firebase/FBOp.dart';
 import 'package:zone_trader/screens/home.dart';
+import 'package:zone_trader/screens/howtoplay.dart';
 import 'package:zone_trader/screens/optionspage.dart';
 
 class IntroPage extends StatefulWidget {
@@ -72,7 +73,6 @@ class _IntroPageState extends State<IntroPage> {
                           builder: (context) =>  const SignInScreen()),
                     ));
           }
-
           return Scaffold(
               //backgroundColor: bgcolor,
               appBar: AppBar(
@@ -98,7 +98,7 @@ class _IntroPageState extends State<IntroPage> {
                     IconButton(
                       icon: const Icon(
                         Icons.exit_to_app,
-                        color: Color.fromARGB(208, 244, 67, 54),
+                        color: Color.fromARGB(208, 255, 255, 255),
                         size: 26,
                       ),
                       onPressed: () async {
@@ -156,7 +156,7 @@ class _IntroPageState extends State<IntroPage> {
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) =>
-                                          const HomeScreen()));
+                                          const HowtPlay()));
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor:

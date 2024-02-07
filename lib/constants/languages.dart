@@ -91,6 +91,50 @@ class Languages {
   'Değişiklikleri kaydet',
   'Guarda los cambios',
   '変更を保存'];
-
+  static var howtoplaytext10 = ['This is game page',
+  'Bu, oyun sayfası',
+  'Este es la página del juego',
+  'これはゲームページです'];
+  static var howtoplaytext11 = ['This is all money you have',
+  'Bu, sahip oldugunuz para',
+  'Este es todo lo que tienes de dinero',
+  'これは、あなたが持っているお金です'];
+  static var howtoplaytext12 = ['You can change your nickname by clicking on the nickname',
+  'Takma adınızı değiştirmek için takma ad metnine tıklayın',
+  'Para cambiar su apodo, haga clic en el texto del apodo',
+  'ニックネームを変更するには、ニックネーム テクストをクリックしてください'];
+  static var howtoplaytext13 = ['You should reload page after buying countries',
+  'Ülke satın alımınızdan sonra sayfayı yeniden yükleyin',
+  'Debe recargar la página de inicio tras la compra de los paises',
+  '国の購入後にページを再読み込みする必要があります'];
+  static var howtoplaytext14 = ['You can see your country list here',
+  'Ülkeleriniz burada',
+  'Puedes ver tu lista de países aquí.',
+  'ここであなたの国のリストを確認することができます'];
+  static var howtoplaytext15 = ['You can return to home page by clicking Home button.',
+  'Ana sayfa butonuna tıklayarak giriŞ sayfasına geri dönebilirsiniz.',
+  'Puedes regresar a inicio hasiendo clic en el botón inicio.',
+  'ホームページに戻るには、ホーム ボタンをクリックしてください'];
+  static var howtoplaytext16 = ['You can see all countries that are not bought as white color',
+  'Satın alınılmamıŞ ülkeleri beyaz olarak görebilirsiniz',
+  'Puedes ver todos los países que no se compran en color blanco.',
+  '購入されていない国を白色で表示することができます'];
+  static var howtoplaytext17 = ['You can see all countries that are bought as green color',
+  'Satın alınılmış ülkeleri yesil olarak görebilirsiniz',
+  'Puedes ver todos losaises que se compran en color verde.',
+  '購入された国を緑色で表示することができます'];
+  static var howtoplaytext18 = ['When click on a country, you can see that country details.',
+  'Ülke detaylarını ülkenin üzerine tıklayarak görüntüleyebilirsiniz',
+  'Cuando hagas clic en un país, puedes ver los detalles de ese país.',
+  '国の詳細を表示するには、国をクリックしてください'];
+  static var howtoplaytext19 = ['You can see here the country information.',
+  'Ülkenin bilgilerini burada görebilirsiniz',
+  'Puedes ver la información del país.',
+  'ここに国の情報が表示されます。'];
+  static var howtoplaytext20 = ['You can buy this country or cancel buying it.',
+  'Bu ülkeyi satın alabilir veya satın alımını iptal edebilirsiniz',
+  'Puedes comprar este país o cancelar su compra',
+  'この国を購入するか、購入をキャンセルすることができます'];
+  
 }
                                           

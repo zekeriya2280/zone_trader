@@ -130,7 +130,26 @@ flutter:
     - images/settingshomees.png
     - images/settingsjp.png
     - images/settingsreloadjp.png
-    - images/settingshomejp.png
+    - images/game.png
+    - images/gameboughtcountries.png
+    - images/gamenotboughtcountries.png
+    - images/gamecountrylist.png
+    - images/gamehome.png
+    - images/gamemoney.png
+    - images/gamenickname.png
+    - images/gamereload.png
+    - images/gamepopup.png
+    - images/gamepopupinfos.png
+    - images/gamepopupbuyorcancel.png
+    - images/gamepopuptr.png
+    - images/gamepopupinfostr.png
+    - images/gamepopupbuyorcanceltr.png
+    - images/gamepopupes.png
+    - images/gamepopupinfoses.png
+    - images/gamepopupbuyorcanceles.png
+    - images/gamepopupjp.png
+    - images/gamepopupinfosjp.png
+    - images/gamepopupbuyorcanceljp.png
     - assets/sounds/bought.mp3
     - assets/sounds/homeinitpopup.mp3
     - assets/sounds/pagechanged.mp3

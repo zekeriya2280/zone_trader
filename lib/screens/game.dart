@@ -23,13 +23,14 @@ class _GameState extends State<Game> {
   List<Country> countries = []; //
   int money = 10000;
   bool countryBreaker = false;
-  Player player = Player('', '', 0, [], []);
+  Player player = Player('', '', 0, [], [], [], [], 'ENG');
   List<bool> bought = List<bool>.filled(48, false);
   List<Map<String, dynamic>> boughttimes =
       List<Map<String, dynamic>>.filled(48, {'60': 60});
   Color appBarColor = Colors.blue;
   Color bgcolor = Colors.white;
   int langindex = 0;
+  List<int> buyablecountries = [];
   var langs = [
     'ENG',
     'TR',
@@ -372,11 +373,6 @@ class _GameState extends State<Game> {
       bought[index] = true;
     });
     await FBOp.updateMoneyFB(money);
-    //Navigator.of(context).pop();
-
-    //Navigator.push(
-    //  this.context,MaterialPageRoute(builder: (BuildContext context) => HomeScreen()),
-    //);
   }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -417,17 +413,6 @@ class _GameState extends State<Game> {
                   ),
                 );
               }
-
-              if (!countryBreaker) {
-                for (var doc in countriessnapshot.data!.docs) {
-                  countries.add(Country(
-                      name: doc.data()['name'],
-                      price: doc.data()['price'],
-                      income: doc.data()['income'],
-                      owner: doc.data()['owner']));
-                }
-                countryBreaker = true;
-              }
               for (var doc in userssnapshot.data!.docs) {
                 var map = doc.data() as Map<String, dynamic>;
 
@@ -439,12 +424,32 @@ class _GameState extends State<Game> {
                           map['email'],
                           map['money'],
                           List<bool>.from(map['bought']),
-                          List<Map<String, dynamic>>.from(map['times']))
+                          List<Map<String, dynamic>>.from(map['times']),
+                          List<String>.from(map['appcolorTheme']),
+                          List<String>.from(map['bgcolorTheme']),
+                          map['language'])
                       .getPlayer;
                 }
               }
               money = player.money!;
-
+              
+              
+              if (!countryBreaker) {
+                for (var doc in countriessnapshot.data!.docs) {
+                  countries.add(Country(
+                      name: doc.data()['name'],
+                      price: doc.data()['price'],
+                      income: doc.data()['income'],
+                      owner: doc.data()['owner']));
+                }
+                for (var element in countries) {
+                if (money > element.price.floor()) {
+                    buyablecountries.add(countries.indexOf(element));
+                  }
+                }
+                countryBreaker = true;
+              }
+              //countries.forEach((element) { print(element.owner);});
               return Scaffold(
                 backgroundColor: bgcolor,
                 appBar: AppBar(
@@ -545,7 +550,7 @@ class _GameState extends State<Game> {
                                 //image: index != 0 ? null :
                                 //Image.asset('images/australia.jpg',fit: BoxFit.fill, scale: 1.5),
 
-                                color: Colors.yellow,
+                                color: countries[index].owner.isEmpty ? buyablecountries.contains(index) ? Colors.blue : Colors.red : Colors.white,
                                 border:
                                     Border.all(color: Colors.blue, width: 0.1),
                                 shape: BoxShape.rectangle,

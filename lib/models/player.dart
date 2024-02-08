@@ -4,9 +4,13 @@ class Player{
   final int? money;
   final List<bool>? bought;
   final List<Map<String,dynamic>>? times;
+  final List<String>? appcolorTheme;
+  final List<String>? bgcolorTheme;
+  final String? language;
+  
 
-  Player(this.nickname, this.email, this.money, this.bought, this.times);
+  Player(this.nickname, this.email, this.money, this.bought, this.times, this.appcolorTheme, this.bgcolorTheme, this.language);
   //print(player.money);
-  Player get getPlayer => Player(nickname, email, money,bought, times);
+  Player get getPlayer => Player(nickname, email, money,bought, times, appcolorTheme, bgcolorTheme, language);
   
 }

@@ -12,7 +12,7 @@ class FBOp {
       await fb.doc(nickname).set({
         'nickname' : nickname,
         'email': email,
-        'money' : 100000,
+        'money' : 10000,
         'bought' : List<bool>.filled(48, false),
         'times' : List<Map<String,dynamic>>.filled(48, {'60':60}),
         'language' : dropdownvalue,
@@ -257,5 +257,16 @@ class FBOp {
     await fb.doc(FirebaseAuth.instance.currentUser!.displayName).update({
       'nickname' : fb.doc(FirebaseAuth.instance.currentUser!.displayName).id
     });
+  }
+  static Future<bool> checkOwnerFB(int index)async{
+    await fb2.get().then((value) {
+      if(value.docs[index].data()['owner'] != ''){
+        return true;        
+      }
+      else{
+        return false;
+      }
+    });
+    return false;
   }
 }

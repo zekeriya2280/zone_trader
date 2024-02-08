@@ -12,14 +12,14 @@ import 'package:zone_trader/models/player.dart';
 import 'package:zone_trader/screens/intropage.dart';
 import 'package:zone_trader/screens/myCountryList.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+class Game extends StatefulWidget {
+  const Game({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<Game> createState() => _GameState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _GameState extends State<Game> {
   List<Country> countries = []; //
   int money = 10000;
   bool countryBreaker = false;
@@ -198,6 +198,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     boughttimes,
                                     index); // UPDATE TIMES AND OWNER IN FB
                                 await greenBGColorFiller(); // WHEN COUNTRY IS BOUGHT UPDATE COLORS IN FB
+                                await Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const Game()));
                               },
                         child: Text(
                           Languages.buy[langindex],
@@ -240,7 +241,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         );
       },
-    );
+    );//.whenComplete(() => Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const Game())));
   }
 
   void _showMoneyChange(BuildContext context, int moneychange) {
@@ -371,7 +372,7 @@ class _HomeScreenState extends State<HomeScreen> {
       bought[index] = true;
     });
     await FBOp.updateMoneyFB(money);
-    Navigator.of(context).pop();
+    //Navigator.of(context).pop();
 
     //Navigator.push(
     //  this.context,MaterialPageRoute(builder: (BuildContext context) => HomeScreen()),
@@ -491,7 +492,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const HomeScreen()),
+                              builder: (context) => const Game()),
                         );
                       },
                     ),

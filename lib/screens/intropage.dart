@@ -127,7 +127,7 @@ class _IntroPageState extends State<IntroPage> {
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) =>
-                                          const HomeScreen()));
+                                          const Game()));
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor:

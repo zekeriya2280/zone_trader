@@ -101,7 +101,7 @@ class _MyCountryListState extends State<MyCountryList> {
                 child: IconButton(
                   icon: const Icon(Icons.home,size: 30,color: Colors.white,), 
                   onPressed: ()async{ 
-                    await Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const HomeScreen()));
+                    await Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const Game()));
                    },
                 ),
               )

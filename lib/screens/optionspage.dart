@@ -62,9 +62,12 @@ class _OptionsPageState extends State<OptionsPage> {
 
   @override
   Widget build(BuildContext context) {
-    
     switch (slidervalue) {
       case 0.0:
+        appbarcolor = colors[0].keys.first;
+        scfoldbgcolor = colors[0].values.first;
+        break;
+      case 0.1:
         appbarcolor = colors[0].keys.first;
         scfoldbgcolor = colors[0].values.first;
         break;

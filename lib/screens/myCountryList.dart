@@ -18,6 +18,7 @@ class _MyCountryListState extends State<MyCountryList> {
   Color appBarColor = Colors.blue;
   Color bgcolor = Colors.white;
   int langindex = 0;
+  Color textcolors = Colors.black;
   var langs = [
     'ENG',
     'TR',
@@ -54,6 +55,15 @@ class _MyCountryListState extends State<MyCountryList> {
         bgcolor = Color.fromARGB(255, value[0], value[1], value[2]);
       });
     });
+    if (bgcolor.red + bgcolor.green + bgcolor.blue >= 570) {
+      setState(() {
+        textcolors = Colors.black;
+      });
+    } else {
+      setState(() {
+        textcolors = Colors.white;
+      });
+    }
   }
   @override
   Widget build(BuildContext context) {
@@ -98,7 +108,7 @@ class _MyCountryListState extends State<MyCountryList> {
             ]
           ),
           body: 
-          myCountryList.isEmpty ? Center(child: Text(Languages.youhavenocountry[langindex],style: const TextStyle(fontSize: 22,color: Colors.red,fontWeight: FontWeight.bold),)) :
+          myCountryList.isEmpty ? Center(child: Text(Languages.youhavenocountry[langindex],style: TextStyle(fontSize: 22,color: textcolors,fontWeight: FontWeight.bold),)) :
           ListView.builder(
             itemCount: myCountryList.length,
             itemBuilder: (context, index) {

@@ -135,6 +135,21 @@ class Languages {
   'Bu ülkeyi satın alabilir veya satın alımını iptal edebilirsiniz',
   'Puedes comprar este país o cancelar su compra',
   'この国を購入するか、購入をキャンセルすることができます'];
-  
+  static var howtoplaytext21 = ['You can see your country list here',
+  'Satın aldığınız ülkeleriniz burada',
+  'Puedes ver tu lista deaises',
+  '購入された国のリストを確認することができます'];
+  static var howtoplaytext22 = ['If you have no country or sold all countries, the page will be empty',
+  'Eğer ülkeniz yoksa veya tüm ülkeleri sattuysanız sayfa bos olur',
+  'Si no tienes un país o vendiste todos losaises, la página se vacíará',
+  '国がない場合、またはすべての国を売った場合、ページは空になります'];
+  static var howtoplaytext23 = ['If you click on a country, you can see the country details',
+  'Ülke detaylarını ülkenin üzerine tıklayarak görebilirsiniz',
+  'Cuando hagas clic en un país, puedes ver los detalles de ese país.',
+  '国の詳細を表示するには、国をクリックしてください'];
+  static var howtoplaytext24 = ['You can sell a country or cancel selling.',
+  'Bir ülkeyi satın alabilir veya satın alımını iptal edebilirsiniz',
+  'Puedes vender un país o cancelar su venta',
+  'この国を売るか、売却をキャンセルすることができます'];
 }
                                           

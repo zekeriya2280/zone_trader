@@ -187,6 +187,7 @@ class FBOp {
   }
   static Future<String> getLanguage()async{
     String returnvalue = '';
+    print(FirebaseAuth.instance.currentUser!.displayName);
     await fb.doc(FirebaseAuth.instance.currentUser!.displayName).get().then((value) => returnvalue = value.data()!['language']);
     return returnvalue;
   }

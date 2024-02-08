@@ -81,6 +81,30 @@ class _HowtPlayState extends State<HowtPlay> with TickerProviderStateMixin {
     'images/gamepopupbuyorcanceles.png',
     'images/gamepopupbuyorcanceljp.png',
   ];
+  List<String> mycountrylistinfos = [
+    'images/mycountrylistinfos.png',
+    'images/mycountrylistinfostr.png',
+    'images/mycountrylistinfoses.png',
+    'images/mycountrylistinfosjp.png',
+  ];
+  List<String> mycountrylistnothing = [
+    'images/mycountrylistnothing.png',
+    'images/mycountrylistnothingtr.png',
+    'images/mycountrylistnothinges.png',
+    'images/mycountrylistnothingjp.png',
+  ];
+  List<String> mycountrylistpopupinfos = [
+    'images/mycountrylistpopupinfos.png',
+    'images/mycountrylistpopupinfostr.png',
+    'images/mycountrylistpopupinfoses.png',
+    'images/mycountrylistpopupinfosjp.png',
+  ];
+  List<String> mycountrylistpopupsellorcancel = [
+    'images/mycountrylistpopupsellorcancel.png',
+    'images/mycountrylistpopupsellorcanceltr.png',
+    'images/mycountrylistpopupsellorcanceles.png',
+    'images/mycountrylistpopupsellorcanceljp.png',
+  ];
   late final AnimationController _controller = AnimationController(
     duration: const Duration(seconds: 2),
     vsync: this,
@@ -126,7 +150,7 @@ class _HowtPlayState extends State<HowtPlay> with TickerProviderStateMixin {
         bgcolor = Color.fromARGB(255, value[0], value[1], value[2]);
       });
     });
-    print(bgcolor.red + bgcolor.green + bgcolor.blue);
+    //print(bgcolor.red + bgcolor.green + bgcolor.blue);
     if (bgcolor.red + bgcolor.green + bgcolor.blue >= 570) {
       setState(() {
         textcolors = Colors.black;
@@ -162,8 +186,8 @@ class _HowtPlayState extends State<HowtPlay> with TickerProviderStateMixin {
                 SizedBox(height: upheight, child: Container()),
                 ScaleTransition(
                   scale: _animation,
-                  child: RotationTransition(
-                      turns: const AlwaysStoppedAnimation(270 / 360),
+                  child: const RotationTransition(
+                      turns: AlwaysStoppedAnimation(270 / 360),
                       child: Image(
                         image: AssetImage('images/up.png'),
                         width: 70,
@@ -200,8 +224,8 @@ class _HowtPlayState extends State<HowtPlay> with TickerProviderStateMixin {
                 SizedBox(height: upheight, child: Container()),
                 ScaleTransition(
                   scale: _animation,
-                  child: RotationTransition(
-                      turns: const AlwaysStoppedAnimation(270 / 360),
+                  child: const RotationTransition(
+                      turns: AlwaysStoppedAnimation(270 / 360),
                       child: Image(
                         image: AssetImage('images/up.png'),
                         width: 70,
@@ -234,8 +258,8 @@ class _HowtPlayState extends State<HowtPlay> with TickerProviderStateMixin {
                 SizedBox(height: upheight, child: Container()),
                 ScaleTransition(
                   scale: _animation,
-                  child: RotationTransition(
-                      turns: const AlwaysStoppedAnimation(270 / 360),
+                  child: const RotationTransition(
+                      turns: AlwaysStoppedAnimation(270 / 360),
                       child: Image(
                         image: AssetImage('images/up.png'),
                         width: 70,
@@ -257,7 +281,11 @@ class _HowtPlayState extends State<HowtPlay> with TickerProviderStateMixin {
         ),
         Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
           Image.asset(
-            numberindex == 18 ? gamepopups[langindex] : numberindex == 19 ? gamepopupinfos[langindex] : gamepopupbuyorcancels[langindex],
+            numberindex == 18
+                ? gamepopups[langindex]
+                : numberindex == 19
+                    ? gamepopupinfos[langindex]
+                    : gamepopupbuyorcancels[langindex],
             width: MediaQuery.of(context).size.width * 0.5,
             height: 400,
           ),
@@ -265,8 +293,8 @@ class _HowtPlayState extends State<HowtPlay> with TickerProviderStateMixin {
             SizedBox(height: upheight, child: Container()),
             ScaleTransition(
               scale: _animation,
-              child: RotationTransition(
-                  turns: const AlwaysStoppedAnimation(270 / 360),
+              child: const RotationTransition(
+                  turns: AlwaysStoppedAnimation(270 / 360),
                   child: Image(
                     image: AssetImage('images/up.png'),
                     width: 70,
@@ -277,7 +305,44 @@ class _HowtPlayState extends State<HowtPlay> with TickerProviderStateMixin {
           ]),
         ]),
       ];
-    } else {
+    } 
+    else if(numberindex >= 21 && numberindex <= 24){
+      return [
+        Text(
+          '*   $langtext',
+          style: TextStyle(
+              color: textcolors, fontSize: 20, fontWeight: FontWeight.bold),
+        ),
+        Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+          Image.asset(
+            numberindex == 21
+                ? mycountrylistinfos[langindex]
+                : numberindex == 22
+                    ? mycountrylistnothing[langindex]
+                    : numberindex == 23 
+                        ? mycountrylistpopupinfos[langindex] : 
+                            mycountrylistpopupsellorcancel[langindex],
+            width: MediaQuery.of(context).size.width * 0.5,
+            height: 400,
+          ),
+          Column(children: [
+            SizedBox(height: upheight, child: Container()),
+            ScaleTransition(
+              scale: _animation,
+              child: const RotationTransition(
+                  turns: AlwaysStoppedAnimation(270 / 360),
+                  child: Image(
+                    image: AssetImage('images/up.png'),
+                    width: 70,
+                    height: 150,
+                  )),
+            ),
+            SizedBox(height: downheight, child: Container()),
+          ]),
+        ]),
+      ];
+    }
+    else {
       return [];
     }
   }
@@ -289,7 +354,7 @@ class _HowtPlayState extends State<HowtPlay> with TickerProviderStateMixin {
         appBar: AppBar(
             title: Text(
               Languages.howtoplay[langindex],
-              style: TextStyle(
+              style: const TextStyle(
                   color: Colors.white,
                   fontSize: 30,
                   fontWeight: FontWeight.bold,
@@ -355,6 +420,14 @@ class _HowtPlayState extends State<HowtPlay> with TickerProviderStateMixin {
                     19, Languages.howtoplaytext19[langindex], 100, 270),
                 ...getTextAndPictures(
                     20, Languages.howtoplaytext20[langindex], 300, 70),
+                ...getTextAndPictures(
+                    21, Languages.howtoplaytext21[langindex], 80, 290),
+                ...getTextAndPictures(
+                    22, Languages.howtoplaytext22[langindex], 220, 170),
+                ...getTextAndPictures(
+                    23, Languages.howtoplaytext23[langindex], 200, 200),
+                ...getTextAndPictures(
+                    24, Languages.howtoplaytext24[langindex], 250, 120),
               ]),
         )));
   }

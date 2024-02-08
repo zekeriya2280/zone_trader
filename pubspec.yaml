@@ -130,6 +130,7 @@ flutter:
     - images/settingshomees.png
     - images/settingsjp.png
     - images/settingsreloadjp.png
+    - images/settingshomejp.png
     - images/game.png
     - images/gameboughtcountries.png
     - images/gamenotboughtcountries.png
@@ -150,6 +151,22 @@ flutter:
     - images/gamepopupjp.png
     - images/gamepopupinfosjp.png
     - images/gamepopupbuyorcanceljp.png
+    - images/mycountrylistinfos.png
+    - images/mycountrylistinfostr.png
+    - images/mycountrylistinfoses.png
+    - images/mycountrylistinfosjp.png
+    - images/mycountrylistnothing.png
+    - images/mycountrylistnothingtr.png
+    - images/mycountrylistnothinges.png
+    - images/mycountrylistnothingjp.png
+    - images/mycountrylistpopupinfos.png
+    - images/mycountrylistpopupinfostr.png
+    - images/mycountrylistpopupinfoses.png
+    - images/mycountrylistpopupinfosjp.png
+    - images/mycountrylistpopupsellorcancel.png
+    - images/mycountrylistpopupsellorcanceltr.png
+    - images/mycountrylistpopupsellorcanceles.png
+    - images/mycountrylistpopupsellorcanceljp.png
     - assets/sounds/bought.mp3
     - assets/sounds/homeinitpopup.mp3
     - assets/sounds/pagechanged.mp3

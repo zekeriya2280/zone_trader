@@ -6,6 +6,25 @@ import 'package:zone_trader/models/country.dart';
 class FBOp {
   static CollectionReference<Map<String, dynamic>> fb = FirebaseFirestore.instance.collection('users');
   static CollectionReference<Map<String, dynamic>> fb2 = FirebaseFirestore.instance.collection('countries');
+  static Future<String> registerUserFB(String nickname, String email, String dropdownvalue)async {
+    String result = '';
+    if(await fb.get().then((value) => value.docs.every((element) => element.id != nickname))){
+      await fb.doc(nickname).set({
+        'nickname' : nickname,
+        'email': email,
+        'money' : 100000,
+        'bought' : List<bool>.filled(48, false),
+        'times' : List<Map<String,dynamic>>.filled(48, {'60':60}),
+        'language' : dropdownvalue,
+        'appcolorTheme' : [],
+        'bgcolorTheme' : []
+      });
+      return result = '';
+    }
+    else{
+      return result = 'Nickname already exists';
+    }
+  }
   static addCountryTOFB(String name, int price, int income)async{
     fb2.add({
       'name': name,

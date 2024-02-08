@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:zone_trader/authentication/signin.dart';
 import 'package:zone_trader/constants/languages.dart';
+import 'package:zone_trader/firebase/FBOp.dart';
 import 'package:zone_trader/screens/startpage.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -18,6 +19,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController _nicknameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  String errortext = "";
   int langindex = 0;
   String dropdownvalue = 'ENG';
   var dropdownitems = [
@@ -58,22 +60,21 @@ class _RegisterScreenState extends State<RegisterScreen> {
           },
         );
       } else {
-        UserCredential userCredential = await _auth.createUserWithEmailAndPassword(email: email,password: password);
-        await userCredential.user!.updateDisplayName(nickname);
-        await FirebaseFirestore.instance.collection('users').doc(FirebaseAuth.instance.currentUser!.displayName).set({
-          'nickname' : nickname,
-          'email': email,
-          'money' : 100000,
-          'bought' : List<bool>.filled(48, false),
-          'times' : List<Map<String,dynamic>>.filled(48, {'60':60}),
-          'language' : dropdownvalue,
-          'appcolorTheme' : [],
-          'bgcolorTheme' : []
+         await FBOp.registerUserFB(nickname, email, dropdownvalue).then((value) async{
+          if(value != ''){
+            setState(() {
+              errortext = 'Nickname already exists';  
+            });
+             
+          }else{
+            UserCredential userCredential = await _auth.createUserWithEmailAndPassword(email: email,password: password);
+            await userCredential.user!.updateDisplayName(nickname);
+            await Navigator.pushReplacement(
+              context,
+                MaterialPageRoute(builder: (context) => const StartPage()),
+              );
+          }
         });
-        await Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const StartPage()),
-        );
       }
     } catch (e) {
       print("Error signing in: $e");
@@ -106,6 +107,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             children: [
               TextField(
                 controller: _nicknameController,
+                style: TextStyle(color: errortext.isEmpty ? Colors.black : Colors .red),
                 decoration:  InputDecoration(labelText: Languages.nickname[langindex]),
               ),
               TextField(
@@ -117,6 +119,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 controller: _passwordController,
                 decoration:  InputDecoration(labelText: Languages.password[langindex]),
               ),
+              const SizedBox(height: 20),
+              Text(errortext,style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold,fontSize: 20),),
               const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: _register,

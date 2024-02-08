@@ -92,6 +92,7 @@ class _MyCountryListState extends State<MyCountryList> {
         return Scaffold(
           backgroundColor: bgcolor,
           appBar: AppBar(
+            automaticallyImplyLeading: false,
             title: Text(Languages.mycountrylist[langindex],style: const TextStyle(color: Colors.white,fontSize: 22,fontWeight: FontWeight.bold,letterSpacing: 2),),
             centerTitle: true,
             backgroundColor: appBarColor,

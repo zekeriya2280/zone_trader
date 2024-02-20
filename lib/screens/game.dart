@@ -83,6 +83,26 @@ class _GameState extends State<Game> {
     //await FBOp.updateBoughtColorsFB(List<bool>.filled(48, false)); // ALL COUNTRIES ARE NOT BOUGHT---RESET!!!
     //await FBOp.updateCountriesIncomesFB(); // MAKE ALL INCOMES 20% OF THE PRICES FB---RESET!!!
     //await FBOp.changeSamePricesFB(); // CHANGE SAME PRICES FB---RESET!!!
+    /*
+    await FBOp.addToCountriesNewVariablesFB(// ADD NEW VARIABLES TO COUNTRIES FB---RESET!!!
+      {'production': 'banana'},
+      {'production': 'apple'},
+      {'production': 'milk'},
+      {'production': 'cheese'},
+      {'production': 'wheat'},
+      {'production': 'bread'},
+      {'production': 'sugar'},
+      {'production': 'rice'},
+      {'production': 'fish'},
+      {'production': 'beef'},
+      {'production': 'cotton'},
+      {'production': 'rubber'},
+      {'production': 'iron'},
+      {'production': 'silver'},
+      {'production': 'copper'},
+      {'production': 'gold'},
+      {'production': 'coal'},); 
+    */
     await FBOp.fetchBoughtColorsFB().then((value) {
       setState(() {
         bought = value;
@@ -150,6 +170,7 @@ class _GameState extends State<Game> {
               Text('${Languages.price[langindex]}: \$${country.price.floor()}'),
               Text('${Languages.income[langindex]}: \$${country.income.floor()}'),
               Text(country.owner.isEmpty ? '${Languages.owner[langindex]}: ${Languages.yok[langindex]}' : '${Languages.owner[langindex]}: ${country.owner}'),
+              Text('${Languages.production[langindex]}: ${country.production}'),
               Image.asset(
                 CountryImageNames.countryImageNames[index],
                 alignment: Alignment.center,
@@ -440,7 +461,8 @@ class _GameState extends State<Game> {
                       name: doc.data()['name'],
                       price: doc.data()['price'],
                       income: doc.data()['income'],
-                      owner: doc.data()['owner']));
+                      owner: doc.data()['owner'],
+                      production: doc.data()['production']),);
                 }
                 for (var element in countries) {
                 if (money > element.price.floor()) {

@@ -13,6 +13,7 @@ class Languages {
   static var price = ['Price', 'Fiyat', 'Precio', '価格'];
   static var income = ['Income', 'Gelir', 'Ingresos', '収入'];
   static var owner = ['Owner', 'Sahibi', 'Dueno', '所有者'];
+  static var production = ['Production', 'Üretim', 'Producción', '生産'];
   static var youshouldreloadReminderBuying = ["You should reload home page after buying",
     "Satın Alışınızdan sonra ana sayfayı yeniden yükleyin",
     "Debe recargar la página de inicio tras la compra", 

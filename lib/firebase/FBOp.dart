@@ -4,12 +4,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:zone_trader/models/country.dart';
 
 class FBOp {
-  static CollectionReference<Map<String, dynamic>> fb = FirebaseFirestore.instance.collection('users');
-  static CollectionReference<Map<String, dynamic>> fb2 = FirebaseFirestore.instance.collection('countries');
+  static CollectionReference<Map<String, dynamic>> users = FirebaseFirestore.instance.collection('users');
+  static CollectionReference<Map<String, dynamic>> countries = FirebaseFirestore.instance.collection('countries');
   static Future<String> registerUserFB(String nickname, String email, String dropdownvalue)async {
     String result = '';
-    if(await fb.get().then((value) => value.docs.every((element) => element.id != nickname))){
-      await fb.doc(nickname).set({
+    if(await users.get().then((value) => value.docs.every((element) => element.id != nickname))){
+      await users.doc(nickname).set({
         'nickname' : nickname,
         'email': email,
         'money' : 10000,
@@ -25,8 +25,8 @@ class FBOp {
       return result = 'Nickname already exists';
     }
   }
-  static addCountryTOFB(String name, int price, int income)async{
-    fb2.add({
+  static addCountryTOusers(String name, int price, int income)async{
+    countries.add({
       'name': name,
       'price': price,
       'income': income,
@@ -35,52 +35,53 @@ class FBOp {
 
   static Future<List<Country>> fetchFromFBTOCountry()async{
     List<Country> cl = [];
-    await fb2.get().then((value) => value.docs.map((e) => cl.add(Country(
+    await countries.get().then((value) => value.docs.map((e) => cl.add(Country(
       name: e.data()['name'],
       price: e.data()['price'],
       income: e.data()['income'],
       owner: e.data()['owner'],
+      production: e.data()['production']
     ))));
     return cl;
   }
 
   static Future<void> updateMoneyFB(int money)async{
-    fb.doc(FirebaseAuth.instance.currentUser!.displayName).update({
+    users.doc(FirebaseAuth.instance.currentUser!.displayName).update({
       'money' : money
     });
   }
 
   static Future<void> updateBoughtColorsFB(List<bool> bought)async{
-    await fb.doc(FirebaseAuth.instance.currentUser!.displayName).update({
+    await users.doc(FirebaseAuth.instance.currentUser!.displayName).update({
       'bought' : bought
     });
   }
   static Future<void> resetTimesFB(List<Map<String,dynamic>> times)async{
-    await fb.doc(FirebaseAuth.instance.currentUser!.displayName).update({
+    await users.doc(FirebaseAuth.instance.currentUser!.displayName).update({
       'times' : times
     });
   }
   static Future<void> updateCountryOwners()async{
-    await fb2.get().then((value) => value.docs.forEach((e) => fb2.doc(e.id).update({
+    await countries.get().then((value) => value.docs.forEach((e) => countries.doc(e.id).update({
       'owner' : ''
     })));
   }
 
   static Future<List<bool>> fetchBoughtColorsFB()async{
-    return List<bool>.from(await fb.doc(FirebaseAuth.instance.currentUser!.displayName).get().then((value) => value.data()!['bought']));
+    return List<bool>.from(await users.doc(FirebaseAuth.instance.currentUser!.displayName).get().then((value) => value.data()!['bought']));
   }
 
   static Future<void> updateUserTimesAndOwnerFB(List<Map<String,dynamic>> times,int index)async{
-    await fb.doc(FirebaseAuth.instance.currentUser!.displayName).update({
+    await users.doc(FirebaseAuth.instance.currentUser!.displayName).update({
       'times' : times
     });
-    await fb2.get().then((value) => fb2.doc(value.docs[index].id).update({
+    await countries.get().then((value) => countries.doc(value.docs[index].id).update({
       'owner' : FirebaseAuth.instance.currentUser!.displayName
     }));
   }
 
   static Future<List<Map<String,dynamic>>> fetchUserTimesFB()async{
-    return List<Map<String,dynamic>>.from(await fb.doc(FirebaseAuth.instance.currentUser!.displayName).
+    return List<Map<String,dynamic>>.from(await users.doc(FirebaseAuth.instance.currentUser!.displayName).
                                     get().
                                       then((value) => Map<String, dynamic>.from(value.data()!)['times']));
   }
@@ -119,9 +120,9 @@ class FBOp {
     
     List<int> incomes = [];
     for (var i = 0; i < indexes.length; i++) {
-      incomes.add(await fb2.get().then((value) => value.docs[indexes[i]].data()['income']));
+      incomes.add(await countries.get().then((value) => value.docs[indexes[i]].data()['income']));
     }
-    int oldmoney  = await fb.doc(FirebaseAuth.instance.currentUser!.displayName).get().then((value) => Map<String, dynamic>.from(value.data()!)['money']);
+    int oldmoney  = await users.doc(FirebaseAuth.instance.currentUser!.displayName).get().then((value) => Map<String, dynamic>.from(value.data()!)['money']);
     List<Map<String,int>> test =  List<Map<String,int>>.filled(48, {'60':60});
     for (var i = 0; i < indexes.length; i++) {
       test[indexes[i]] = {DateTime.now().hour.toString() : DateTime.now().minute};
@@ -131,7 +132,7 @@ class FBOp {
       sum = sum + (incomes[i] * howmanyincomes[i]).floor();
     }
     //print('sum $sum');
-    fb.doc(FirebaseAuth.instance.currentUser!.displayName).update({
+    users.doc(FirebaseAuth.instance.currentUser!.displayName).update({
       'money' : (oldmoney + sum),
       'times' : test,
     });
@@ -140,10 +141,10 @@ class FBOp {
   static Future<void> updateCountriesIncomesFB()async{
     List<int> prices = [];
     for (var i = 0; i < 48; i++) {
-      prices.add(await fb2.get().then((value) => value.docs[i].data()['price']));
+      prices.add(await countries.get().then((value) => value.docs[i].data()['price']));
     }
     for (var i = 0; i < 48; i++) {
-      fb2.get().then((value) => fb2.doc(value.docs[i].id).update({
+      countries.get().then((value) => countries.doc(value.docs[i].id).update({
         'income' : (prices[i] * 0.15).floor()
       }));
     }
@@ -152,13 +153,13 @@ class FBOp {
     List<int> prices = [];
     List<int> samenumbers = [];
     for (var i = 0; i < 48; i++) {
-      prices.add(await fb2.get().then((value) => value.docs[i].data()['price']));
+      prices.add(await countries.get().then((value) => value.docs[i].data()['price']));
     }
     for (var i = 0; i < prices.length; i++) {
       for (var j = 1; j < prices.length; j++) {
         if(i != j && prices[i] == prices[j]){
           samenumbers.add(prices[i]);
-          fb2.get().then((value) => fb2.doc(value.docs[i].id).update({
+          countries.get().then((value) => countries.doc(value.docs[i].id).update({
             'price' : ((prices[i] * 3).floor() / 20).floor() * 10,
           }));
         }
@@ -166,12 +167,12 @@ class FBOp {
     }
     for (var i = 0; i < prices.length; i++) {
         if((prices[i]/10000).floor() > 1){
-          fb2.get().then((value) => fb2.doc(value.docs[i].id).update({
+          countries.get().then((value) => countries.doc(value.docs[i].id).update({
             'price' : ((prices[i] / 10).floor() / 10).floor() * 10,
           }));
         } 
         else if((prices[i]/1000).floor() == 0) { 
-          fb2.get().then((value) => fb2.doc(value.docs[i].id).update({
+          countries.get().then((value) => countries.doc(value.docs[i].id).update({
             'price' : prices[i] * 10,
           }));
         }
@@ -183,67 +184,67 @@ class FBOp {
   static Future<void> sellCountryFB(Country country)async{
     int index = 0;
     //print(country.price);
-    await fb2.get().then((value)async { 
+    await countries.get().then((value)async { 
       for (var i = 0; i < value.docs.length; i++) {
         if (value.docs[i].data()['name'] == country.name) {
           index = i;
         }
       }
-      await fb2.doc(value.docs[index].id).update({
+      await countries.doc(value.docs[index].id).update({
         'owner' : '',
       });
     });
-    await fb.get().then((value) => fb.doc(FirebaseAuth.instance.currentUser!.displayName).get().then((value2) => fb.doc(FirebaseAuth.instance.currentUser!.displayName).update({
+    await users.get().then((value) => users.doc(FirebaseAuth.instance.currentUser!.displayName).get().then((value2) => users.doc(FirebaseAuth.instance.currentUser!.displayName).update({
       'money' : value2.data()!['money'] + country.price,
       'bought' : List.from(value2.data()!['bought'])..[index] = false,
       'times' : List.from(value2.data()!['times'])..[index] = {'60' : 60},
     })));
   }
   static Future<void> changeLanguage(String lang)async{
-    await fb.doc(FirebaseAuth.instance.currentUser!.displayName).update({
+    await users.doc(FirebaseAuth.instance.currentUser!.displayName).update({
       'language' : lang
     });
   }
   static Future<String> getLanguage()async{
     String returnvalue = '';
     print(FirebaseAuth.instance.currentUser!.displayName);
-    await fb.doc(FirebaseAuth.instance.currentUser!.displayName).get().then((value) => returnvalue = value.data()!['language']);
+    await users.doc(FirebaseAuth.instance.currentUser!.displayName).get().then((value) => returnvalue = value.data()!['language']);
     return returnvalue;
   }
   static Future<void> updateColorTheme(List<int> c1, List<int> c2)async{
-    await fb.doc(FirebaseAuth.instance.currentUser!.displayName).update({
+    await users.doc(FirebaseAuth.instance.currentUser!.displayName).update({
       'appcolorTheme' : c1,
       'bgcolorTheme' : c2
     });
   }
   static Future<List<int>> getAppColorTheme()async{
     List<int> returnvalue = [];
-    await fb.doc(FirebaseAuth.instance.currentUser!.displayName).get().then((value) => returnvalue = List<int>.from(value.data()!['appcolorTheme']));
+    await users.doc(FirebaseAuth.instance.currentUser!.displayName).get().then((value) => returnvalue = List<int>.from(value.data()!['appcolorTheme']));
     return returnvalue;
   } 
   static Future<List<int>> getBGColorTheme()async{
     List<int> returnvalue = [];
-    await fb.doc(FirebaseAuth.instance.currentUser!.displayName).get().then((value) => returnvalue = List<int>.from(value.data()!['bgcolorTheme']));
+    await users.doc(FirebaseAuth.instance.currentUser!.displayName).get().then((value) => returnvalue = List<int>.from(value.data()!['bgcolorTheme']));
     return returnvalue;
   } 
   static Future<String> changeUserNickname(String name)async{
 
     String? oldname = FirebaseAuth.instance.currentUser!.displayName;
-    QuerySnapshot<Map<String, dynamic>> fbget = await fb.get();
+    QuerySnapshot<Map<String, dynamic>> fbget = await users.get();
     if(fbget.docs.every((element) => element.id != name)){
-      await fb.get().then((value) => value.docs.forEach((element) {
+      await users.get().then((value) => value.docs.forEach((element) {
       if(element.id == oldname){
-        fb.doc(oldname).get().then((doc) {
+        users.doc(oldname).get().then((doc) {
             if (doc.exists) {
                 var data = doc.data();
-                fb.doc(name).set(data!).then((value) {
-                  fb.doc(oldname).delete();
+                users.doc(name).set(data!).then((value) {
+                  users.doc(oldname).delete();
                 });
             }
         });
       }
       }));
-      //await fb.doc(name).update({
+      //await users.doc(name).update({
       //  'nickname' : name
       //});
       await FirebaseAuth.instance.currentUser!.updateDisplayName(name);
@@ -254,12 +255,12 @@ class FBOp {
     return '0';
   }
   static Future<void> updateNicknameHelper(String name)async{
-    await fb.doc(FirebaseAuth.instance.currentUser!.displayName).update({
-      'nickname' : fb.doc(FirebaseAuth.instance.currentUser!.displayName).id
+    await users.doc(FirebaseAuth.instance.currentUser!.displayName).update({
+      'nickname' : users.doc(FirebaseAuth.instance.currentUser!.displayName).id
     });
   }
   static Future<bool> checkOwnerFB(int index)async{
-    await fb2.get().then((value) {
+    await countries.get().then((value) {
       if(value.docs[index].data()['owner'] != ''){
         return true;        
       }
@@ -268,5 +269,79 @@ class FBOp {
       }
     });
     return false;
+  }
+  static Future<void> addToCountriesNewVariablesFB(
+                       Map<String,String> data,
+                       Map<String,String> data2,
+                       Map<String,String> data3,
+                       Map<String,String> data4,
+                       Map<String,String> data5,
+                       Map<String,String> data6,
+                       Map<String,String> data7,
+                       Map<String,String> data8,
+                       Map<String,String> data9,
+                       Map<String,String> data10,
+                       Map<String,String> data11,
+                       Map<String,String> data12,
+                       Map<String,String> data13,
+                       Map<String,String> data14,
+                       Map<String,String> data15,
+                       Map<String,String> data16,
+                       Map<String,String> data17)async{
+    await countries.get().then((value) {
+      for (var i = 0; i < value.docs.length; i++) {
+        if (value.docs[i].data()['price'] > 1000 && value.docs[i].data()['price'] < 2000) {
+          countries.doc(value.docs[i].id).update(data);
+        }
+        else if(value.docs[i].data()['price'] > 2000 && value.docs[i].data()['price'] < 3000){
+          countries.doc(value.docs[i].id).update(data2);
+        }
+        else if(value.docs[i].data()['price'] > 3000 && value.docs[i].data()['price'] < 4000){
+          countries.doc(value.docs[i].id).update(data3);
+        }
+        else if(value.docs[i].data()['price'] > 4000 && value.docs[i].data()['price'] < 5000){
+          countries.doc(value.docs[i].id).update(data4);
+        }
+        else if(value.docs[i].data()['price'] > 5000 && value.docs[i].data()['price'] < 6000){
+          countries.doc(value.docs[i].id).update(data5);
+        }
+        else if(value.docs[i].data()['price'] > 6000 && value.docs[i].data()['price'] < 7000){
+          countries.doc(value.docs[i].id).update(data6);
+        }
+        else if(value.docs[i].data()['price'] > 7000 && value.docs[i].data()['price'] < 8000){
+          countries.doc(value.docs[i].id).update(data7);
+        }
+        else if(value.docs[i].data()['price'] > 8000 && value.docs[i].data()['price'] < 9000){
+          countries.doc(value.docs[i].id).update(data8);
+        }
+        else if(value.docs[i].data()['price'] > 9000 && value.docs[i].data()['price'] < 10000){
+          countries.doc(value.docs[i].id).update(data9);
+        }
+        else if(value.docs[i].data()['price'] > 10000 && value.docs[i].data()['price'] < 11000){
+          countries.doc(value.docs[i].id).update(data10);
+        }
+        else if(value.docs[i].data()['price'] > 11000 && value.docs[i].data()['price'] < 12000){
+          countries.doc(value.docs[i].id).update(data11);
+        }
+        else if(value.docs[i].data()['price'] > 12000 && value.docs[i].data()['price'] < 13000){
+          countries.doc(value.docs[i].id).update(data12);
+        }
+        else if(value.docs[i].data()['price'] > 13000 && value.docs[i].data()['price'] < 14000){
+          countries.doc(value.docs[i].id).update(data13);
+        }
+        else if(value.docs[i].data()['price'] > 14000 && value.docs[i].data()['price'] < 15000){
+          countries.doc(value.docs[i].id).update(data14);
+        }
+        else if(value.docs[i].data()['price'] > 15000 && value.docs[i].data()['price'] < 16000){
+          countries.doc(value.docs[i].id).update(data15);
+        }
+        else if(value.docs[i].data()['price'] > 16000 && value.docs[i].data()['price'] < 17000){
+          countries.doc(value.docs[i].id).update(data16);
+        }
+        else if(value.docs[i].data()['price'] > 17000){
+          countries.doc(value.docs[i].id).update(data17);
+        }
+      }
+    });
   }
 }

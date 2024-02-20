@@ -85,6 +85,7 @@ class _MyCountryListState extends State<MyCountryList> {
             income: data['income'],
             price: data['price'], 
             owner: data['owner'],
+            production: data['production'],
           ));
           }
         }

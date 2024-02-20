@@ -425,8 +425,8 @@ class _GameState extends State<Game> {
                           map['money'],
                           List<bool>.from(map['bought']),
                           List<Map<String, dynamic>>.from(map['times']),
-                          List<String>.from(map['appcolorTheme']),
-                          List<String>.from(map['bgcolorTheme']),
+                          List<int>.from(map['appcolorTheme']),
+                          List<int>.from(map['bgcolorTheme']),
                           map['language'])
                       .getPlayer;
                 }

@@ -4,8 +4,8 @@ class Player{
   final int? money;
   final List<bool>? bought;
   final List<Map<String,dynamic>>? times;
-  final List<String>? appcolorTheme;
-  final List<String>? bgcolorTheme;
+  final List<int>? appcolorTheme;
+  final List<int>? bgcolorTheme;
   final String? language;
   
 

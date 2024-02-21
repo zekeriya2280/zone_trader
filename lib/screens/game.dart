@@ -31,6 +31,9 @@ class _GameState extends State<Game> {
   Color bgcolor = Colors.white;
   int langindex = 0;
   List<int> buyablecountries = [];
+  bool canbebought = false;
+  String wrongproductionerror = '';
+  Color buttoncolor = Colors.red;
   var langs = [
     'ENG',
     'TR',
@@ -57,7 +60,6 @@ class _GameState extends State<Game> {
     {'gold': 'copper'},
     {'coal': 'gold'},
   ];
-  Color buttoncolor = Colors.green;
 
   @override
   void initState() {
@@ -177,15 +179,11 @@ class _GameState extends State<Game> {
     // Go back to the sign-in screen
   }
 
-  void _showCountryDetails(BuildContext context, Country country, int index) {
+  _showCountryDetails(BuildContext context, Country country, bool canbeboughtt,int index)async {
+    
     showDialog(
       context: context,
       builder: (context) {
-        bool canbebought = false;
-        String wrongproductionerror = '';
-        FBOp.checkNeededProductionBoughtBefore(productionpairs, country.production)
-            .then((value) => canbebought = value);
-        canbebought ? wrongproductionerror = '' : wrongproductionerror = Languages.wrongproductionerror[langindex];
         return AlertDialog(
           title: Center(child: Text(country.name)),
           content: Column(
@@ -226,7 +224,7 @@ class _GameState extends State<Game> {
                 bought[index] || country.owner.isNotEmpty
                     ? const Text('')
                     : TextButton(
-                        onPressed: money < country.price.floor()
+                        onPressed: money < country.price.floor() || !canbebought
                             ? null
                             : () async {
                                 
@@ -252,17 +250,12 @@ class _GameState extends State<Game> {
                                       await greenBGColorFiller(); // WHEN COUNTRY IS BOUGHT UPDATE COLORS IN FB
                                       await Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const Game()));
                                 }
-                                else{
-                                  setState(() {
-                                        buttoncolor = Colors.red;
-                                  });
-                                }
                               },
                         child: Text(
                           Languages.buy[langindex],
                           style: TextStyle(
                               color: money >= country.price.floor()
-                                  ? canbebought ? Colors.green : Colors.red
+                                  ? buttoncolor
                                   : Colors.red,
                               fontSize: 20),
                         ),
@@ -601,9 +594,21 @@ class _GameState extends State<Game> {
                       itemCount: bought.length,
                       itemBuilder: (context, index) {
                         return GestureDetector(
-                            onTap: () {
+                            onTap: ()async {
+                               await FBOp.checkNeededProductionBoughtBefore(productionpairs, countries[index].production)
+                               .then((value) { value == true ? setState(() {
+                                 canbebought = true;
+                               }): setState(() {
+                                 canbebought = false;
+                               });
+                               setState(() {
+                                 canbebought ? wrongproductionerror = '' : wrongproductionerror = Languages.wrongproductionerror[langindex];
+                                 canbebought ? buttoncolor = Colors.green : buttoncolor = Colors.red;
+                               });
+
+                               }).then((value) =>
                               _showCountryDetails(
-                                  context, countries[index], index);
+                                  context, countries[index], canbebought ,index));
                             },
                             child: Container(
                               height: 100,

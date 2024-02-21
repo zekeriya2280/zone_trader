@@ -120,11 +120,13 @@ class _MyCountryListState extends State<MyCountryList> {
                     _showPopup(context, myCountryList[index]);
                   },
                   child: ListTile(
-                    title: Center(child: Text(myCountryList[index].name,style: const TextStyle(fontSize: 20,fontWeight: FontWeight.bold),)),
+                    title: Center(child: Text(myCountryList[index].name,style: const TextStyle(fontSize: 22,color: Colors.blue,fontWeight: FontWeight.bold),)),
                     subtitle: Center(
                       child: Text(
-                          '${Languages.price[langindex]} ${myCountryList[index].price} - ${Languages.income[langindex]}: ${myCountryList[index].income} '
-                          '- ${Languages.owner[langindex]}: ${myCountryList[index].owner}'),
+                            '  ${Languages.price[langindex]} ${myCountryList[index].price} \n' 
+                            '  ${Languages.income[langindex]}: ${myCountryList[index].income} '
+                          '\n  ${Languages.owner[langindex]}: ${myCountryList[index].owner}'
+                          '\n  ${Languages.production[langindex]}: ${myCountryList[index].production}',style: TextStyle(letterSpacing: 2,fontWeight: FontWeight.bold,color: Colors.blue,shadows: [Shadow(color: Colors.yellow,offset: Offset(1, 1),blurRadius: 2)]),),
                     ),
                   ),
                 ),
@@ -149,6 +151,7 @@ class _MyCountryListState extends State<MyCountryList> {
                 Text('${Languages.price[langindex]}: ${country.price}'),
                 Text('${Languages.income[langindex]}: ${country.income}'),
                 Text('${Languages.owner[langindex]}: ${country.owner}'),
+                Text('${Languages.production[langindex]}: ${country.production}'),
                 Expanded(child: Container()),
                 Center(child: Text(Languages.youshouldreloadReminderSelling[langindex], style: const TextStyle(fontSize: 13,color: Colors.red,fontWeight: FontWeight.bold),)),
               ],

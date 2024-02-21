@@ -344,23 +344,21 @@ class FBOp {
       }
     });
   }
-  static Future<bool> checkNeededProductionBoughtBefore(List<Map<String,dynamic>> pairs,String wanttobuyproduct)async{
+  static Future<bool?> checkNeededProductionBoughtBefore(List<Map<String,dynamic>> pairs,String wanttobuyproduct)async{
+    print(wanttobuyproduct);
+    print(pairs);
     if(wanttobuyproduct == 'banana'){
       return true;
     }
-    await countries.get().then((value) {
+    else{
+      return await countries.get().then((value) {
       for (var j = 0; j < pairs.length; j++) {
             if (pairs[j].keys.first == wanttobuyproduct) {
-                for (var i = 0; i < value.docs.length; i++) {
-                     if(value.docs[i].data()['production'] == pairs[j].values.first && value.docs[i].data()['owner'] == FirebaseAuth.instance.currentUser!.displayName){
-                       return true;
-                     }
-                 }
+                     return value.docs.any((doc) => doc.data()['production'] == pairs[j].values.first && doc.data()['owner'] == FirebaseAuth.instance.currentUser!.displayName);
             }
-            
-      }
-    });
-    return false;
+       }
+     });
+    }
   }
   static Future<void> updateCountriesPriceAndIncomesFB()async{
     await countries.get().then((value) {

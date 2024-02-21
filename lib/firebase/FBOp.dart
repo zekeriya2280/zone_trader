@@ -355,6 +355,7 @@ class FBOp {
                      return value.docs.any((doc) => doc.data()['production'] == pairs[j].values.first && doc.data()['owner'] == FirebaseAuth.instance.currentUser!.displayName);
             }
        }
+      return null;
      });
     }
   }

@@ -345,8 +345,6 @@ class FBOp {
     });
   }
   static Future<bool?> checkNeededProductionBoughtBefore(List<Map<String,dynamic>> pairs,String wanttobuyproduct)async{
-    print(wanttobuyproduct);
-    print(pairs);
     if(wanttobuyproduct == 'banana'){
       return true;
     }

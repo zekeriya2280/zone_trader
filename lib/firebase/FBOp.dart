@@ -12,7 +12,7 @@ class FBOp {
       await users.doc(nickname).set({
         'nickname' : nickname,
         'email': email,
-        'money' : 10000,
+        'money' : 2000,
         'bought' : List<bool>.filled(48, false),
         'times' : List<Map<String,dynamic>>.filled(48, {'60':60}),
         'language' : dropdownvalue,
@@ -290,57 +290,83 @@ class FBOp {
                        Map<String,String> data17)async{
     await countries.get().then((value) {
       for (var i = 0; i < value.docs.length; i++) {
-        if (value.docs[i].data()['price'] > 1000 && value.docs[i].data()['price'] < 2000) {
+        if (value.docs[i].data()['price'] >= 1000 && value.docs[i].data()['price'] < 2000) {
           countries.doc(value.docs[i].id).update(data);
         }
-        else if(value.docs[i].data()['price'] > 2000 && value.docs[i].data()['price'] < 3000){
+        else if(value.docs[i].data()['price'] >= 2000 && value.docs[i].data()['price'] < 3000){
           countries.doc(value.docs[i].id).update(data2);
         }
-        else if(value.docs[i].data()['price'] > 3000 && value.docs[i].data()['price'] < 4000){
+        else if(value.docs[i].data()['price'] >= 3000 && value.docs[i].data()['price'] < 4000){
           countries.doc(value.docs[i].id).update(data3);
         }
-        else if(value.docs[i].data()['price'] > 4000 && value.docs[i].data()['price'] < 5000){
+        else if(value.docs[i].data()['price'] >= 4000 && value.docs[i].data()['price'] < 5000){
           countries.doc(value.docs[i].id).update(data4);
         }
-        else if(value.docs[i].data()['price'] > 5000 && value.docs[i].data()['price'] < 6000){
+        else if(value.docs[i].data()['price'] >= 5000 && value.docs[i].data()['price'] < 6000){
           countries.doc(value.docs[i].id).update(data5);
         }
-        else if(value.docs[i].data()['price'] > 6000 && value.docs[i].data()['price'] < 7000){
+        else if(value.docs[i].data()['price'] >= 6000 && value.docs[i].data()['price'] < 7000){
           countries.doc(value.docs[i].id).update(data6);
         }
-        else if(value.docs[i].data()['price'] > 7000 && value.docs[i].data()['price'] < 8000){
+        else if(value.docs[i].data()['price'] >= 7000 && value.docs[i].data()['price'] < 8000){
           countries.doc(value.docs[i].id).update(data7);
         }
-        else if(value.docs[i].data()['price'] > 8000 && value.docs[i].data()['price'] < 9000){
+        else if(value.docs[i].data()['price'] >= 8000 && value.docs[i].data()['price'] < 9000){
           countries.doc(value.docs[i].id).update(data8);
         }
-        else if(value.docs[i].data()['price'] > 9000 && value.docs[i].data()['price'] < 10000){
+        else if(value.docs[i].data()['price'] >= 9000 && value.docs[i].data()['price'] < 10000){
           countries.doc(value.docs[i].id).update(data9);
         }
-        else if(value.docs[i].data()['price'] > 10000 && value.docs[i].data()['price'] < 11000){
+        else if(value.docs[i].data()['price'] >= 10000 && value.docs[i].data()['price'] < 11000){
           countries.doc(value.docs[i].id).update(data10);
         }
-        else if(value.docs[i].data()['price'] > 11000 && value.docs[i].data()['price'] < 12000){
+        else if(value.docs[i].data()['price'] >= 11000 && value.docs[i].data()['price'] < 12000){
           countries.doc(value.docs[i].id).update(data11);
         }
-        else if(value.docs[i].data()['price'] > 12000 && value.docs[i].data()['price'] < 13000){
+        else if(value.docs[i].data()['price'] >= 12000 && value.docs[i].data()['price'] < 13000){
           countries.doc(value.docs[i].id).update(data12);
         }
         else if(value.docs[i].data()['price'] > 13000 && value.docs[i].data()['price'] < 14000){
           countries.doc(value.docs[i].id).update(data13);
         }
-        else if(value.docs[i].data()['price'] > 14000 && value.docs[i].data()['price'] < 15000){
+        else if(value.docs[i].data()['price'] >= 14000 && value.docs[i].data()['price'] < 15000){
           countries.doc(value.docs[i].id).update(data14);
         }
-        else if(value.docs[i].data()['price'] > 15000 && value.docs[i].data()['price'] < 16000){
+        else if(value.docs[i].data()['price'] >= 15000 && value.docs[i].data()['price'] < 16000){
           countries.doc(value.docs[i].id).update(data15);
         }
-        else if(value.docs[i].data()['price'] > 16000 && value.docs[i].data()['price'] < 17000){
+        else if(value.docs[i].data()['price'] >= 16000 && value.docs[i].data()['price'] < 17000){
           countries.doc(value.docs[i].id).update(data16);
         }
-        else if(value.docs[i].data()['price'] > 17000){
+        else if(value.docs[i].data()['price'] >= 17000){
           countries.doc(value.docs[i].id).update(data17);
         }
+      }
+    });
+  }
+  static Future<bool> checkNeededProductionBoughtBefore(List<Map<String,dynamic>> pairs,String wanttobuyproduct)async{
+    if(wanttobuyproduct == 'banana'){
+      return true;
+    }
+    await countries.get().then((value) {
+      for (var j = 0; j < pairs.length; j++) {
+            if (pairs[j].keys.first == wanttobuyproduct) {
+                for (var i = 0; i < value.docs.length; i++) {
+                     if(value.docs[i].data()['production'] == pairs[j].values.first && value.docs[i].data()['owner'] == FirebaseAuth.instance.currentUser!.displayName){
+                       return true;
+                     }
+                 }
+            }
+            
+      }
+    });
+    return false;
+  }
+  static Future<void> updateCountriesPriceAndIncomesFB()async{
+    await countries.get().then((value) {
+      for (var i = 0; i < value.docs.length; i++) {
+        countries.doc(value.docs[i].id).update({'price' : ((i / 3 ).floor() + 1) * 1000});
+        countries.doc(value.docs[i].id).update({'income' : (value.docs[i].data()['price'] * 0.15).floor()});
       }
     });
   }

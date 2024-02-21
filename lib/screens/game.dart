@@ -39,6 +39,25 @@ class _GameState extends State<Game> {
   ];
   String nickname = "";
   String chooseAUniqueNickname = "";
+  List<Map<String,dynamic>> productionpairs = [
+    {'apple': 'banana'},
+    {'milk': 'apple'},
+    {'cheese': 'milk'},
+    {'wheat': 'cheese'},
+    {'bread': 'wheat'},
+    {'sugar': 'bread'},
+    {'rice': 'sugar'},
+    {'fish': 'rice'},
+    {'beef': 'fish'},
+    {'cotton': 'beef'},
+    {'rubber': 'cotton'},
+    {'iron': 'rubber'},
+    {'silver': 'iron'},
+    {'copper': 'silver'},
+    {'gold': 'copper'},
+    {'coal': 'gold'},
+  ];
+  Color buttoncolor = Colors.green;
 
   @override
   void initState() {
@@ -103,6 +122,7 @@ class _GameState extends State<Game> {
       {'production': 'gold'},
       {'production': 'coal'},); 
     */
+    //await FBOp.updateCountriesPriceAndIncomesFB();// UPDATE COUNTRIES PRICES AND INCOMES FB---RESET!!!
     await FBOp.fetchBoughtColorsFB().then((value) {
       setState(() {
         bought = value;
@@ -161,6 +181,11 @@ class _GameState extends State<Game> {
     showDialog(
       context: context,
       builder: (context) {
+        bool canbebought = false;
+        String wrongproductionerror = '';
+        FBOp.checkNeededProductionBoughtBefore(productionpairs, country.production)
+            .then((value) => canbebought = value);
+        canbebought ? wrongproductionerror = '' : wrongproductionerror = Languages.wrongproductionerror[langindex];
         return AlertDialog(
           title: Center(child: Text(country.name)),
           content: Column(
@@ -189,6 +214,9 @@ class _GameState extends State<Game> {
                           color: Colors.red,
                           fontWeight: FontWeight.bold),
                     )),
+              Text(
+                            wrongproductionerror,
+                            style: const TextStyle(color: Colors.red,)),
             ],
           ),
           actions: [
@@ -201,32 +229,40 @@ class _GameState extends State<Game> {
                         onPressed: money < country.price.floor()
                             ? null
                             : () async {
-                                //print(country.price.floor());
-                                money < country.price.floor()
-                                    ? null
-                                    : buythiscard(context, country, index);
-                                playSampleSound('assets/sounds/bought.mp3');
-                                DateTime now = DateTime.now();
-                                await FBOp.fetchUserTimesFB().then((value) {
-                                  //FETCH TIMES FROM FB
+                                
+                                //print(canbebought);
+                                if(canbebought){
+                                      money < country.price.floor()
+                                          ? null
+                                          : buythiscard(context, country, index);
+                                      playSampleSound('assets/sounds/bought.mp3');
+                                      DateTime now = DateTime.now();
+                                      await FBOp.fetchUserTimesFB().then((value) {
+                                        //FETCH TIMES FROM FB
+                                        setState(() {
+                                          boughttimes = value;
+                                        });
+                                      });
+                                      boughttimes[index] = {
+                                        now.hour.toString().trim(): now.minute
+                                      };
+                                      await FBOp.updateUserTimesAndOwnerFB(
+                                          boughttimes,
+                                          index); // UPDATE TIMES AND OWNER IN FB
+                                      await greenBGColorFiller(); // WHEN COUNTRY IS BOUGHT UPDATE COLORS IN FB
+                                      await Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const Game()));
+                                }
+                                else{
                                   setState(() {
-                                    boughttimes = value;
+                                        buttoncolor = Colors.red;
                                   });
-                                });
-                                boughttimes[index] = {
-                                  now.hour.toString().trim(): now.minute
-                                };
-                                await FBOp.updateUserTimesAndOwnerFB(
-                                    boughttimes,
-                                    index); // UPDATE TIMES AND OWNER IN FB
-                                await greenBGColorFiller(); // WHEN COUNTRY IS BOUGHT UPDATE COLORS IN FB
-                                await Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const Game()));
+                                }
                               },
                         child: Text(
                           Languages.buy[langindex],
                           style: TextStyle(
                               color: money >= country.price.floor()
-                                  ? Colors.green
+                                  ? canbebought ? Colors.green : Colors.red
                                   : Colors.red,
                               fontSize: 20),
                         ),
@@ -253,9 +289,13 @@ class _GameState extends State<Game> {
                       onPressed: () {
                         Navigator.of(context).pop();
                       },
-                      child:  Text(
-                        Languages.notenoughtmoney[langindex],
-                        style: const TextStyle(color: Colors.red, fontSize: 15),
+                      child:  Column(
+                        children: [
+                          Text(
+                            Languages.notenoughtmoney[langindex],
+                            style: const TextStyle(color: Colors.red, fontSize: 15),
+                          ),
+                        ],
                       ),
                     ),
                   )
@@ -465,7 +505,7 @@ class _GameState extends State<Game> {
                       production: doc.data()['production']),);
                 }
                 for (var element in countries) {
-                if (money > element.price.floor()) {
+                if (money >= element.price.floor()) {
                     buyablecountries.add(countries.indexOf(element));
                   }
                 }

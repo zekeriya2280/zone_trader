@@ -42,23 +42,16 @@ class _GameState extends State<Game> {
   ];
   String nickname = "";
   String chooseAUniqueNickname = "";
-  List<Map<String,dynamic>> productionpairs = [
-    {'apple': 'banana'},
-    {'milk': 'apple'},
-    {'cheese': 'milk'},
-    {'wheat': 'cheese'},
-    {'bread': 'wheat'},
-    {'sugar': 'bread'},
-    {'rice': 'sugar'},
-    {'fish': 'rice'},
-    {'beef': 'fish'},
-    {'cotton': 'beef'},
-    {'rubber': 'cotton'},
-    {'iron': 'rubber'},
-    {'silver': 'iron'},
-    {'copper': 'silver'},
-    {'gold': 'copper'},
-    {'coal': 'gold'},
+  List<Map<String, List<String>>> productionpairs = [
+    {'watersoda': ['water','sugar']},
+    {'orangejuice': ['orange','water']},
+    {'bananajuice': ['banana','milk']},
+    {'orangesoda': ['orangejuice','watersoda']},
+    {'bread': ['floor','yeast','salt','water']},
+    {'melonsoda': ['melonjuice','watersoda']},
+    {'melonjuice': ['melon','honey','sugar','water']},
+    {'bananasmoothie': ['bananajuice','sugar']},
+    {'bananashake': ['bananasmoothie','ice']},
   ];
 
   @override
@@ -106,23 +99,23 @@ class _GameState extends State<Game> {
     //await FBOp.changeSamePricesFB(); // CHANGE SAME PRICES FB---RESET!!!
     /*
     await FBOp.addToCountriesNewVariablesFB(// ADD NEW VARIABLES TO COUNTRIES FB---RESET!!!
-      {'production': 'banana'},
-      {'production': 'apple'},
-      {'production': 'milk'},
-      {'production': 'cheese'},
-      {'production': 'wheat'},
-      {'production': 'bread'},
+      {'production': 'water'},
       {'production': 'sugar'},
-      {'production': 'rice'},
-      {'production': 'fish'},
-      {'production': 'beef'},
-      {'production': 'cotton'},
-      {'production': 'rubber'},
-      {'production': 'iron'},
-      {'production': 'silver'},
-      {'production': 'copper'},
-      {'production': 'gold'},
-      {'production': 'coal'},); 
+      {'production': 'salt'},
+      {'production': 'orange'},
+      {'production': 'banana'},
+      {'production': 'wheat'},
+      {'production': 'yeast'},
+      {'production': 'bread'},
+      {'production': 'milk'},
+      {'production': 'honey'},
+      {'production': 'melon'},
+      {'production': 'watersoda'},
+      {'production': 'orangejuice'},
+      {'production': 'melonjuice'},
+      {'production': 'bananajuice'},
+      {'production': 'bananasmoothie'},
+      {'production': 'bananashake'},); 
     */
     //await FBOp.updateCountriesPriceAndIncomesFB();// UPDATE COUNTRIES PRICES AND INCOMES FB---RESET!!!
     await FBOp.fetchBoughtColorsFB().then((value) {
@@ -336,7 +329,7 @@ class _GameState extends State<Game> {
                 },
                 child: Center(
                   child: Text(
-                    Languages.cancel[langindex],                    
+                    Languages.ok[langindex],                    
                     style: const TextStyle(color: Colors.red, fontSize: 20),
                   ),
                 ),
@@ -595,14 +588,16 @@ class _GameState extends State<Game> {
                       itemBuilder: (context, index) {
                         return GestureDetector(
                             onTap: ()async {
-                               await FBOp.checkNeededProductionBoughtBefore(productionpairs, countries[index].production)
-                               .then((value) { value == true ? setState(() {
+                               await FBOp.checkNeededProductionBoughtBefore(countriessnapshot,productionpairs, countries[index].production)
+                               .then((value) { 
+                                //print('game value $value');
+                                value.keys.first == true ? setState(() {
                                  canbebought = true;
                                }): setState(() {
                                  canbebought = false;
                                });
                                setState(() {
-                                 canbebought ? wrongproductionerror = '' : wrongproductionerror = Languages.wrongproductionerror[langindex];
+                                 canbebought ? wrongproductionerror = '' : wrongproductionerror = Languages.wrongproductionerror[langindex] + ':    ${value.values.first}';
                                  canbebought ? buttoncolor = Colors.green : buttoncolor = Colors.red;
                                });
 
@@ -626,7 +621,7 @@ class _GameState extends State<Game> {
                               ),
                               child: Card(
                                 color: bought[index] ||
-                                        countries[index].owner != ''
+                                        countries[index].owner.isNotEmpty
                                     ? Colors.green
                                     : Colors.white,
                                 elevation: 5,

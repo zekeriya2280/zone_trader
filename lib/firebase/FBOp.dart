@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:zone_trader/models/country.dart';
 
 class FBOp {
@@ -326,7 +327,7 @@ class FBOp {
         else if(value.docs[i].data()['price'] >= 12000 && value.docs[i].data()['price'] < 13000){
           countries.doc(value.docs[i].id).update(data12);
         }
-        else if(value.docs[i].data()['price'] > 13000 && value.docs[i].data()['price'] < 14000){
+        else if(value.docs[i].data()['price'] >= 13000 && value.docs[i].data()['price'] < 14000){
           countries.doc(value.docs[i].id).update(data13);
         }
         else if(value.docs[i].data()['price'] >= 14000 && value.docs[i].data()['price'] < 15000){
@@ -344,20 +345,56 @@ class FBOp {
       }
     });
   }
-  static Future<bool?> checkNeededProductionBoughtBefore(List<Map<String,dynamic>> pairs,String wanttobuyproduct)async{
-    if(wanttobuyproduct == 'banana'){
-      return true;
+  static Future<Map<bool,String>> checkNeededProductionBoughtBefore(AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot, List<Map<String,List<String>>> pairs,String wanttobuyproduct)async{
+    List<String> counter = [];
+    if(wanttobuyproduct == 'water' ||
+       wanttobuyproduct == 'sugar' ||
+       wanttobuyproduct == 'orange' ||
+       wanttobuyproduct == 'milk' ||
+       wanttobuyproduct == 'banana' ||
+       wanttobuyproduct == 'salt' ||
+       wanttobuyproduct == 'wheat' ||
+       wanttobuyproduct == 'yeast' ||
+       wanttobuyproduct == 'honey' ||
+       wanttobuyproduct == 'melon'){
+      return {true:''};
     }
     else{
-      return await countries.get().then((value) {
-      for (var j = 0; j < pairs.length; j++) {
-            if (pairs[j].keys.first == wanttobuyproduct) {
-                     return value.docs.any((doc) => doc.data()['production'] == pairs[j].values.first && doc.data()['owner'] == FirebaseAuth.instance.currentUser!.displayName);
-            }
-       }
-      return null;
-     });
-    }
+      
+     // return 
+     //await countries.get().then((value) {
+     //  for (var i = 0; i < value.docs.length; i++) {
+     //    if(value.docs[i].data()['production'] == wanttobuyproduct){//
+           
+            pairs.forEach((element) {
+              if(element.keys.first == wanttobuyproduct){
+                
+                element.values.first.forEach((value0) async{
+                  
+                  snapshot.data!.docs.forEach((value2) {
+                   // for (var j = 0; j < snapshot.data!.docs.length; j++) {
+                      if(value2.data()['production'] == value0){
+                       
+                        if(value2.data()['owner'] != FirebaseAuth.instance.currentUser!.displayName){
+                          counter.add(value0);
+                           print('counter : '+counter.toString());
+                           //return {true:''};
+                        }
+                        else{
+                          counter.remove(value0);
+                          //return {false:'aaa'};
+                        }
+                        
+                      }
+                    //}
+                   //return counter == [] ? {true:''} : {false:'aaa'};
+                  });
+                });
+              }
+            });
+            
+          } 
+          return counter == [] ? {true:''} : {false:'\n     ' + counter.toSet().join('  ,  ').toUpperCase()}; 
   }
   static Future<void> updateCountriesPriceAndIncomesFB()async{
     await countries.get().then((value) {

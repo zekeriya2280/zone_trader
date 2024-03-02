@@ -14,10 +14,10 @@ class Languages {
   static var income = ['Income', 'Gelir', 'Ingresos', '収入'];
   static var owner = ['Owner', 'Sahibi', 'Dueno', '所有者'];
   static var production = ['Production', 'Üretim', 'Producción', '生産'];
-  static var wrongproductionerror = ["You can't buy this country without buying a lower priced country",
-  "Daha düşük fiyatlı bir ülkeyi satın almadan bu ülkeyi satın alamazsınız",
-  "No se puede comprar este país sin comprar un país más barato que este"
-  "この国より安い国を買わずにこの国を買うことはできない"
+  static var wrongproductionerror = ["You can't buy this country without buying necessary item",
+    "Bu ülkeyi satın almak için gerekli itemi satın almalısınız",
+    "No puedes comprar este país sin comprar el item necesario",
+    "この国を買うには必要なアイテムを購入する必要があります"
   ];
   static var youshouldreloadReminderBuying = ["You should reload home page after buying",
     "Satın Alışınızdan sonra ana sayfayı yeniden yükleyin",

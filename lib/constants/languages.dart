@@ -12,7 +12,7 @@ class Languages {
   static var save = ['Save', 'Kaydet', 'Guardar', '保存'];
   static var price = ['Price', 'Fiyat', 'Precio', '価格'];
   static var income = ['Income', 'Gelir', 'Ingresos', '収入'];
-  static var owner = ['Owner', 'Sahibi', 'Dueno', '所有者'];
+  static var owners = ['Owners', 'Sahibleri', 'Duenos', '所有者達'];
   static var production = ['Production', 'Üretim', 'Producción', '生産'];
   static var wrongproductionerror = ["You can't buy this country without buying necessary item",
     "Bu ülkeyi satın almak için gerekli itemi satın almalısınız",
@@ -28,6 +28,7 @@ class Languages {
     "Debe recargar la página de inicio tras la venta",
     "売却後にホームページを再読み込みする必要があります"];
   static var cancel = ['Cancel', 'İptal', 'Cancelar', 'キャンセル'];
+  static var close = ['Close', 'Kapat', 'Cerrar', '閉じる'];
   static var sell = ['Sell', 'Sat', 'Vender', '売る'];
   static var buy = ['Buy', 'Satın Al', 'Comprar', '買う'];
   static var mycountrylist = ['My Country List', 'Benim Ülke Listem', 'Mi Lista de Paises', '私の国のリスト'];

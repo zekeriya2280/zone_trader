@@ -33,6 +33,7 @@ class _IntroPageState extends State<IntroPage> {
     super.initState();
   }
   void getLang()async{
+    
     await FBOp.getLanguage().then((value) {
       setState(() {
         langindex = langs.indexOf(value);

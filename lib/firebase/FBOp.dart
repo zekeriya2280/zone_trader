@@ -40,7 +40,7 @@ class FBOp {
       name: e.data()['name'],
       price: e.data()['price'],
       income: e.data()['income'],
-      owner: e.data()['owner'],
+      owners: e.data()['owners'],
       production: e.data()['production']
     ))));
     return cl;
@@ -64,7 +64,8 @@ class FBOp {
   }
   static Future<void> updateCountryOwners()async{
     await countries.get().then((value) => value.docs.forEach((e) => countries.doc(e.id).update({
-      'owner' : ''
+      'owners' : List<String>.filled(0, ''),
+      'owner' : FieldValue.delete()
     })));
   }
 
@@ -72,12 +73,15 @@ class FBOp {
     return List<bool>.from(await users.doc(FirebaseAuth.instance.currentUser!.displayName).get().then((value) => value.data()!['bought']));
   }
 
-  static Future<void> updateUserTimesAndOwnerFB(List<Map<String,dynamic>> times,int index)async{
+  static Future<void> updateUserTimesAndOwnersFB(List<Map<String,dynamic>> times,int index)async{
     await users.doc(FirebaseAuth.instance.currentUser!.displayName).update({
       'times' : times
     });
+    List<String> owners = [];
+    await countries.get().then((value) => owners = List<String>.from(value.docs[index].data()['owners']));
+    owners.add(FirebaseAuth.instance.currentUser!.displayName!);
     await countries.get().then((value) => countries.doc(value.docs[index].id).update({
-      'owner' : FirebaseAuth.instance.currentUser!.displayName
+      'owners' : owners
     }));
   }
 

@@ -43,15 +43,33 @@ class _GameState extends State<Game> {
   String nickname = "";
   String chooseAUniqueNickname = "";
   List<Map<String, List<String>>> productionpairs = [
-    {'watersoda': ['water','sugar']},
-    {'orangejuice': ['orange','water']},
-    {'bananajuice': ['banana','milk']},
-    {'orangesoda': ['orangejuice','watersoda']},
-    {'bread': ['floor','yeast','salt','water']},
-    {'melonsoda': ['melonjuice','watersoda']},
-    {'melonjuice': ['melon','honey','sugar','water']},
-    {'bananasmoothie': ['bananajuice','sugar']},
-    {'bananashake': ['bananasmoothie','ice']},
+    {
+      'watersoda': ['water', 'sugar']
+    },
+    {
+      'orangejuice': ['orange', 'water']
+    },
+    {
+      'bananajuice': ['banana', 'milk']
+    },
+    {
+      'orangesoda': ['orangejuice', 'watersoda']
+    },
+    {
+      'bread': ['floor', 'yeast', 'salt', 'water']
+    },
+    {
+      'melonsoda': ['melonjuice', 'watersoda']
+    },
+    {
+      'melonjuice': ['melon', 'honey', 'sugar', 'water']
+    },
+    {
+      'bananasmoothie': ['bananajuice', 'sugar']
+    },
+    {
+      'bananashake': ['bananasmoothie', 'ice']
+    },
   ];
 
   @override
@@ -62,16 +80,19 @@ class _GameState extends State<Game> {
     colorProducer();
     super.initState();
   }
-  void getLang()async{
+
+  void getLang() async {
     await FBOp.getLanguage().then((value) {
       setState(() {
         langindex = langs.indexOf(value);
       });
     });
   }
+
   updateNickname() async {
     await FBOp.updateNicknameHelper(nickname);
   }
+
   colorProducer() async {
     await FBOp.getAppColorTheme().then((value) {
       setState(() {
@@ -172,8 +193,8 @@ class _GameState extends State<Game> {
     // Go back to the sign-in screen
   }
 
-  _showCountryDetails(BuildContext context, Country country, bool canbeboughtt,int index)async {
-    
+  _showCountryDetails(BuildContext context, Country country, bool canbeboughtt,
+      int index) async {
     showDialog(
       context: context,
       builder: (context) {
@@ -184,8 +205,11 @@ class _GameState extends State<Game> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text('${Languages.price[langindex]}: \$${country.price.floor()}'),
-              Text('${Languages.income[langindex]}: \$${country.income.floor()}'),
-              Text(country.owner.isEmpty ? '${Languages.owner[langindex]}: ${Languages.yok[langindex]}' : '${Languages.owner[langindex]}: ${country.owner}'),
+              Text(
+                  '${Languages.income[langindex]}: \$${country.income.floor()}'),
+              Text(country.owners.isEmpty
+                  ? '${Languages.owners[langindex]}: ${Languages.yok[langindex]}'
+                  : '${Languages.owners[langindex]}: ${country.owners.join(', ')}'),
               Text('${Languages.production[langindex]}: ${country.production}'),
               Image.asset(
                 CountryImageNames.countryImageNames[index],
@@ -195,53 +219,54 @@ class _GameState extends State<Game> {
                   child: Container(
                 height: 10,
               )),
-              country.owner.isNotEmpty
-                  ? const Text('')
-                  : Center(
-                      child: Text(
-                      Languages.youshouldreloadReminderBuying[langindex],
-                      style: const TextStyle(
-                          fontSize: 15,
-                          color: Colors.red,
-                          fontWeight: FontWeight.bold),
-                    )),
-              Text(
-                            wrongproductionerror,
-                            style: const TextStyle(color: Colors.red,)),
+              Center(
+                  child: Text(
+                Languages.youshouldreloadReminderBuying[langindex],
+                style: const TextStyle(
+                    fontSize: 15,
+                    color: Colors.red,
+                    fontWeight: FontWeight.bold),
+              )),
+              Text(wrongproductionerror,
+                  style: const TextStyle(
+                    color: Colors.red,
+                  )),
             ],
           ),
           actions: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                bought[index] || country.owner.isNotEmpty
+                bought[index]
                     ? const Text('')
                     : TextButton(
                         onPressed: money < country.price.floor() || !canbebought
                             ? null
                             : () async {
-                                
                                 //print(canbebought);
-                                if(canbebought){
-                                      money < country.price.floor()
-                                          ? null
-                                          : buythiscard(context, country, index);
-                                      playSampleSound('assets/sounds/bought.mp3');
-                                      DateTime now = DateTime.now();
-                                      await FBOp.fetchUserTimesFB().then((value) {
-                                        //FETCH TIMES FROM FB
-                                        setState(() {
-                                          boughttimes = value;
-                                        });
-                                      });
-                                      boughttimes[index] = {
-                                        now.hour.toString().trim(): now.minute
-                                      };
-                                      await FBOp.updateUserTimesAndOwnerFB(
-                                          boughttimes,
-                                          index); // UPDATE TIMES AND OWNER IN FB
-                                      await greenBGColorFiller(); // WHEN COUNTRY IS BOUGHT UPDATE COLORS IN FB
-                                      await Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const Game()));
+                                if (canbebought) {
+                                  money < country.price.floor()
+                                      ? null
+                                      : buythiscard(context, country, index);
+                                  playSampleSound('assets/sounds/bought.mp3');
+                                  DateTime now = DateTime.now();
+                                  await FBOp.fetchUserTimesFB().then((value) {
+                                    //FETCH TIMES FROM FB
+                                    setState(() {
+                                      boughttimes = value;
+                                    });
+                                  });
+                                  boughttimes[index] = {
+                                    now.hour.toString().trim(): now.minute
+                                  };
+                                  await FBOp.updateUserTimesAndOwnersFB(
+                                      boughttimes,
+                                      index); // UPDATE TIMES AND OWNER IN FB
+                                  await greenBGColorFiller(); // WHEN COUNTRY IS BOUGHT UPDATE COLORS IN FB
+                                  await Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => const Game()));
                                 }
                               },
                         child: Text(
@@ -254,19 +279,20 @@ class _GameState extends State<Game> {
                         ),
                       ),
                 const SizedBox(
-                  width: 60,
+                  width: 50,
                   child: Text(''),
                 ),
                 TextButton(
-                  onPressed: () {
-                    playSampleSound('assets/sounds/close.mp3');
-                    Navigator.of(context).pop();
-                  },
-                  child:  Text(
-                    Languages.cancel[langindex],
-                    style: const TextStyle(color: Colors.red, fontSize: 20),
-                  ),
-                ),
+                        onPressed: () {
+                          playSampleSound('assets/sounds/close.mp3');
+                          Navigator.of(context).pop();
+                        },
+                        child: Text(
+                          Languages.close[langindex],
+                          style:
+                              const TextStyle(color: Colors.red, fontSize: 20),
+                        ),
+                      ),
               ],
             ),
             money < country.price.floor()
@@ -275,11 +301,12 @@ class _GameState extends State<Game> {
                       onPressed: () {
                         Navigator.of(context).pop();
                       },
-                      child:  Column(
+                      child: Column(
                         children: [
                           Text(
                             Languages.notenoughtmoney[langindex],
-                            style: const TextStyle(color: Colors.red, fontSize: 15),
+                            style: const TextStyle(
+                                color: Colors.red, fontSize: 15),
                           ),
                         ],
                       ),
@@ -289,7 +316,7 @@ class _GameState extends State<Game> {
           ],
         );
       },
-    );//.whenComplete(() => Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const Game())));
+    ); //.whenComplete(() => Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const Game())));
   }
 
   void _showMoneyChange(BuildContext context, int moneychange) {
@@ -329,7 +356,7 @@ class _GameState extends State<Game> {
                 },
                 child: Center(
                   child: Text(
-                    Languages.ok[langindex],                    
+                    Languages.ok[langindex],
                     style: const TextStyle(color: Colors.red, fontSize: 20),
                   ),
                 ),
@@ -340,6 +367,7 @@ class _GameState extends State<Game> {
       },
     );
   }
+
   void _userNameChange(BuildContext context) {
     showDialog(
       context: context,
@@ -359,17 +387,17 @@ class _GameState extends State<Game> {
                 children: [
                   SizedBox(
                     width: MediaQuery.of(context).size.width * 0.5,
-                    child: TextField(
-                      onChanged: (value) {
-                        setState(() {
-                          nickname = value;
-                        });
-                      }
-                    ),
+                    child: TextField(onChanged: (value) {
+                      setState(() {
+                        nickname = value;
+                      });
+                    }),
                   ),
-                  Center(child: Text(
-                      Languages.chooseAUniqueNickname[langindex],
-                      style: const TextStyle(color: Colors.red, fontSize: 14),)),
+                  Center(
+                      child: Text(
+                    Languages.chooseAUniqueNickname[langindex],
+                    style: const TextStyle(color: Colors.red, fontSize: 14),
+                  )),
                 ],
               ),
             ),
@@ -380,20 +408,17 @@ class _GameState extends State<Game> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   TextButton(
-                    onPressed: () async{
-                      if(nickname.isNotEmpty){
-                        
-                        await FBOp.changeUserNickname(nickname).then((value) => {
-                          Navigator.of(context).pop()
-                        });
-                      }
-                      else{
+                    onPressed: () async {
+                      if (nickname.isNotEmpty) {
+                        await FBOp.changeUserNickname(nickname)
+                            .then((value) => {Navigator.of(context).pop()});
+                      } else {
                         Navigator.of(context).pop();
                       }
                     },
                     child: Center(
                       child: Text(
-                        Languages.ok[langindex],                    
+                        Languages.ok[langindex],
                         style: const TextStyle(color: Colors.red, fontSize: 20),
                       ),
                     ),
@@ -427,7 +452,6 @@ class _GameState extends State<Game> {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   @override
   Widget build(BuildContext context) {
-    
     return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
       stream: FirebaseFirestore.instance.collection('users').snapshots(),
       builder: (context, AsyncSnapshot<QuerySnapshot> userssnapshot) {
@@ -479,19 +503,20 @@ class _GameState extends State<Game> {
                 }
               }
               money = player.money!;
-              
-              
+
               if (!countryBreaker) {
                 for (var doc in countriessnapshot.data!.docs) {
-                  countries.add(Country(
-                      name: doc.data()['name'],
-                      price: doc.data()['price'],
-                      income: doc.data()['income'],
-                      owner: doc.data()['owner'],
-                      production: doc.data()['production']),);
+                  countries.add(
+                    Country(
+                        name: doc.data()['name'],
+                        price: doc.data()['price'],
+                        income: doc.data()['income'],
+                        owners: List<String>.from(doc.data()['owners']),
+                        production: doc.data()['production']),
+                  );
                 }
                 for (var element in countries) {
-                if (money >= element.price.floor()) {
+                  if (money >= element.price.floor()) {
                     buyablecountries.add(countries.indexOf(element));
                   }
                 }
@@ -524,13 +549,13 @@ class _GameState extends State<Game> {
                           height: 50,
                           child: Center(
                               child: InkWell(
-                                onTap: () => _userNameChange(context),
-                                child: Text(
-                                                            '${FirebaseAuth.instance.currentUser!.displayName ?? player.nickname}',
-                                                            style: const TextStyle(
+                            onTap: () => _userNameChange(context),
+                            child: Text(
+                              '${FirebaseAuth.instance.currentUser!.displayName ?? player.nickname}',
+                              style: const TextStyle(
                                   fontSize: 22, color: Colors.white),
-                                                          ),
-                              ))),
+                            ),
+                          ))),
                     ],
                   ),
                   centerTitle: true,
@@ -544,8 +569,7 @@ class _GameState extends State<Game> {
                       onPressed: () {
                         Navigator.pushReplacement(
                           context,
-                          MaterialPageRoute(
-                              builder: (context) => const Game()),
+                          MaterialPageRoute(builder: (context) => const Game()),
                         );
                       },
                     ),
@@ -587,23 +611,32 @@ class _GameState extends State<Game> {
                       itemCount: bought.length,
                       itemBuilder: (context, index) {
                         return GestureDetector(
-                            onTap: ()async {
-                               await FBOp.checkNeededProductionBoughtBefore(countriessnapshot,productionpairs, countries[index].production)
-                               .then((value) { 
+                            onTap: () async {
+                              await FBOp.checkNeededProductionBoughtBefore(
+                                      countriessnapshot,
+                                      productionpairs,
+                                      countries[index].production)
+                                  .then((value) {
                                 //print('game value $value');
-                                value.keys.first == true ? setState(() {
-                                 canbebought = true;
-                               }): setState(() {
-                                 canbebought = false;////
-                               });
-                               setState(() {
-                                 canbebought ? wrongproductionerror = '' : wrongproductionerror = Languages.wrongproductionerror[langindex] + ':    ${value.values.first}';
-                                 canbebought ? buttoncolor = Colors.green : buttoncolor = Colors.red;
-                               });
-
-                               }).then((value) =>
-                              _showCountryDetails(
-                                  context, countries[index], canbebought ,index));
+                                value.keys.first == true
+                                    ? setState(() {
+                                        canbebought = true;
+                                      })
+                                    : setState(() {
+                                        canbebought = false; ////
+                                      });
+                                setState(() {
+                                  canbebought
+                                      ? wrongproductionerror = ''
+                                      : wrongproductionerror = Languages
+                                              .wrongproductionerror[langindex] +
+                                          ':    ${value.values.first}';
+                                  canbebought
+                                      ? buttoncolor = Colors.green
+                                      : buttoncolor = Colors.red;
+                                });
+                              }).then((value) => _showCountryDetails(context,
+                                      countries[index], canbebought, index));
                             },
                             child: Container(
                               height: 100,
@@ -612,7 +645,9 @@ class _GameState extends State<Game> {
                                 //image: index != 0 ? null :
                                 //Image.asset('images/australia.jpg',fit: BoxFit.fill, scale: 1.5),
 
-                                color: countries[index].owner.isEmpty ? buyablecountries.contains(index) ? Colors.blue : Colors.red : Colors.white,
+                                color: bought[index] ? Colors.green : buyablecountries.contains(index)
+                                    ? Colors.blue
+                                    :  Colors.red,
                                 border:
                                     Border.all(color: Colors.blue, width: 0.1),
                                 shape: BoxShape.rectangle,
@@ -620,10 +655,8 @@ class _GameState extends State<Game> {
                                     Radius.circular(10.0)),
                               ),
                               child: Card(
-                                color: bought[index] ||
-                                        countries[index].owner.isNotEmpty
-                                    ? Colors.green
-                                    : Colors.white,
+                                color:
+                                    bought[index] ? Colors.green : Colors.white,
                                 elevation: 5,
                                 child: Center(
                                   child: Text(

@@ -158,5 +158,33 @@ class Languages {
   'Bir ülkeyi satın alabilir veya satın alımını iptal edebilirsiniz',
   'Puedes vender un país o cancelar su venta',
   'この国を売るか、売却をキャンセルすることができます'];
+  static var firebaseautherror1 = ['The password provided is too weak.',
+  'Girdiğiniz parola çok zayıf.',
+  'La contraseña que ingresó es demasiado débil.',
+  'パスワードが弱すぎです。'];
+  static var firebaseautherror2 = ['An account already exists for that email.',
+  'Girdiğiniz e-posta adresi için bir hesap zaten var.',
+  'La cuenta ya existe para ese correo',
+  'このメールアドレスにはアカウントが既に存在しています。'];
+  static var firebaseautherror3 = ['The email address is badly formatted.',
+  'Girdiğiniz e-posta adresi geçerli bir formatta olmalıdır.',
+  'La dirección de correo electrónico está mal formateada.',
+  'メールアドレスが正しくフォーマットされていません。'];
+  static var firebaseautherror4 = ['No user found for that email.',
+  'Girdiğiniz e-posta adresi için bir kullanıcı bulunamadı.',
+  'No se encontro un usuario para ese correo',
+  'そのメールアドレスを持つユーザーが見つかりません。'];
+  static var firebaseautherror5 = ['Wrong password provided for that user.',
+  'Girdiğiniz kullanıcıya ait hatalı parola girdiniz.',
+  'Contrasenya incorrecta',
+  'そのユーザーのパスワードが間違っています。'];
+  static var firebaseautherror6 = ['The user account has been disabled.',
+  'Kullanıcı hesabı devre dışı bırakıldı.',
+  'La cuenta de usuario ha sido deshabilitada',
+  'アカウントのユーザーが無効になりました。'];
+  static var firebaseautherror7 = ['Invalid credentials.',
+  'Girdiğiniz bilgiler geçerli bir formatta olmalıdır.',
+  'Credenciales incorrectas',
+  '無効な認証情報です。'];
 }
                                           

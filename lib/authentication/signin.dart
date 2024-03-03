@@ -16,6 +16,7 @@ class _SignInScreenState extends State<SignInScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   String dropdownvalue = 'ENG';
+  String errortext = "";
   var dropdownitems = [
     'ENG',
     'TR',
@@ -54,11 +55,82 @@ class _SignInScreenState extends State<SignInScreen> {
         );
       } else {
         // The nickname is available, proceed with signing in
-        UserCredential userCredential = await _auth.signInWithEmailAndPassword(email: email,password: password);
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const StartPage()),
-        );
+        try {
+          UserCredential userCredential = await _auth.signInWithEmailAndPassword(email: email, password: password);
+          if (userCredential.user != null) {
+            // User is signed in, navigate to the home screen
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const StartPage()),
+            );
+          }
+        }
+        on FirebaseAuthException catch (e) {
+          if (e.code == 'weak-password') {
+            setState(() {
+              errortext = Languages.firebaseautherror1[langindex];
+            });
+          }
+          else if (e.code == 'email-already-in-use') {
+            setState(() {
+              errortext = Languages.firebaseautherror2[langindex];
+            });
+          }
+          else if (e.code == 'invalid-email') {
+            setState(() {
+              errortext = Languages.firebaseautherror3[langindex];
+            });
+          }
+          else if(e.code == 'user-not-found'){
+            setState(() {
+              errortext = Languages.firebaseautherror4[langindex];
+            });
+          }
+          else if( e.code == 'wrong-password'){
+            setState(() {
+              errortext = Languages.firebaseautherror5[langindex];
+            });
+          }
+          else if( e.code == 'user-disabled'){
+            setState(() {
+              errortext = Languages.firebaseautherror6[langindex];
+            });
+          }
+          else{
+            setState(() {
+              errortext = Languages.firebaseautherror7[langindex];
+            });
+          }
+        }
+      // UserCredential userCredential = await _auth.signInWithEmailAndPassword(email: email,password: password);
+      // if (userCredential.user != null) {
+      //   // User is signed in, navigate to the home screen
+      //   Navigator.pushReplacement(
+      //   context,
+      //   MaterialPageRoute(builder: (context) => const StartPage()),
+      // );
+      // }
+      // else {
+      //   print('aaa');
+      //   await showDialog(
+      //     context: context,
+      //     builder: (BuildContext context) {
+      //       return AlertDialog(
+      //         title: Text(Languages.pleaseenteravalidemailpass[langindex]),
+      //         //content: Text('Please choose a different nickname.'),
+      //         actions: [
+      //           TextButton(
+      //             onPressed: () {
+      //               Navigator.of(context).pop();
+      //             }
+      //             ,child: Text(Languages.ok[langindex]),
+      //           )
+      //         ]
+      //       );
+      //     }
+      //   );
+      // }
+        
       }
     } catch (e) {
       print("Error signing in: $e");
@@ -101,6 +173,11 @@ class _SignInScreenState extends State<SignInScreen> {
               TextField(
                 controller: _passwordController,
                 decoration:  InputDecoration(labelText: Languages.password[langindex]),
+              ),
+              const SizedBox(height: 20),
+              Text(
+                errortext,
+                style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold,fontSize: 20),
               ),
               const SizedBox(height: 20),
               ElevatedButton(

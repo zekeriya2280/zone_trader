@@ -1,4 +1,3 @@
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:zone_trader/authentication/signin.dart';
@@ -8,11 +7,12 @@ import 'package:zone_trader/screens/startpage.dart';
 
 class RegisterScreen extends StatefulWidget {
   int? langindex;
-  RegisterScreen({langindex,super.key});
+  RegisterScreen({langindex, super.key});
 
   @override
   _RegisterScreenState createState() => _RegisterScreenState();
 }
+
 class _RegisterScreenState extends State<RegisterScreen> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final TextEditingController _nicknameController = TextEditingController();
@@ -33,8 +33,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
     langChecker();
     super.initState();
   }
-  void langChecker()async{
-  }
+
+  void langChecker() async {}
 
   Future<void> _register() async {
     try {
@@ -46,39 +46,71 @@ class _RegisterScreenState extends State<RegisterScreen> {
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
-              title:  Text(Languages.pleaseenteravalidnicknameemailpass[langindex]),
+              title:
+                  Text(Languages.pleaseenteravalidnicknameemailpass[langindex]),
               actions: [
                 TextButton(
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
-                  child:  Text(Languages.ok[langindex]),
+                  child: Text(Languages.ok[langindex]),
                 ),
               ],
             );
           },
         );
       } else {
-         await FBOp.registerUserFB(nickname, email, dropdownvalue).then((value) async{
-          if(value != ''){
-            setState(() {
-              errortext = 'Nickname already exists';  
+        try {
+          late UserCredential userCredential;
+          await FBOp.registerUserFB(nickname, email, dropdownvalue)
+                .then((value) async {
+              if (value.isNotEmpty) {
+                setState(() {
+                  errortext = Languages.nicknameAlreadyInUse[langindex];
+                });
+              } else {
+                 userCredential = await _auth
+              .createUserWithEmailAndPassword(email: email, password: password);
+              }
             });
-             
-          }else{
-            UserCredential userCredential = await _auth.createUserWithEmailAndPassword(email: email,password: password);
+         
+          if (userCredential.user != null) {
             await userCredential.user!.updateDisplayName(nickname);
             await Navigator.pushReplacement(
               context,
-                MaterialPageRoute(builder: (context) => const StartPage()),
-              );
+              MaterialPageRoute(builder: (context) => const StartPage()),
+            );
+            
           }
-        });
+        } on FirebaseAuthException catch (e) {
+          if (e.code == 'weak-password') {
+            setState(() {
+              errortext = Languages.firebaseautherror1[langindex];
+            });
+          } else if (e.code == 'invalid-email') {
+            setState(() {
+              errortext = Languages.firebaseautherror3[langindex];
+            });
+          } else if (e.code == 'email-already-in-use') {
+            setState(() {
+              errortext = Languages.firebaseautherror2[langindex];
+            });
+          } else if (e.code == 'user-disabled') {
+            setState(() {
+              errortext = Languages.firebaseautherror6[langindex];
+            });
+          } else {
+            setState(() {
+              errortext = Languages.firebaseautherror7[langindex];
+            });
+          }
+        }
       }
     } catch (e) {
       print("Error signing in: $e");
     }
   }
+
   @override
   void dispose() {
     _emailController.dispose();
@@ -86,17 +118,22 @@ class _RegisterScreenState extends State<RegisterScreen> {
     _nicknameController.dispose();
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 169, 197, 246),
       appBar: AppBar(
         backgroundColor: Colors.blue,
-        title:  Center(child: Text( Languages.register[langindex],style: const TextStyle(
+        title: Center(
+            child: Text(
+          Languages.register[langindex],
+          style: const TextStyle(
             color: Colors.white,
             fontSize: 28,
             fontWeight: FontWeight.bold,
-          ),)),
+          ),
+        )),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -106,66 +143,81 @@ class _RegisterScreenState extends State<RegisterScreen> {
             children: [
               TextField(
                 controller: _nicknameController,
-                style: TextStyle(color: errortext.isEmpty ? Colors.black : Colors .red),
-                decoration:  InputDecoration(labelText: Languages.nickname[langindex]),
+                style: TextStyle(
+                    color: errortext.isEmpty ? Colors.black : Colors.red),
+                decoration:
+                    InputDecoration(labelText: Languages.nickname[langindex]),
               ),
               TextField(
                 controller: _emailController,
-                decoration:  InputDecoration(labelText: Languages.email[langindex]),
+                decoration:
+                    InputDecoration(labelText: Languages.email[langindex]),
               ),
               const SizedBox(height: 20),
               TextField(
                 controller: _passwordController,
-                decoration:  InputDecoration(labelText: Languages.password[langindex]),
+                decoration:
+                    InputDecoration(labelText: Languages.password[langindex]),
               ),
               const SizedBox(height: 20),
-              Text(errortext,style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold,fontSize: 20),),
+              Text(
+                errortext,
+                style: const TextStyle(
+                    color: Colors.red,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20),
+              ),
               const SizedBox(height: 20),
               ElevatedButton(
-                onPressed: _register,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
+                  onPressed: _register,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    elevation: 5,
+                    minimumSize: const Size(200, 70),
                   ),
-                  elevation: 5,
-                  minimumSize: const Size(200, 70),
-                ),
-                child:  Text(Languages.register[langindex],style: const TextStyle(
-              color: Colors.white,
-              fontSize: 30,
-              fontWeight: FontWeight.bold,
-            ),)
-              ),
+                  child: Text(
+                    Languages.register[langindex],
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 30,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  )),
               Padding(
                 padding: const EdgeInsets.all(76.0),
                 child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue
-                  ),
-                  onPressed: ()async {
+                  style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
+                  onPressed: () async {
                     await Navigator.pushReplacement(
-                      context,MaterialPageRoute(builder: (context) => const SignInScreen()),
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const SignInScreen()),
                     );
                   },
-                  child: Text(Languages.signin[langindex],style: const TextStyle(
-              color: Colors.white,
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),),
+                  child: Text(
+                    Languages.signin[langindex],
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
               ),
               Row(
                 children: [
-                  Expanded(child: Container(
-                    child: Center(
-                      child: Text(Languages.chooseyourlanguage[langindex],style: const TextStyle(
-                        color: Colors.red,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold
-                      )),
-                    )
-                  )),
+                  Expanded(
+                      child: Container(
+                          child: Center(
+                    child: Text(Languages.chooseyourlanguage[langindex],
+                        style: const TextStyle(
+                            color: Colors.red,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold)),
+                  ))),
                   Center(
                     child: SizedBox(
                       height: 50,
@@ -188,12 +240,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             )),
                           );
                         }).toList(),
-                        onChanged: (String? newValue) async{
+                        onChanged: (String? newValue) async {
                           setState(() {
                             dropdownvalue = newValue!;
                             langindex = dropdownitems.indexOf(newValue);
                           });
-                          
                         },
                       ),
                     ),

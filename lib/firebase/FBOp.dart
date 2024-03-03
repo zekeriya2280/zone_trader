@@ -8,7 +8,6 @@ class FBOp {
   static CollectionReference<Map<String, dynamic>> users = FirebaseFirestore.instance.collection('users');
   static CollectionReference<Map<String, dynamic>> countries = FirebaseFirestore.instance.collection('countries');
   static Future<String> registerUserFB(String nickname, String email, String dropdownvalue)async {
-    String result = '';
     if(await users.get().then((value) => value.docs.every((element) => element.id != nickname))){
       await users.doc(nickname).set({
         'nickname' : nickname,
@@ -20,10 +19,10 @@ class FBOp {
         'appcolorTheme' : [],
         'bgcolorTheme' : []
       });
-      return result = '';
+      return '';
     }
     else{
-      return result = 'Nickname already exists';
+      return 'Nickname already exists';
     }
   }
   static addCountryTOusers(String name, int price, int income)async{

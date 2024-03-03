@@ -53,22 +53,46 @@ class _GameState extends State<Game> {
       'bananajuice': ['banana', 'milk']
     },
     {
-      'orangesoda': ['orangejuice', 'watersoda']
+      'timber': ['wood']
     },
     {
-      'bread': ['floor', 'yeast', 'salt', 'water']
+      'chair': ['timber']
     },
     {
-      'melonsoda': ['melonjuice', 'watersoda']
+      'table': ['timber']
     },
     {
-      'melonjuice': ['melon', 'honey', 'sugar', 'water']
+      'washroom': ['ceramic']
     },
     {
       'bananasmoothie': ['bananajuice', 'sugar']
     },
     {
-      'bananashake': ['bananasmoothie', 'ice']
+      'door': ['wood']
+    },
+    {
+      'window': ['glass','wood']
+    },
+    {
+      'tire': ['rubber']
+    },
+    {
+      'house': ['window','table','chair','washroom','door']
+    },
+    {
+      'steel': ['coal','iron']
+    },
+    {
+      'cans': ['steel']
+    },
+    {
+      'bottle': ['plastic']
+    },
+    {
+      'engine': ['steel','plastic']
+    },
+    {
+      'car': ['engine','tire','plastic']
     },
   ];
 
@@ -659,15 +683,38 @@ class _GameState extends State<Game> {
                                     bought[index] ? Colors.green : Colors.white,
                                 elevation: 5,
                                 child: Center(
-                                  child: Text(
-                                    countries[index].name.contains(' ')
-                                        ? countries[index]
-                                            .name
-                                            .split(' ')
-                                            .join('\n')
-                                        : countries[index].name,
-                                    style: const TextStyle(
-                                        fontSize: 15, color: Colors.black),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Center(
+                                        
+                                        child: Text(
+                                          countries[index].name.contains(' ')
+                                              ? countries[index]
+                                                  .name
+                                                  .split(' ')
+                                                  .join('\n')
+                                              : countries[index].name,
+                                          style: bought[index] ? const TextStyle(
+                                              fontSize: 15, color: Colors.white,fontWeight: FontWeight.bold,letterSpacing: 1)
+                                              : const TextStyle(
+                                              fontSize: 15, color: Colors.black),
+                                        
+                                        ),
+                                      ),
+                                      Center(
+                                        child: Text(
+                                          countries[index].name.contains(' ')
+                                              ? countries[index].production.toString()
+                                              : countries[index].production.toString(),
+                                          style: bought[index] ? const TextStyle(
+                                              fontSize: 10, color: Colors.white,fontWeight: FontWeight.bold,letterSpacing: 1)
+                                              : const TextStyle(
+                                              fontSize: 10, color: Color.fromARGB(255, 255, 64, 0)),
+                                        
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ),

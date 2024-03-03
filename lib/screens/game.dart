@@ -594,7 +594,7 @@ class _GameState extends State<Game> {
                                 value.keys.first == true ? setState(() {
                                  canbebought = true;
                                }): setState(() {
-                                 canbebought = false;
+                                 canbebought = false;////
                                });
                                setState(() {
                                  canbebought ? wrongproductionerror = '' : wrongproductionerror = Languages.wrongproductionerror[langindex] + ':    ${value.values.first}';

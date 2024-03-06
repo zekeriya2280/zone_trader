@@ -79,13 +79,13 @@ class _MyCountryListState extends State<MyCountryList> {
         List<Country> myCountryList = [];
         for (var doc in snapshot.data!.docs) {
           var data = doc.data() as Map<String, dynamic>;
-          if(data['owner'] == FirebaseAuth.instance.currentUser!.displayName){
+          if(data['owners'].contains(FirebaseAuth.instance.currentUser!.displayName)){
             myCountryList.add(Country(
             name: data['name'],
             income: data['income'],
             price: data['price'], 
-            owners: data['owners'],
-            production: data['production'],
+            owners: List<String>.from(data['owners']),
+            productions: List<String>.from(data['productions']),
           ));
           }
         }
@@ -126,7 +126,7 @@ class _MyCountryListState extends State<MyCountryList> {
                             '  ${Languages.price[langindex]} ${myCountryList[index].price} \n' 
                             '  ${Languages.income[langindex]}: ${myCountryList[index].income} '
                           '\n  ${Languages.owners[langindex]}: ${myCountryList[index].owners}'
-                          '\n  ${Languages.production[langindex]}: ${myCountryList[index].production}',style: TextStyle(letterSpacing: 2,fontWeight: FontWeight.bold,color: Colors.blue,shadows: [Shadow(color: Colors.yellow,offset: Offset(1, 1),blurRadius: 2)]),),
+                          '\n  ${Languages.productions[langindex]}: ${myCountryList[index].productions}',style: TextStyle(letterSpacing: 2,fontWeight: FontWeight.bold,color: Colors.blue,shadows: [Shadow(color: Colors.yellow,offset: Offset(1, 1),blurRadius: 2)]),),
                     ),
                   ),
                 ),
@@ -151,7 +151,7 @@ class _MyCountryListState extends State<MyCountryList> {
                 Text('${Languages.price[langindex]}: ${country.price}'),
                 Text('${Languages.income[langindex]}: ${country.income}'),
                 Text('${Languages.owners[langindex]}: ${country.owners}'),
-                Text('${Languages.production[langindex]}: ${country.production}'),
+                Text('${Languages.productions[langindex]}: ${country.productions}'),
                 Expanded(child: Container()),
                 Center(child: Text(Languages.youshouldreloadReminderSelling[langindex], style: const TextStyle(fontSize: 13,color: Colors.red,fontWeight: FontWeight.bold),)),
               ],

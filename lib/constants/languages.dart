@@ -13,7 +13,7 @@ class Languages {
   static var price = ['Price', 'Fiyat', 'Precio', '価格'];
   static var income = ['Income', 'Gelir', 'Ingresos', '収入'];
   static var owners = ['Owners', 'Sahibleri', 'Duenos', '所有者達'];
-  static var production = ['Production', 'Üretim', 'Producción', '生産'];
+  static var productions = ['Productions', 'Üretimler', 'Producciónes', '生産'];
   static var wrongproductionerror = ["You can't buy this country without buying necessary item(s)",
     "Bu ülkeyi satın almak için gerekli item(ler)i satın almalısınız",
     "No puedes comprar este país sin comprar el (los) item necesario",
@@ -31,6 +31,9 @@ class Languages {
   static var close = ['Close', 'Kapat', 'Cerrar', '閉じる'];
   static var sell = ['Sell', 'Sat', 'Vender', '売る'];
   static var buy = ['Buy', 'Satın Al', 'Comprar', '買う'];
+  static var upgrade = ['Upgrade', 'Yükselt', 'Mejora', 'アップグレード'];
+  static var youcanbuythese = ['You can buy these', 'Bunları satın alabilirsiniz', 'Puedes comprar estos', 'これらを買うことができます'];
+  static var doyouwanttoupgrade = ['Do you want to upgrade', 'Yükseltmek istiyor musunuz?', '¿Deseas mejorar', 'アップグレードしますか'];
   static var mycountrylist = ['My Country List', 'Benim Ülke Listem', 'Mi Lista de Paises', '私の国のリスト'];
   static var congratulations = ['Congratulations', 'Tebrikler', 'Felicitaciones', 'おめでとう'];
   static var youearnedfromcountries = ['You earned from countries', 'Ülkelerden kazandığınız', 'Ganaste de los países', '国の利益'];

@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:zone_trader/authentication/signin.dart';
 import 'package:zone_trader/constants/languages.dart';
 import 'package:zone_trader/firebase/FBOp.dart';
@@ -63,24 +64,23 @@ class _RegisterScreenState extends State<RegisterScreen> {
         try {
           late UserCredential userCredential;
           await FBOp.registerUserFB(nickname, email, dropdownvalue)
-                .then((value) async {
-              if (value.isNotEmpty) {
-                setState(() {
-                  errortext = Languages.nicknameAlreadyInUse[langindex];
-                });
-              } else {
-                 userCredential = await _auth
-              .createUserWithEmailAndPassword(email: email, password: password);
-              }
-            });
-         
+              .then((value) async {
+            if (value.isNotEmpty) {
+              setState(() {
+                errortext = Languages.nicknameAlreadyInUse[langindex];
+              });
+            } else {
+              userCredential = await _auth.createUserWithEmailAndPassword(
+                  email: email, password: password);
+            }
+          });
+
           if (userCredential.user != null) {
             await userCredential.user!.updateDisplayName(nickname);
             await Navigator.pushReplacement(
               context,
               MaterialPageRoute(builder: (context) => const StartPage()),
             );
-            
           }
         } on FirebaseAuthException catch (e) {
           if (e.code == 'weak-password') {
@@ -124,7 +124,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 169, 197, 246),
       appBar: AppBar(
-        backgroundColor: Colors.blue,
+        backgroundColor: Colors.purple,
         title: Center(
             child: Text(
           Languages.register[langindex],
@@ -136,77 +136,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
         )),
       ),
       body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
+        child: Container(
+          margin: const EdgeInsets.all(34),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              TextField(
-                controller: _nicknameController,
-                style: TextStyle(
-                    color: errortext.isEmpty ? Colors.black : Colors.red),
-                decoration:
-                    InputDecoration(labelText: Languages.nickname[langindex]),
-              ),
-              TextField(
-                controller: _emailController,
-                decoration:
-                    InputDecoration(labelText: Languages.email[langindex]),
-              ),
-              const SizedBox(height: 20),
-              TextField(
-                controller: _passwordController,
-                decoration:
-                    InputDecoration(labelText: Languages.password[langindex]),
-              ),
-              const SizedBox(height: 20),
-              Text(
-                errortext,
-                style: const TextStyle(
-                    color: Colors.red,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20),
-              ),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                  onPressed: _register,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    elevation: 5,
-                    minimumSize: const Size(200, 70),
-                  ),
-                  child: Text(
-                    Languages.register[langindex],
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 30,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  )),
-              Padding(
-                padding: const EdgeInsets.all(76.0),
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
-                  onPressed: () async {
-                    await Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const SignInScreen()),
-                    );
-                  },
-                  child: Text(
-                    Languages.signin[langindex],
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
               Row(
                 children: [
                   Expanded(
@@ -214,7 +148,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           child: Center(
                     child: Text(Languages.chooseyourlanguage[langindex],
                         style: const TextStyle(
-                            color: Colors.red,
+                            color: Colors.purple,
                             fontSize: 20,
                             fontWeight: FontWeight.bold)),
                   ))),
@@ -226,7 +160,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         iconDisabledColor: Colors.yellow,
                         dropdownColor: const Color.fromARGB(252, 155, 99, 210),
                         alignment: Alignment.center,
-                        iconEnabledColor: Colors.red,
+                        iconEnabledColor: Colors.purple,
                         value: dropdownvalue,
                         padding: const EdgeInsets.only(left: 18),
                         icon: const Icon(Icons.keyboard_arrow_down),
@@ -250,7 +184,98 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ),
                   ),
                 ],
-              )
+              ),
+              SizedBox(height: MediaQuery.of(context).size.height * 0.05),
+              TextField(
+                controller: _nicknameController,
+                style: TextStyle(
+                    color: errortext.isEmpty ? Colors.black : Colors.red),
+                decoration: InputDecoration(
+                    hintText: Languages.nickname[langindex],
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(18),
+                        borderSide: BorderSide.none),
+                    fillColor: Colors.purple.withOpacity(0.1),
+                    filled: true,
+                    prefixIcon: const Icon(Icons.person)),
+                // decoration:
+                //     InputDecoration(labelText: Languages.nickname[langindex]),
+              ),
+              const SizedBox(height: 20),
+              TextField(
+                controller: _emailController,
+                decoration: InputDecoration(
+                    hintText: Languages.email[langindex],
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(18),
+                        borderSide: BorderSide.none),
+                    fillColor: Colors.purple.withOpacity(0.1),
+                    filled: true,
+                    prefixIcon: const Icon(Icons.email)),
+              ),
+              const SizedBox(height: 20),
+              TextField(
+                controller: _passwordController,
+                obscureText: true,
+                decoration: InputDecoration(
+                    hintText: Languages.password[langindex],
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(18),
+                        borderSide: BorderSide.none),
+                    fillColor: Colors.purple.withOpacity(0.1),
+                    filled: true,
+                    prefixIcon: const Icon(Icons.password)),
+              ),
+              const SizedBox(height: 20),
+              Text(
+                errortext,
+                style: const TextStyle(
+                    color: Colors.purple,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 18),
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                  onPressed: _register,
+                  style: ElevatedButton.styleFrom(
+                    shape: const StadiumBorder(),
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    backgroundColor: Colors.purple,
+                    elevation: 5,
+                    minimumSize: const Size(200, 70),
+                  ),
+                  child: Text(
+                    Languages.register[langindex],
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 30,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  )),
+              Padding(
+                padding: const EdgeInsets.all(76.0),
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    shape: const StadiumBorder(),
+                    padding: const EdgeInsets.symmetric(horizontal: 6),
+                    backgroundColor: Colors.purple,),
+                  onPressed: () async {
+                    await Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const SignInScreen()),
+                    );
+                  },
+                  child: Text(
+                    Languages.signin[langindex],
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
             ],
           ),
         ),

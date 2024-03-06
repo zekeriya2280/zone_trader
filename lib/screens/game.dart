@@ -34,6 +34,19 @@ class _GameState extends State<Game> {
   bool canbebought = false;
   String wrongproductionerror = '';
   Color buttoncolor = Colors.red;
+  String upgradelistviewselected = 'water';
+  List<String> upgradelistviewitems = [
+    'water',
+    'milk',
+    'sugar',
+    'yeast',
+    'orange',
+    'berries',
+    'wheat',
+    'iron',
+    'silver',
+    'gold',
+  ];
   var langs = [
     'ENG',
     'TR',
@@ -53,7 +66,7 @@ class _GameState extends State<Game> {
       'bananajuice': ['banana', 'milk']
     },
     {
-      'bread' : ['floor', 'yeast', 'water','milk','salt','sugar']
+      'bread': ['floor', 'yeast', 'water', 'milk', 'salt', 'sugar']
     },
     {
       'timber': ['wood']
@@ -74,16 +87,16 @@ class _GameState extends State<Game> {
       'door': ['wood']
     },
     {
-      'window': ['glass','wood']
+      'window': ['glass', 'wood']
     },
     {
       'tire': ['rubber']
     },
     {
-      'house': ['window','table','chair','washroom','door']
+      'house': ['window', 'table', 'chair', 'washroom', 'door']
     },
     {
-      'steel': ['coal','iron']
+      'steel': ['coal', 'iron']
     },
     {
       'cans': ['steel']
@@ -92,10 +105,10 @@ class _GameState extends State<Game> {
       'bottle': ['plastic']
     },
     {
-      'engine': ['steel','plastic']
+      'engine': ['steel', 'plastic']
     },
     {
-      'car': ['engine','tire','plastic']
+      'car': ['engine', 'tire', 'plastic']
     },
   ];
 
@@ -166,6 +179,7 @@ class _GameState extends State<Game> {
       {'production': 'bananashake'},); 
     */
     //await FBOp.updateCountriesPriceAndIncomesFB();// UPDATE COUNTRIES PRICES AND INCOMES FB---RESET!!!
+    //await FBOp.updateProductionsFB();// UPDATE COUNTRIES PRODUCTIONS to LISTs FB---RESET
     await FBOp.fetchBoughtColorsFB().then((value) {
       setState(() {
         bought = value;
@@ -219,25 +233,47 @@ class _GameState extends State<Game> {
             ));
     // Go back to the sign-in screen
   }
-
+  TextStyle detailtextstyle = TextStyle(fontWeight: FontWeight.bold,color: Colors.blue,shadows: [Shadow(color: Colors.yellow,offset: Offset(0.1, 0.1),blurRadius: 2)]);
   _showCountryDetails(BuildContext context, Country country, bool canbeboughtt,
       int index) async {
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Center(child: Text(country.name)),
+          title: Center(child: Text(country.name,style: detailtextstyle,)),
           content: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text('${Languages.price[langindex]}: \$${country.price.floor()}'),
-              Text(
-                  '${Languages.income[langindex]}: \$${country.income.floor()}'),
-              Text(country.owners.isEmpty
-                  ? '${Languages.owners[langindex]}: ${Languages.yok[langindex]}'
-                  : '${Languages.owners[langindex]}: ${country.owners.join(', ')}'),
-              Text('${Languages.production[langindex]}: ${country.production}'),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text('${Languages.price[langindex]}: ',style: detailtextstyle),
+                  Text('\$${country.price.floor()}'),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text('${Languages.income[langindex]}: ',style: detailtextstyle),
+                  Text('\$${country.income.floor()}'),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text('${Languages.owners[langindex]}: ',style: detailtextstyle),
+                  Text(country.owners.isEmpty
+                  ? Languages.yok[langindex] : country.owners.join(', ')),
+                ],
+              ),
+            // Text(country.owners.isEmpty
+            //     ? '${Languages.owners[langindex]}: ${Languages.yok[langindex]}'
+            //     : '${Languages.owners[langindex]}: ${country.owners.join(', ')}'),
+              Text('${Languages.productions[langindex]}:',style: detailtextstyle),
+              Text(country.productions.length > 3 ?  country.productions.map((e) => country.productions.indexOf(e) % 5 == 4 ? e = e+'\n' : e = e).join(', ')
+                  : 
+                  '${country.productions.join(', ')}'),
               Image.asset(
                 CountryImageNames.countryImageNames[index],
                 alignment: Alignment.center,
@@ -264,6 +300,162 @@ class _GameState extends State<Game> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
+                !bought[index]
+                    ? const Text('')
+                    : TextButton(
+                        onPressed: money < country.price.floor() || !canbebought
+                            ? null
+                            : () async {
+                                // SECOND DIALOG ////////////////////////
+                                await showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return AlertDialog(
+                                        title: Center(
+                                            child: Text(Languages
+                                                    .youcanbuythese[index] +
+                                                ' : ')),
+                                        content: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Center(
+                                                child: SizedBox(
+                                                  height: 60 *
+                                                              upgradelistviewitems
+                                                                  .length
+                                                                  .toDouble() <
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .height *
+                                                              0.5
+                                                      ? 60 *
+                                                          upgradelistviewitems
+                                                              .length
+                                                              .toDouble()
+                                                      : MediaQuery.of(context)
+                                                              .size
+                                                              .height *
+                                                          0.5,
+                                                  width: MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                      0.5,
+                                                  child: ListView.builder(
+                                                      itemCount:
+                                                          upgradelistviewitems
+                                                              .length,
+                                                      scrollDirection:
+                                                          Axis.vertical,
+                                                      itemBuilder:
+                                                          (context, listviewindex) {
+                                                        return Card(
+                                                            child: InkWell(
+                                                          onTap: () async {
+                                                            // UPGRADE LAST CHECK DIALOG /////////////////////
+                                                            await showDialog(
+                                                                context:
+                                                                    context,
+                                                                builder:
+                                                                    (context) {
+                                                                  return AlertDialog(
+                                                                    title: Center(
+                                                                        child: Column(
+                                                                          children: [
+                                                                            Text(upgradelistviewitems[listviewindex]),
+                                                                            Text(Languages.doyouwanttoupgrade[langindex] +
+                                                                                ' : ',style: const TextStyle(fontSize: 20,fontWeight: FontWeight.bold,color: Color.fromARGB(158, 33, 149, 243),),),
+                                                                          ],
+                                                                        )),
+                                                                    actions: [
+                                                                      Row(
+                                                                        mainAxisAlignment:
+                                                                            MainAxisAlignment.spaceEvenly,
+                                                                        children: [
+                                                                          TextButton(
+                                                                            onPressed:
+                                                                                () async {
+                                                                                 await FBOp.upgradeCountryItemFB(index,upgradelistviewitems[listviewindex]).then((value) => {Navigator.push(context, MaterialPageRoute(builder: (context) => const Game()))});
+                                                                            },
+                                                                            child:
+                                                                                Text(
+                                                                              Languages.upgrade[langindex],
+                                                                              style: const TextStyle(color: Colors.green, fontSize: 20),
+                                                                            ),
+                                                                          ),
+                                                                          TextButton(
+                                                                            onPressed:
+                                                                                () {
+                                                                              playSampleSound('assets/sounds/close.mp3');
+                                                                              Navigator.of(context).pop();
+                                                                            },
+                                                                            child:
+                                                                                Text(
+                                                                              Languages.cancel[langindex],
+                                                                              style: const TextStyle(color: Colors.red, fontSize: 20),
+                                                                            ),
+                                                                          ),
+                                                                        ],
+                                                                      )
+                                                                    ],
+                                                                  );
+                                                                });
+                                                          },
+                                                          child: ListTile(
+                                                            //title: Center(child: Text(myCountryList[index].name,style: const TextStyle(fontSize: 22,color: Colors.blue,fontWeight: FontWeight.bold),)),
+                                                            subtitle: Center(
+                                                              child: Padding(
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                        .all(
+                                                                        8.0),
+                                                                child: Text(
+                                                                    upgradelistviewitems[
+                                                                        listviewindex] //\n'
+                                                                    //  '  ${Languages.income[langindex]}: ${myCountryList[index].income} '
+                                                                    //'\n  ${Languages.owners[langindex]}: ${myCountryList[index].owners}'
+                                                                    //'\n  ${Languages.productions[langindex]}: ${myCountryList[index].productions}',style: TextStyle(letterSpacing: 2,fontWeight: FontWeight.bold,color: Colors.blue,shadows: [Shadow(color: Colors.yellow,offset: Offset(1, 1),blurRadius: 2)]),),
+                                                                    ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ));
+                                                      }),
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                height: 10,
+                                              )
+                                            ]),
+                                            actions: [
+                                              Center(
+                                                child: TextButton(
+                                                  onPressed: () {
+                                                    playSampleSound('assets/sounds/close.mp3');
+                                                  },
+                                                  child: Text(
+                                                    Languages.cancel[langindex],
+                                                    style: TextStyle(
+                                                        color: Colors.red,
+                                                        fontSize: 18),
+                                                  )
+                                                ),
+                                              )
+                                            ],
+                                            );
+                                  },
+                                );
+                              },
+                        child: Text(
+                          Languages.upgrade[langindex],
+                          style: TextStyle(
+                              color: money >= country.price.floor()
+                                  ? Colors.green
+                                  : Colors.red,
+                              fontSize: 20),
+                        ),
+                      ),
                 bought[index]
                     ? const Text('')
                     : TextButton(
@@ -310,16 +502,15 @@ class _GameState extends State<Game> {
                   child: Text(''),
                 ),
                 TextButton(
-                        onPressed: () {
-                          playSampleSound('assets/sounds/close.mp3');
-                          Navigator.of(context).pop();
-                        },
-                        child: Text(
-                          Languages.close[langindex],
-                          style:
-                              const TextStyle(color: Colors.red, fontSize: 20),
-                        ),
-                      ),
+                  onPressed: () {
+                    playSampleSound('assets/sounds/close.mp3');
+                    Navigator.of(context).pop();
+                  },
+                  child: Text(
+                    Languages.close[langindex],
+                    style: const TextStyle(color: Colors.red, fontSize: 20),
+                  ),
+                ),
               ],
             ),
             money < country.price.floor()
@@ -539,7 +730,8 @@ class _GameState extends State<Game> {
                         price: doc.data()['price'],
                         income: doc.data()['income'],
                         owners: List<String>.from(doc.data()['owners']),
-                        production: doc.data()['production']),
+                        productions:
+                            List<String>.from(doc.data()['productions'])),
                   );
                 }
                 for (var element in countries) {
@@ -639,12 +831,15 @@ class _GameState extends State<Game> {
                       itemBuilder: (context, index) {
                         return GestureDetector(
                             onTap: () async {
-                              await FBOp.checkNeededProductionBoughtBefore(
+                              await FBOp.checkNeededProductionsBoughtBefore(
                                       countriessnapshot,
                                       productionpairs,
-                                      countries[index].production)
+                                      countries[index]
+                                          .productions
+                                          .first
+                                          .toString())
                                   .then((value) {
-                                //print('game value $value');
+                                print('game value $value');
                                 value.keys.first == true
                                     ? setState(() {
                                         canbebought = true;
@@ -672,9 +867,11 @@ class _GameState extends State<Game> {
                                 //image: index != 0 ? null :
                                 //Image.asset('images/australia.jpg',fit: BoxFit.fill, scale: 1.5),
 
-                                color: bought[index] ? Colors.green : buyablecountries.contains(index)
-                                    ? Colors.blue
-                                    :  Colors.red,
+                                color: bought[index]
+                                    ? Colors.green
+                                    : buyablecountries.contains(index)
+                                        ? Colors.blue
+                                        : Colors.red,
                                 border:
                                     Border.all(color: Colors.blue, width: 0.1),
                                 shape: BoxShape.rectangle,
@@ -690,7 +887,6 @@ class _GameState extends State<Game> {
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       Center(
-                                        
                                         child: Text(
                                           countries[index].name.contains(' ')
                                               ? countries[index]
@@ -698,23 +894,38 @@ class _GameState extends State<Game> {
                                                   .split(' ')
                                                   .join('\n')
                                               : countries[index].name,
-                                          style: bought[index] ? const TextStyle(
-                                              fontSize: 15, color: Colors.white,fontWeight: FontWeight.bold,letterSpacing: 1)
+                                          style: bought[index]
+                                              ? const TextStyle(
+                                                  fontSize: 15,
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.bold,
+                                                  letterSpacing: 1)
                                               : const TextStyle(
-                                              fontSize: 15, color: Colors.black),
-                                        
+                                                  fontSize: 15,
+                                                  color: Colors.black),
                                         ),
                                       ),
                                       Center(
                                         child: Text(
-                                          countries[index].name.contains(' ')
-                                              ? countries[index].production.toString()
-                                              : countries[index].production.toString(),
-                                          style: bought[index] ? const TextStyle(
-                                              fontSize: 10, color: Colors.white,fontWeight: FontWeight.bold,letterSpacing: 1)
+                                         countries[index]
+                                                 .productions.length > 3  ? 
+                                         countries[index].productions[0] + '\n' + countries[index].productions[1] + '\n' +  countries[index].productions[2] + "\n  :+: "
+                                         :
+                                          countries[index]
+                                                  .productions
+                                                  .join('\n') + "\n    + ",
+                                          //maxLines: 3,
+                                          overflow: TextOverflow.fade,
+                                          style: bought[index]
+                                              ? const TextStyle(
+                                                  fontSize: 10,
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.bold,
+                                                  letterSpacing: 1)
                                               : const TextStyle(
-                                              fontSize: 10, color: Color.fromARGB(255, 255, 64, 0)),
-                                        
+                                                  fontSize: 10,
+                                                  color: Color.fromARGB(
+                                                      255, 255, 64, 0)),
                                         ),
                                       ),
                                     ],

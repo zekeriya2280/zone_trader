@@ -44,7 +44,7 @@ class FBOp {
         price: e.data()['price'],
         income: e.data()['income'],
         owners: e.data()['owners'],
-        production: e.data()['production']))));
+        productions: e.data()['productions']))));
     return cl;
   }
 
@@ -73,6 +73,29 @@ class FBOp {
           'owners': List<String>.filled(0, ''),
           'owner': FieldValue.delete()
         })));
+  }
+
+  static Future<void> updateProductionsFB() async {
+    List<String> productions = [];
+    await countries.get().then((value) => value.docs.forEach((e) {
+          productions.add(e.data()['production']);
+        }));
+    await countries.get().then((value) => value.docs.forEach((e) {
+          countries.doc(e.id).update({
+            'productions': List<String>.filled(0, ''),
+            'production': FieldValue.delete()
+          });
+        }));
+    await countries.get().then((value) {
+      for (var i = 0; i < value.docs.length; i++) {
+        List<String> productions2 = [];
+        productions2.add(productions[i]);
+        countries.doc(value.docs[i].id).update({'productions': productions2});
+      }
+      //value.docs.forEach((e) {
+      //}
+      //);
+    });
   }
 
   static Future<List<bool>> fetchBoughtColorsFB() async {
@@ -328,6 +351,7 @@ class FBOp {
     return false;
   }
 
+/*
   static Future<void> addToCountriesNewVariablesFB(
       Map<String, String> data,
       Map<String, String> data2,
@@ -402,69 +426,42 @@ class FBOp {
       }
     });
   }
-
-  static Future<Map<bool, String>> checkNeededProductionBoughtBefore(
+*/
+  static Future<Map<bool, String>> checkNeededProductionsBoughtBefore(
       AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot,
       List<Map<String, List<String>>> pairs,
       String wanttobuyproduct) async {
     List<String> counter = [];
-    if (wanttobuyproduct == 'water' ||
-        wanttobuyproduct == 'sugar' ||
-        wanttobuyproduct == 'orange' ||
-        wanttobuyproduct == 'milk' ||
-        wanttobuyproduct == 'banana' ||
-        wanttobuyproduct == 'salt' ||
-        wanttobuyproduct == 'wheat' ||
-        wanttobuyproduct == 'yeast' ||
-        wanttobuyproduct == 'honey' ||
-        wanttobuyproduct == 'cocoa' ||
-        wanttobuyproduct == 'potato' ||
-        wanttobuyproduct == 'olives' ||
-        wanttobuyproduct == 'tomato' ||
-        wanttobuyproduct == 'bronze' ||
-        wanttobuyproduct == 'iron' ||
-        wanttobuyproduct == 'gold' ||
-        wanttobuyproduct == 'silver' ||
-        wanttobuyproduct == 'copper' ||
-        wanttobuyproduct == 'coal' ||
-        wanttobuyproduct == 'meat' ||
-        wanttobuyproduct == 'eggs' ||
-        wanttobuyproduct == 'beef' ||
-        wanttobuyproduct == 'leather' ||
-        wanttobuyproduct == 'mutton' ||
-        wanttobuyproduct == 'wool' ||
-        wanttobuyproduct == 'wood' ||
-        wanttobuyproduct == 'plastic' ||
-        wanttobuyproduct == 'glass' ||
-        wanttobuyproduct == 'rubber'||
-        wanttobuyproduct == 'ceramic') {
+    if (pairs.every((element) => element.keys.first != wanttobuyproduct)) {
       return {true: ''};
     } else {
-      
-      pairs.forEach((element) {
+      for (var element in pairs) {
         if (element.keys.first == wanttobuyproduct) {
-          
           element.values.first.forEach((value0) async {
-           
-            snapshot.data!.docs.forEach((value2) {
-              if (value2.data()['production'] == value0) {
-                 print('valu0 : ' + value2
-                    .data()['owners'].toString());
-                if (!value2
+            for (var value2 in snapshot.data!.docs)  {
+              if(value2.data()['productions'].contains(value0) && !value2
                     .data()['owners']
-                    .contains(FirebaseAuth.instance.currentUser!.displayName)) {
-                  counter.add(value0);
-                  
-                } else {
-                  counter.remove(value0);
-                }
+                    .contains(FirebaseAuth.instance.currentUser!.displayName)  ){
+                     //print('a');
+                counter.add(value0);
               }
-            });
+              else if(value2.data()['productions'].contains(value0) && value2
+                    .data()['owners']
+                    .contains(FirebaseAuth.instance.currentUser!.displayName)){
+                      //print('b');
+                      counter.remove(value0);
+                      break;
+              }
+              else{
+                //print('c');
+              }
+            }
           });
         }
-      });
+      }
+      print(counter);
     }
-    return counter == []
+    return counter == [] || counter.isEmpty
         ? {true: ''}
         : {false: '\n     ' + counter.toSet().join('  ,  ').toUpperCase()};
   }
@@ -479,6 +476,25 @@ class FBOp {
             .doc(value.docs[i].id)
             .update({'income': (value.docs[i].data()['price'] * 0.15).floor()});
       }
+    });
+  }
+  static Future<List<String>> fetchIndexProductions(int index)async{
+    List<String> items = [];
+    await countries.get().then((value) {
+      items = List<String>.from(value.docs[index].data()['productions']);
+    });
+    return items;
+  }
+  static Future<void> upgradeCountryItemFB(int index, String newitem)async{
+    print('index' + index.toString() + 'newitem' + newitem);
+    List<String> items = [];
+    await fetchIndexProductions(index).then((value) => items = value).then((value) => {
+      items.add(newitem),
+    });
+    await countries.get().then((value) {
+      countries
+          .doc(value.docs[index].id)
+          .update({'productions': items});
     });
   }
 }

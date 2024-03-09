@@ -19,6 +19,7 @@ class _MyCountryListState extends State<MyCountryList> {
   Color bgcolor = Colors.white;
   int langindex = 0;
   Color textcolors = Colors.black;
+  TextStyle detailtextstyle = TextStyle(fontWeight: FontWeight.bold,color: Colors.blue,shadows: [Shadow(color: Colors.yellow,offset: Offset(0.1, 0.1),blurRadius: 2)]);
   var langs = [
     'ENG',
     'TR',
@@ -32,18 +33,21 @@ class _MyCountryListState extends State<MyCountryList> {
     getLang();
     super.initState();
   }
-  void getLang()async{
+
+  void getLang() async {
     await FBOp.getLanguage().then((value) {
       setState(() {
         langindex = langs.indexOf(value);
       });
     });
   }
+
   void playSampleSound(String path) async {
-     AudioPlayer player = AudioPlayer();
+    AudioPlayer player = AudioPlayer();
     await player.setAsset(path);
     await player.play();
   }
+
   colorProducer() async {
     await FBOp.getAppColorTheme().then((value) {
       setState(() {
@@ -65,6 +69,7 @@ class _MyCountryListState extends State<MyCountryList> {
       });
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
@@ -79,60 +84,126 @@ class _MyCountryListState extends State<MyCountryList> {
         List<Country> myCountryList = [];
         for (var doc in snapshot.data!.docs) {
           var data = doc.data() as Map<String, dynamic>;
-          if(data['owners'].contains(FirebaseAuth.instance.currentUser!.displayName)){
+          if (data['owners']
+              .contains(FirebaseAuth.instance.currentUser!.displayName)) {
             myCountryList.add(Country(
-            name: data['name'],
-            income: data['income'],
-            price: data['price'], 
-            owners: List<String>.from(data['owners']),
-            productions: List<String>.from(data['productions']),
-          ));
+              name: data['name'],
+              income: data['income'],
+              price: data['price'],
+              owners: List<String>.from(data['owners']),
+              productions: List<String>.from(data['productions']),
+            ));
           }
         }
 
         return Scaffold(
           backgroundColor: bgcolor,
           appBar: AppBar(
-            automaticallyImplyLeading: false,
-            title: Text(Languages.mycountrylist[langindex],style: const TextStyle(color: Colors.white,fontSize: 22,fontWeight: FontWeight.bold,letterSpacing: 2),),
-            centerTitle: true,
-            backgroundColor: appBarColor,
-            actions: [
-              Padding(
-                padding: const EdgeInsets.only(right:18.0),
-                child: IconButton(
-                  icon: const Icon(Icons.home,size: 30,color: Colors.white,), 
-                  onPressed: ()async{ 
-                    await Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const Game()));
-                   },
-                ),
-              )
-            ]
-          ),
-          body: 
-          myCountryList.isEmpty ? Center(child: Text(Languages.youhavenocountry[langindex],style: TextStyle(fontSize: 22,color: textcolors,fontWeight: FontWeight.bold),)) :
-          ListView.builder(
-            itemCount: myCountryList.length,
-            itemBuilder: (context, index) {
-              return Card(
-                child: InkWell(
-                  onTap: () {
-                    _showPopup(context, myCountryList[index]);
-                  },
-                  child: ListTile(
-                    title: Center(child: Text(myCountryList[index].name,style: const TextStyle(fontSize: 22,color: Colors.blue,fontWeight: FontWeight.bold),)),
-                    subtitle: Center(
-                      child: Text(
-                            '  ${Languages.price[langindex]} ${myCountryList[index].price} \n' 
-                            '  ${Languages.income[langindex]}: ${myCountryList[index].income} '
-                          '\n  ${Languages.owners[langindex]}: ${myCountryList[index].owners}'
-                          '\n  ${Languages.productions[langindex]}: ${myCountryList[index].productions}',style: TextStyle(letterSpacing: 2,fontWeight: FontWeight.bold,color: Colors.blue,shadows: [Shadow(color: Colors.yellow,offset: Offset(1, 1),blurRadius: 2)]),),
+              automaticallyImplyLeading: false,
+              title: Text(
+                Languages.mycountrylist[langindex],
+                style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 2),
+              ),
+              centerTitle: true,
+              backgroundColor: appBarColor,
+              actions: [
+                Padding(
+                  padding: const EdgeInsets.only(right: 18.0),
+                  child: IconButton(
+                    icon: const Icon(
+                      Icons.home,
+                      size: 30,
+                      color: Colors.white,
                     ),
+                    onPressed: () async {
+                      await Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const Game()));
+                    },
                   ),
+                )
+              ]),
+          body: myCountryList.isEmpty
+              ? Center(
+                  child: Text(
+                  Languages.youhavenocountry[langindex],
+                  style: TextStyle(
+                      fontSize: 22,
+                      color: textcolors,
+                      fontWeight: FontWeight.bold),
+                ))
+              : ListView.builder(
+                  itemCount: myCountryList.length,
+                  itemBuilder: (context, index) {
+                    return Card(
+                      child: InkWell(
+                        onTap: () {
+                          _showPopup(context, myCountryList[index]);
+                        },
+                        child: ListTile(
+                          title: Center(
+                              child: Text(
+                            myCountryList[index].name,
+                            style: const TextStyle(
+                                fontSize: 22,
+                                color: Colors.blue,
+                                fontWeight: FontWeight.bold),
+                          )),
+                          subtitle: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text('${Languages.price[langindex]}: ',
+                                        style: detailtextstyle),
+                                    Text('\$${myCountryList[index].price.floor()}'),
+                                  ],
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text('${Languages.income[langindex]}: ',
+                                        style: detailtextstyle),
+                                    Text('\$${myCountryList[index].income.floor()}'),
+                                  ],
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text('${Languages.owners[langindex]}: ',
+                                        style: detailtextstyle),
+                                    Text(myCountryList[index].owners.isEmpty
+                                        ? Languages.yok[langindex]
+                                        : myCountryList[index].owners.join(', ')),
+                                  ],
+                                ),
+                                // Text(country.owners.isEmpty
+                                //     ? '${Languages.owners[langindex]}: ${Languages.yok[langindex]}'
+                                //     : '${Languages.owners[langindex]}: ${country.owners.join(', ')}'),
+                                Text('${Languages.productions[langindex]}:',
+                                    style: detailtextstyle),
+                                Text(myCountryList[index].productions.length > 3
+                                    ? myCountryList[index].productions
+                                        .map((e) =>
+                                            myCountryList[index].productions.indexOf(e) %
+                                                        5 ==
+                                                    4
+                                                ? e = e + '\n'
+                                                : e = e)
+                                        .join(', ')
+                                    : '${myCountryList[index].productions.join(', ')}'),
+                              ]),
+                        ),
+                      ),
+                    );
+                  },
                 ),
-              );
-            },
-          ),
         );
       },
     );
@@ -143,7 +214,11 @@ class _MyCountryListState extends State<MyCountryList> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Center(child: Text(country.name,style: const TextStyle(fontSize: 20,fontWeight: FontWeight.bold),)),
+          title: Center(
+              child: Text(
+            country.name,
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          )),
           content: SizedBox(
             height: MediaQuery.of(context).size.height * 0.15,
             child: Column(
@@ -151,9 +226,17 @@ class _MyCountryListState extends State<MyCountryList> {
                 Text('${Languages.price[langindex]}: ${country.price}'),
                 Text('${Languages.income[langindex]}: ${country.income}'),
                 Text('${Languages.owners[langindex]}: ${country.owners}'),
-                Text('${Languages.productions[langindex]}: ${country.productions}'),
+                Text(
+                    '${Languages.productions[langindex]}: ${country.productions}'),
                 Expanded(child: Container()),
-                Center(child: Text(Languages.youshouldreloadReminderSelling[langindex], style: const TextStyle(fontSize: 13,color: Colors.red,fontWeight: FontWeight.bold),)),
+                Center(
+                    child: Text(
+                  Languages.youshouldreloadReminderSelling[langindex],
+                  style: const TextStyle(
+                      fontSize: 13,
+                      color: Colors.red,
+                      fontWeight: FontWeight.bold),
+                )),
               ],
             ),
           ),
@@ -161,25 +244,34 @@ class _MyCountryListState extends State<MyCountryList> {
             SizedBox(
               width: MediaQuery.of(context).size.width * 0.3,
               child: TextButton(
-                style: ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.red)),
+                style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all(Colors.red)),
                 onPressed: () {
                   playSampleSound('assets/sounds/close.mp3');
                   Navigator.of(context).pop(); // Cancel button
                 },
-                child: Text(Languages.cancel[langindex],style: const TextStyle(color: Colors.white),),
+                child: Text(
+                  Languages.cancel[langindex],
+                  style: const TextStyle(color: Colors.white),
+                ),
               ),
             ),
             SizedBox(
               width: MediaQuery.of(context).size.width * 0.3,
               child: TextButton(
-                style: ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.green)),
-              onPressed: ()async {
-               await FBOp.sellCountryFB(country).then((value) { 
-                playSampleSound('assets/sounds/bought.mp3');
-                Navigator.of(context).pop();});
-              },
-              child: Text(Languages.sell[langindex],style: const TextStyle(color: Colors.white),),
-            ),
+                style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all(Colors.green)),
+                onPressed: () async {
+                  await FBOp.sellCountryFB(country).then((value) {
+                    playSampleSound('assets/sounds/bought.mp3');
+                    Navigator.of(context).pop();
+                  });
+                },
+                child: Text(
+                  Languages.sell[langindex],
+                  style: const TextStyle(color: Colors.white),
+                ),
+              ),
             ),
           ],
         );

@@ -466,18 +466,7 @@ class FBOp {
         : {false: '\n     ' + counter.toSet().join('  ,  ').toUpperCase()};
   }
 
-  static Future<void> updateCountriesPriceAndIncomesFB() async {
-    await countries.get().then((value) {
-      for (var i = 0; i < value.docs.length; i++) {
-        countries
-            .doc(value.docs[i].id)
-            .update({'price': ((i / 3).floor() + 1) * 1000});
-        countries
-            .doc(value.docs[i].id)
-            .update({'income': (value.docs[i].data()['price'] * 0.15).floor()});
-      }
-    });
-  }
+  
   static Future<List<String>> fetchIndexProductions(int index)async{
     List<String> items = [];
     await countries.get().then((value) {
@@ -485,16 +474,48 @@ class FBOp {
     });
     return items;
   }
-  static Future<void> upgradeCountryItemFB(int index, String newitem)async{
-    print('index' + index.toString() + 'newitem' + newitem);
+  static Future<int> fetchIndexPrice(int index)async{
+    int price = 0;
+    await countries.get().then((value) {
+      price = value.docs[index].data()['price'];
+    });
+    return price;
+  }
+  static Future<void> updateCountriesNewIncomesFB() async {
+    await countries.get().then((value) {
+      for (var i = 0; i < value.docs.length; i++) {
+        countries
+            .doc(value.docs[i].id)
+            .update({'income': (value.docs[i].data()['price'] * 0.12).floor()});
+      }
+    });
+  }
+  static Future<void> upgradeCountryItemFB(int index, Map<String,int> newitem)async{
+    print('index' + index.toString() + 'newitem' + newitem.toString());
     List<String> items = [];
     await fetchIndexProductions(index).then((value) => items = value).then((value) => {
-      items.add(newitem),
+      items.add(newitem.keys.first),
     });
     await countries.get().then((value) {
       countries
           .doc(value.docs[index].id)
           .update({'productions': items});
+    });
+    await fetchIndexPrice(index).then((oldprice) => {
+      countries.get().then((value) => countries
+          .doc(value.docs[index].id)
+          .update({'price': oldprice + newitem.values.first}),
+    )});
+    
+    
+  }
+  static Future<void> updateAllPricesFB(List<Map<String, int>> pricesmaps)async{
+    await countries.get().then((value) {
+      for (var i = 0; i < value.docs.length; i++) {
+        countries.doc(value.docs[i].id).update({
+          'price': pricesmaps[i].values.first
+        });
+      }
     });
   }
 }

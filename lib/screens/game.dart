@@ -34,18 +34,55 @@ class _GameState extends State<Game> {
   bool canbebought = false;
   String wrongproductionerror = '';
   Color buttoncolor = Colors.red;
-  String upgradelistviewselected = 'water';
-  List<String> upgradelistviewitems = [
-    'water',
-    'milk',
-    'sugar',
-    'yeast',
-    'orange',
-    'berries',
-    'wheat',
-    'iron',
-    'silver',
-    'gold',
+  List<Map<String, int>> upgradelistviewitems = [
+   {'water':1200},
+   {'sugar':1500},
+   {'salt':1800},
+   {'orange':2100},
+   {'banana':2400},
+   {'flour':1900},
+   {'yeast':2200},
+   {'milk':1400},
+   {'honey':2500},
+   {'cocoa':2800},
+   {'potato':3100},
+   {'olives':3400},
+   {'tomato':3700},
+   {'bread':4100},
+   {'bronze':4400},
+   {'silver':4700},
+   {'gold':5000},
+   {'iron':4300},
+   {'copper':4600},
+   {'coal':4200},
+   {'meat':3300},
+   {'eggs':3100},
+   {'beef':3600},
+   {'leather':4000},
+   {'mutton':4100},
+   {'wool':3800},
+   {'wood':2400},
+   {'timber':4000},
+   {'chair':5000},
+   {'table':5200},
+   {'ceramic':3400},
+   {'washroom':5500},
+   {'door':5200},
+   {'plastic':3300},
+   {'bottle':4000},
+   {'glass':4000},
+   {'window':6000},
+   {'house':10000},
+   {'rubber':4000},
+   {'tire':5200},
+   {'engine':7000},
+   {'car':15000},
+   {'watersoda':3300},
+   {'bananajuice':4500},
+   {'orangejuice':4500},
+   {'steel':4700},
+   {'cans':5700},
+   {'bananasmoothie':6000},
   ];
   var langs = [
     'ENG',
@@ -87,7 +124,7 @@ class _GameState extends State<Game> {
       'door': ['wood']
     },
     {
-      'window': ['glass', 'wood']
+      'window': ['glass', 'plastic']
     },
     {
       'tire': ['rubber']
@@ -145,6 +182,18 @@ class _GameState extends State<Game> {
       });
     });
   }
+  List<Map<String,int>> findupgradableitems(int money, List<String> olditems){
+   
+    List<Map<String,int>> temp = [];
+    for(var item in upgradelistviewitems){
+       
+      if(money >= item.values.first && olditems.every((element) => element != item.keys.first)) {
+        temp.add(item);
+        print(temp);
+      }
+    }
+    return temp;
+  }
 
   void playSampleSound(String path) async {
     AudioPlayer player = AudioPlayer();
@@ -180,6 +229,7 @@ class _GameState extends State<Game> {
     */
     //await FBOp.updateCountriesPriceAndIncomesFB();// UPDATE COUNTRIES PRICES AND INCOMES FB---RESET!!!
     //await FBOp.updateProductionsFB();// UPDATE COUNTRIES PRODUCTIONS to LISTs FB---RESET
+    await FBOp.updateAllPricesFB(upgradelistviewitems);// UPDATE COUNTRIES PRICES AND INCOMES FB---RESET
     await FBOp.fetchBoughtColorsFB().then((value) {
       setState(() {
         bought = value;
@@ -206,7 +256,7 @@ class _GameState extends State<Game> {
     //print('allsubmin $allsubmin');
     List<double> howmanyincomes = [];
     for (var submin in allsubmin) {
-      howmanyincomes.add(submin / 5);
+      howmanyincomes.add(submin / 10);
     }
 
     await FBOp.findCountryIncomeAndAddFB(howmanyincomes)
@@ -236,6 +286,7 @@ class _GameState extends State<Game> {
   TextStyle detailtextstyle = TextStyle(fontWeight: FontWeight.bold,color: Colors.blue,shadows: [Shadow(color: Colors.yellow,offset: Offset(0.1, 0.1),blurRadius: 2)]);
   _showCountryDetails(BuildContext context, Country country, bool canbeboughtt,
       int index) async {
+       // print(country.productions);
     showDialog(
       context: context,
       builder: (context) {
@@ -306,15 +357,16 @@ class _GameState extends State<Game> {
                         onPressed: money < country.price.floor() || !canbebought
                             ? null
                             : () async {
-                                // SECOND DIALOG ////////////////////////
+                                ///////////////// SECOND DIALOG ////////////////////////
                                 await showDialog(
                                   context: context,
                                   builder: (context) {
                                     return AlertDialog(
+                                        backgroundColor: Color.fromARGB(240, 27, 29, 27),
                                         title: Center(
                                             child: Text(Languages
-                                                    .youcanbuythese[index] +
-                                                ' : ')),
+                                                    .youcanbuythese[langindex] +
+                                                ' : ',style: TextStyle(color: Colors.white),)),
                                         content: Column(
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.center,
@@ -344,7 +396,7 @@ class _GameState extends State<Game> {
                                                       0.5,
                                                   child: ListView.builder(
                                                       itemCount:
-                                                          upgradelistviewitems
+                                                          findupgradableitems(money,country.productions)
                                                               .length,
                                                       scrollDirection:
                                                           Axis.vertical,
@@ -353,7 +405,7 @@ class _GameState extends State<Game> {
                                                         return Card(
                                                             child: InkWell(
                                                           onTap: () async {
-                                                            // UPGRADE LAST CHECK DIALOG /////////////////////
+                                                            /////////////// UPGRADE LAST CHECK DIALOG /////////////////////
                                                             await showDialog(
                                                                 context:
                                                                     context,
@@ -363,7 +415,9 @@ class _GameState extends State<Game> {
                                                                     title: Center(
                                                                         child: Column(
                                                                           children: [
-                                                                            Text(upgradelistviewitems[listviewindex]),
+                                                                            Text(findupgradableitems(money,country.productions)[listviewindex].keys.first,style: const TextStyle(fontSize: 20,fontWeight: FontWeight.bold,color: Color.fromARGB(158, 33, 149, 243),),),
+                                                                            Text(findupgradableitems(money,country.productions)[listviewindex].values.first.toString() + "\$",style: const TextStyle(fontSize: 20,fontWeight: FontWeight.bold,color: Colors.orange),),
+                                                                            SizedBox(height: 10,),
                                                                             Text(Languages.doyouwanttoupgrade[langindex] +
                                                                                 ' : ',style: const TextStyle(fontSize: 20,fontWeight: FontWeight.bold,color: Color.fromARGB(158, 33, 149, 243),),),
                                                                           ],
@@ -376,7 +430,8 @@ class _GameState extends State<Game> {
                                                                           TextButton(
                                                                             onPressed:
                                                                                 () async {
-                                                                                 await FBOp.upgradeCountryItemFB(index,upgradelistviewitems[listviewindex]).then((value) => {Navigator.push(context, MaterialPageRoute(builder: (context) => const Game()))});
+                                                                                 await FBOp.upgradeCountryItemFB(index,findupgradableitems(money,country.productions)[listviewindex]).
+                                                                                                       then((value) => {Navigator.push(context, MaterialPageRoute(builder: (context) => const Game()))});
                                                                             },
                                                                             child:
                                                                                 Text(
@@ -401,6 +456,7 @@ class _GameState extends State<Game> {
                                                                     ],
                                                                   );
                                                                 });
+                                                                //////////////// END OF THE THIRD DIALOG /////////////////
                                                           },
                                                           child: ListTile(
                                                             //title: Center(child: Text(myCountryList[index].name,style: const TextStyle(fontSize: 22,color: Colors.blue,fontWeight: FontWeight.bold),)),
@@ -410,18 +466,26 @@ class _GameState extends State<Game> {
                                                                     const EdgeInsets
                                                                         .all(
                                                                         8.0),
-                                                                child: Text(
-                                                                    upgradelistviewitems[
-                                                                        listviewindex] //\n'
-                                                                    //  '  ${Languages.income[langindex]}: ${myCountryList[index].income} '
-                                                                    //'\n  ${Languages.owners[langindex]}: ${myCountryList[index].owners}'
-                                                                    //'\n  ${Languages.productions[langindex]}: ${myCountryList[index].productions}',style: TextStyle(letterSpacing: 2,fontWeight: FontWeight.bold,color: Colors.blue,shadows: [Shadow(color: Colors.yellow,offset: Offset(1, 1),blurRadius: 2)]),),
+                                                                child: Column(
+                                                                  children: [
+                                                                    Text(
+                                                                        findupgradableitems(money,country.productions)[listviewindex].keys.first.toString()
+                                                                        , style: TextStyle(fontSize: 20,color: Colors.green, fontWeight: FontWeight.bold),
                                                                     ),
-                                                              ),
+                                                                    Text(
+                                                                        findupgradableitems(money,country.productions)[listviewindex].values.first.toString() + "\$"
+                                                                        , style: TextStyle(fontSize: 18,color: Colors.orange, fontWeight: FontWeight.bold),
+                                                                    ),
+                                                                  ],
+                                                                ),
                                                             ),
                                                           ),
-                                                        ));
-                                                      }),
+                                                        )
+                                                        )
+                                                        );
+                                      
+                                                      }
+                                                      ),
                                                 ),
                                               ),
                                               SizedBox(
@@ -433,12 +497,13 @@ class _GameState extends State<Game> {
                                                 child: TextButton(
                                                   onPressed: () {
                                                     playSampleSound('assets/sounds/close.mp3');
+                                                    Navigator.of(context).pop();
                                                   },
                                                   child: Text(
                                                     Languages.cancel[langindex],
                                                     style: TextStyle(
                                                         color: Colors.red,
-                                                        fontSize: 18),
+                                                        fontSize: 19,letterSpacing: 2),
                                                   )
                                                 ),
                                               )
@@ -446,6 +511,7 @@ class _GameState extends State<Game> {
                                             );
                                   },
                                 );
+                                ////////////// END OF THE SECOND DIALOG  //////////////////////
                               },
                         child: Text(
                           Languages.upgrade[langindex],
@@ -670,6 +736,7 @@ class _GameState extends State<Game> {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   @override
   Widget build(BuildContext context) {
+    FBOp.updateCountriesNewIncomesFB();
     return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
       stream: FirebaseFirestore.instance.collection('users').snapshots(),
       builder: (context, AsyncSnapshot<QuerySnapshot> userssnapshot) {
@@ -907,13 +974,13 @@ class _GameState extends State<Game> {
                                       ),
                                       Center(
                                         child: Text(
-                                         countries[index]
-                                                 .productions.length > 3  ? 
-                                         countries[index].productions[0] + '\n' + countries[index].productions[1] + '\n' +  countries[index].productions[2] + "\n  :+: "
-                                         :
                                           countries[index]
-                                                  .productions
-                                                  .join('\n') + "\n    + ",
+                                                  .productions.length > 3  ? 
+                                          countries[index].productions[0] + '\n' + countries[index].productions[1] + '\n' +  countries[index].productions[2] + "\n  :+: "
+                                          :
+                                          countries[index]
+                                                 .productions
+                                                  .join('\n') + "\n   + ",
                                           //maxLines: 3,
                                           overflow: TextOverflow.fade,
                                           style: bought[index]

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:zone_trader/constants/countryImageNames.dart';
 import 'package:zone_trader/models/country.dart';
 
 class FBOp {
@@ -17,8 +18,8 @@ class FBOp {
         'nickname': nickname,
         'email': email,
         'money': 2000,
-        'bought': List<bool>.filled(48, false),
-        'times': List<Map<String, dynamic>>.filled(48, {'60': 60}),
+        'bought': List<bool>.filled(CountryImageNames.countryandcitynumber, false),
+        'times': List<Map<String, dynamic>>.filled(CountryImageNames.countryandcitynumber, {'60': 60}),
         'language': dropdownvalue,
         'appcolorTheme': [],
         'bgcolorTheme': []
@@ -180,7 +181,7 @@ class FBOp {
         .doc(FirebaseAuth.instance.currentUser!.displayName)
         .get()
         .then((value) => Map<String, dynamic>.from(value.data()!)['money']);
-    List<Map<String, int>> test = List<Map<String, int>>.filled(48, {'60': 60});
+    List<Map<String, int>> test = List<Map<String, int>>.filled(CountryImageNames.countryandcitynumber, {'60': 60});
     for (var i = 0; i < indexes.length; i++) {
       test[indexes[i]] = {
         DateTime.now().hour.toString(): DateTime.now().minute
@@ -200,11 +201,11 @@ class FBOp {
 
   static Future<void> updateCountriesIncomesFB() async {
     List<int> prices = [];
-    for (var i = 0; i < 48; i++) {
+    for (var i = 0; i < CountryImageNames.countryandcitynumber; i++) {
       prices.add(
           await countries.get().then((value) => value.docs[i].data()['price']));
     }
-    for (var i = 0; i < 48; i++) {
+    for (var i = 0; i < CountryImageNames.countryandcitynumber; i++) {
       countries.get().then((value) => countries
           .doc(value.docs[i].id)
           .update({'income': (prices[i] * 0.15).floor()}));
@@ -214,7 +215,7 @@ class FBOp {
   static Future<void> changeSamePricesFB() async {
     List<int> prices = [];
     List<int> samenumbers = [];
-    for (var i = 0; i < 48; i++) {
+    for (var i = 0; i < CountryImageNames.countryandcitynumber; i++) {
       prices.add(
           await countries.get().then((value) => value.docs[i].data()['price']));
     }

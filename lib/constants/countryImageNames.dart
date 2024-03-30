@@ -49,5 +49,5 @@ class CountryImageNames {
     'images/Poland.jpeg',
     'images/Italy.jpeg',
   ];
-  
+  static final int countryandcitynumber = countryImageNames.length;
 }

@@ -115,6 +115,21 @@ flutter:
     - images/Norway.jpeg
     - images/Poland.jpeg
     - images/Italy.jpeg
+    - images/Algiers.png
+    - images/Ankara.png
+    - images/Beijing.png
+    - images/Bucharest.png
+    - images/BuenosAires.png
+    - images/Canberra.png
+    - images/McMurdo.png
+    - images/MexicoCity.png
+    - images/Moscow.png
+    - images/NewDelhi.png
+    - images/Ottawa.png
+    - images/Putrajaya.png
+    - images/Riyadh.png
+    - images/Tokyo.png
+
     - images/start.jpeg
     - images/intro.jpeg
     - images/up.png

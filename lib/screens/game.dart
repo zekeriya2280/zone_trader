@@ -24,9 +24,9 @@ class _GameState extends State<Game> {
   int money = 10000;
   bool countryBreaker = false;
   Player player = Player('', '', 0, [], [], [], [], 'ENG');
-  List<bool> bought = List<bool>.filled(48, false);
+  List<bool> bought = List<bool>.filled(CountryImageNames.countryandcitynumber, false);
   List<Map<String, dynamic>> boughttimes =
-      List<Map<String, dynamic>>.filled(48, {'60': 60});
+      List<Map<String, dynamic>>.filled(CountryImageNames.countryandcitynumber, {'60': 60});
   Color appBarColor = Colors.blue;
   Color bgcolor = Colors.white;
   int langindex = 0;
@@ -204,7 +204,7 @@ class _GameState extends State<Game> {
   Future<void> updateBought() async {
     //await FBOp.resetTimesFB(boughttimes); //RESETS TIMES FB---RESET!!!
     //await FBOp.updateCountryOwners(); //ADDS OWNER FIELDS TO ALL COUNTRIES FB---RESET!!!
-    //await FBOp.updateBoughtColorsFB(List<bool>.filled(48, false)); // ALL COUNTRIES ARE NOT BOUGHT---RESET!!!
+    //await FBOp.updateBoughtColorsFB(List<bool>.filled(CountryImageNames.countryandcitynumber, false)); // ALL COUNTRIES ARE NOT BOUGHT---RESET!!!
     //await FBOp.updateCountriesIncomesFB(); // MAKE ALL INCOMES 20% OF THE PRICES FB---RESET!!!
     //await FBOp.changeSamePricesFB(); // CHANGE SAME PRICES FB---RESET!!!
     /*

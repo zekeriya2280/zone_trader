@@ -229,7 +229,14 @@ class _GameState extends State<Game> {
     */
     //await FBOp.updateCountriesPriceAndIncomesFB();// UPDATE COUNTRIES PRICES AND INCOMES FB---RESET!!!
     //await FBOp.updateProductionsFB();// UPDATE COUNTRIES PRODUCTIONS to LISTs FB---RESET
-    await FBOp.updateAllPricesFB(upgradelistviewitems);// UPDATE COUNTRIES PRICES AND INCOMES FB---RESET
+    //await FBOp.updateAllPricesFB(upgradelistviewitems);// UPDATE COUNTRIES PRICES AND INCOMES FB---RESET
+    
+    List<String> temp = [];
+    CountryImageNames.countryImageNames.forEach((element) {
+      temp.add(element.split('/')[1].split('.')[0]);
+    });
+    //print(temp.length);
+    //await FBOp.allCountryManagementFB(temp);// UPDATE COUNTRIES PRICES AND INCOMES FB---RESET
     await FBOp.fetchBoughtColorsFB().then((value) {
       setState(() {
         bought = value;

@@ -141,10 +141,10 @@ class Languages {
   'Ülkenin bilgilerini burada görebilirsiniz',
   'Puedes ver la información del país.',
   'ここに国の情報が表示されます。'];
-  static var howtoplaytext20 = ['You can buy this country or cancel buying it.',
-  'Bu ülkeyi satın alabilir veya satın alımını iptal edebilirsiniz',
-  'Puedes comprar este país o cancelar su compra',
-  'この国を購入するか、購入をキャンセルすることができます'];
+  static var howtoplaytext20 = ['You can buy this country or cancel buying it. Income will be added to your money every 10 minutos',
+  'Bu ülkeyi satın alabilir veya satın alımını iptal edebilirsiniz. 10 dakikada bir kar eklenir',
+  'Puedes comprar este país o cancelar su compra. El ingreso se agregará a su dinero cada 10 minutos',
+  'この国を購入するか、購入をキャンセルすることができます. 10分毎に利益が追加されます'];
   static var howtoplaytext21 = ['You can see your country list here',
   'Satın aldığınız ülkeleriniz burada',
   'Puedes ver tu lista deaises',
@@ -157,7 +157,7 @@ class Languages {
   'Ülke detaylarını ülkenin üzerine tıklayarak görebilirsiniz',
   'Cuando hagas clic en un país, puedes ver los detalles de ese país.',
   '国の詳細を表示するには、国をクリックしてください'];
-  static var howtoplaytext24 = ['You can sell a country or cancel selling.',
+  static var howtoplaytext24 = ['You can sell a country or cancel selling',
   'Bir ülkeyi satın alabilir veya satın alımını iptal edebilirsiniz',
   'Puedes vender un país o cancelar su venta',
   'この国を売るか、売却をキャンセルすることができます'];

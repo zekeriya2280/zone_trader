@@ -519,4 +519,37 @@ class FBOp {
       }
     });
   }
+  static Future<void> allCountryManagementFB(List<String> names)async{
+    //List<Country> co = [];
+   //await countries.get().then((value) {
+   //  for (var i = 0; i < value.docs.length; i++) {
+   //    co.add(Country(
+   //      name: value.docs[i].data()['name'],
+   //      price: value.docs[i].data()['price'],
+   //      income: value.docs[i].data()['income'],
+   //      owners: List<String>.from(value.docs[i].data()['owners']),
+   //      productions: List<String>.from(value.docs[i].data()['productions']),
+   //    ));
+   //  }
+   //  
+   //});
+   //co = co.toList() + co.toList();
+   await countries.doc('Mongolia').set({
+        'price': 1200,
+        'income': 144,
+        'owners': [],
+        'productions': ['water'],
+        'name': 'Mongolia'});
+   //  });
+   //for (var i = 0; i < names.length; i++) {
+   //  print('counter: '+ names.length.toString());
+   //  await countries.doc(names[i]).set({
+   //    'price': 1200,
+   //    'income': 144,
+   //    'owners': [],
+   //    'productions': ['water'],
+   //    'name': names[i]
+   //  });
+   //}
+  }
 }

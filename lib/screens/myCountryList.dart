@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:zone_trader/constants/languages.dart';
 import 'package:zone_trader/firebase/FBOp.dart';
@@ -228,15 +229,20 @@ class _MyCountryListState extends State<MyCountryList> {
                 Text('${Languages.owners[langindex]}: ${country.owners}'),
                 Text(
                     '${Languages.productions[langindex]}: ${country.productions}'),
-                Expanded(child: Container()),
+                //Expanded(child: Container()),
+                //SizedBox(height: 30),
                 Center(
-                    child: Text(
-                  Languages.youshouldreloadReminderSelling[langindex],
-                  style: const TextStyle(
-                      fontSize: 13,
-                      color: Colors.red,
-                      fontWeight: FontWeight.bold),
-                )),
+                    child: SizedBox(
+                      height: 20,
+                      child: Text(
+                                        Languages.youshouldreloadReminderSelling[langindex],
+                                        style: const TextStyle(
+                        fontSize: 13,
+                        color: Colors.red,
+                        fontWeight: FontWeight.bold),
+                                      ),
+                    )),
+                
               ],
             ),
           ),

@@ -61,10 +61,10 @@ class FBOp {
         .update({'bought': bought});
   }
 
-  static Future<void> resetTimesFB(List<Map<String, dynamic>> times) async {
+  static Future<void> resetTimesAndBoughtFB(List<Map<String, dynamic>> times,List<bool> bought) async {  /////RESET
     await users
         .doc(FirebaseAuth.instance.currentUser!.displayName)
-        .update({'times': times});
+        .update({'times': times,'bought':bought});
   }
 
   static Future<void> updateCountryOwners() async {
@@ -257,6 +257,14 @@ class FBOp {
       }
       List<String> owners = await fetchownersFB(index);
       owners.remove(FirebaseAuth.instance.currentUser!.displayName);
+      owners.isEmpty ? 
+      await countries.doc(value.docs[index].id).update({
+        'owners': owners,
+        'productions': ["water"],
+        'income': 144,
+        'price': 1200,
+      })
+      :
       await countries.doc(value.docs[index].id).update({
         'owners': owners,
       });
@@ -534,22 +542,17 @@ class FBOp {
    //  
    //});
    //co = co.toList() + co.toList();
-   await countries.doc('Mongolia').set({
-        'price': 1200,
-        'income': 144,
-        'owners': [],
-        'productions': ['water'],
-        'name': 'Mongolia'});
-   //  });
-   //for (var i = 0; i < names.length; i++) {
-   //  print('counter: '+ names.length.toString());
-   //  await countries.doc(names[i]).set({
-   //    'price': 1200,
-   //    'income': 144,
-   //    'owners': [],
-   //    'productions': ['water'],
-   //    'name': names[i]
-   //  });
-   //}
+  //await countries.doc('Australia').update({
+  //     'price': 1300,});
+    //});
+   for (var i = 0; i < names.length; i++) {  //<-----------------------------------
+     await countries.doc(names[i]).set({  //<-----------------------------------
+       'price': 1200,  //<-----------------------------------
+       'income': 144,  //<-----------------------------------
+       'owners': [],  //<-----------------------------------
+       'productions': ['water'],  //<-----------------------------------
+       'name': names[i]  //<-----------------------------------
+     });  //<-----------------------------------
+   }
   }
 }

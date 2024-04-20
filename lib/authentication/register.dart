@@ -36,7 +36,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   void langChecker() async {}
 
-  Future<void> _register() async {
+  Future _register() async {
     try {
       String email = _emailController.text;
       String password = _passwordController.text;
@@ -64,6 +64,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           late UserCredential userCredential;
           await FBOp.registerUserFB(nickname, email, dropdownvalue)
               .then((value) async {
+                print(value);
             if (value.isNotEmpty) {
               setState(() {
                 errortext = Languages.nicknameAlreadyInUse[langindex];
@@ -80,6 +81,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
               context,
               MaterialPageRoute(builder: (context) => const StartPage()),
             );
+          }
+          else{
+            return Center(child: CircularProgressIndicator(strokeWidth: 2,color: Colors.green,));
           }
         } on FirebaseAuthException catch (e) {
           if (e.code == 'weak-password') {

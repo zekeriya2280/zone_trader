@@ -33,6 +33,7 @@ class Languages {
   static var buy = ['Buy', 'Satın Al', 'Comprar', '買う'];
   static var upgrade = ['Upgrade', 'Yükselt', 'Mejora', 'アップグレード'];
   static var youcanbuythese = ['You can buy these', 'Bunları satın alabilirsiniz', 'Puedes comprar estos', 'これらを買うことができます'];
+  static var youdonthaveenoughmoney = ["You don't have enough money", 'Yeterli paran yok', 'No tienes suficiente dinero', 'お金が足りません'];
   static var doyouwanttoupgrade = ['Do you want to upgrade', 'Yükseltmek istiyor musunuz?', '¿Deseas mejorar', 'アップグレードしますか'];
   static var mycountrylist = ['My Country List', 'Benim Ülke Listem', 'Mi Lista de Paises', '私の国のリスト'];
   static var congratulations = ['Congratulations', 'Tebrikler', 'Felicitaciones', 'おめでとう'];
@@ -59,6 +60,7 @@ class Languages {
   static var chooseyourlanguage = ['Choose your language:', 'Dili Seçin:', 'Elige tu idioma:', '言語を選択:'];
   static var notenoughtmoney = ['Not enough money', 'YETERSİZ PARA', 'No tienes suficiente dinero', '所持金不足'];
   static var yok = ['Nobody', 'Yok', 'No hay', '無し'];
+  static var water = ['Water', 'Su', 'Agua', '水'];
   static var youhavenocountry = ['You have no country', 'Ülkeniz yok', 'No tienes un primer país', 'あなたは国を持っていません'];
   static var changeUserNickname = ['Change User Nickname', 'Kullanıcı Takma Adını Değiştir', 'Cambiar nombre de usuario', 'ユーザーのニックネームを変更'];
   static var chooseAUniqueNickname = ['Choose a unique nickname', 

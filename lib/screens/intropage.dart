@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:zone_trader/authentication/signin.dart';
+import 'package:zone_trader/constants/countryImageNames.dart';
 import 'package:zone_trader/constants/languages.dart';
 import 'package:zone_trader/firebase/FBOp.dart';
 import 'package:zone_trader/screens/game.dart';
@@ -33,7 +34,12 @@ class _IntroPageState extends State<IntroPage> {
     super.initState();
   }
   void getLang()async{
-    
+   //List<String> temp = [];
+   //CountryImageNames.countryImageNames.forEach((element) {
+   //  temp.add(element.split('/')[1].split('.')[0]);
+   //});
+   //print(temp.length);
+   //await FBOp.allCountryManagementFB(temp);// UPDATE COUNTRIES PRICES AND INCOMES FB---RESET
     await FBOp.getLanguage().then((value) {
       setState(() {
         langindex = langs.indexOf(value);
@@ -60,6 +66,7 @@ class _IntroPageState extends State<IntroPage> {
 
   @override
   Widget build(BuildContext context) {
+    
     return StreamBuilder<User?>(
         stream: _auth.authStateChanges(),
         builder: (context, snapshot) {

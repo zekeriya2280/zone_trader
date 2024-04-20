@@ -37,6 +37,7 @@ dependencies:
   just_audio: ^0.9.36
   rename: ^3.0.1
   intl: ^0.19.0
+  gsheets: 
   
 
 dev_dependencies:
@@ -68,7 +69,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - images/Australia.jpeg
-    - images/arabia.jpeg
+    - images/Arabia.jpeg
     - images/Algeria.jpeg
     - images/India.jpeg
     - images/Antarctica.jpeg
@@ -87,7 +88,7 @@ flutter:
     - images/Congo.jpeg
     - images/Greenland.jpeg
     - images/Peru.jpeg
-    - images/indonesia.jpeg
+    - images/Indonesia.jpeg
     - images/Sweden.jpeg
     - images/Venezuela.jpeg
     - images/Libya.jpeg
@@ -115,6 +116,8 @@ flutter:
     - images/Norway.jpeg
     - images/Poland.jpeg
     - images/Italy.jpeg
+    - images/Nepal.jpeg
+    - images/Sudan.jpeg
     - images/Algiers.png
     - images/Ankara.png
     - images/Beijing.png
@@ -134,6 +137,8 @@ flutter:
     - images/Bamako.png
     - images/Brasilia.png
     - images/Caracas.png
+    - images/Cairo.png
+    - images/Congo.jpeg
     - images/Conakry.png
     - images/Islamabad.png
     - images/Jakarta.png

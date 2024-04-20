@@ -2,12 +2,14 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:zone_trader/authentication/signin.dart';
 import 'package:zone_trader/constants/countryImageNames.dart';
 import 'package:zone_trader/constants/languages.dart';
 import 'package:zone_trader/firebase/FBOp.dart';
 import 'package:zone_trader/models/country.dart';
+import 'package:zone_trader/models/gsheet.dart';
 import 'package:zone_trader/models/player.dart';
 import 'package:zone_trader/screens/intropage.dart';
 import 'package:zone_trader/screens/myCountryList.dart';
@@ -24,9 +26,10 @@ class _GameState extends State<Game> {
   int money = 10000;
   bool countryBreaker = false;
   Player player = Player('', '', 0, [], [], [], [], 'ENG');
-  List<bool> bought = List<bool>.filled(CountryImageNames.countryandcitynumber, false);
-  List<Map<String, dynamic>> boughttimes =
-      List<Map<String, dynamic>>.filled(CountryImageNames.countryandcitynumber, {'60': 60});
+  List<bool> bought =
+      List<bool>.filled(CountryImageNames.countryandcitynumber, false);
+  List<Map<String, dynamic>> boughttimes = List<Map<String, dynamic>>.filled(
+      CountryImageNames.countryandcitynumber, {'60': 60});
   Color appBarColor = Colors.blue;
   Color bgcolor = Colors.white;
   int langindex = 0;
@@ -35,54 +38,54 @@ class _GameState extends State<Game> {
   String wrongproductionerror = '';
   Color buttoncolor = Colors.red;
   List<Map<String, int>> upgradelistviewitems = [
-   {'water':1200},
-   {'sugar':1500},
-   {'salt':1800},
-   {'orange':2100},
-   {'banana':2400},
-   {'flour':1900},
-   {'yeast':2200},
-   {'milk':1400},
-   {'honey':2500},
-   {'cocoa':2800},
-   {'potato':3100},
-   {'olives':3400},
-   {'tomato':3700},
-   {'bread':4100},
-   {'bronze':4400},
-   {'silver':4700},
-   {'gold':5000},
-   {'iron':4300},
-   {'copper':4600},
-   {'coal':4200},
-   {'meat':3300},
-   {'eggs':3100},
-   {'beef':3600},
-   {'leather':4000},
-   {'mutton':4100},
-   {'wool':3800},
-   {'wood':2400},
-   {'timber':4000},
-   {'chair':5000},
-   {'table':5200},
-   {'ceramic':3400},
-   {'washroom':5500},
-   {'door':5200},
-   {'plastic':3300},
-   {'bottle':4000},
-   {'glass':4000},
-   {'window':6000},
-   {'house':10000},
-   {'rubber':4000},
-   {'tire':5200},
-   {'engine':7000},
-   {'car':15000},
-   {'watersoda':3300},
-   {'bananajuice':4500},
-   {'orangejuice':4500},
-   {'steel':4700},
-   {'cans':5700},
-   {'bananasmoothie':6000},
+    {'water': 1200},
+    {'sugar': 1500},
+    {'salt': 1800},
+    {'orange': 2100},
+    {'banana': 2400},
+    {'flour': 1900},
+    {'yeast': 2200},
+    {'milk': 1400},
+    {'honey': 2500},
+    {'cocoa': 2800},
+    {'potato': 3100},
+    {'olives': 3400},
+    {'tomato': 3700},
+    {'bread': 4100},
+    {'bronze': 4400},
+    {'silver': 4700},
+    {'gold': 5000},
+    {'iron': 4300},
+    {'copper': 4600},
+    {'coal': 4200},
+    {'meat': 3300},
+    {'eggs': 3100},
+    {'beef': 3600},
+    {'leather': 4000},
+    {'mutton': 4100},
+    {'wool': 3800},
+    {'wood': 2400},
+    {'timber': 4000},
+    {'chair': 5000},
+    {'table': 5200},
+    {'ceramic': 3400},
+    {'washroom': 5500},
+    {'door': 5200},
+    {'plastic': 3300},
+    {'bottle': 4000},
+    {'glass': 4000},
+    {'window': 6000},
+    {'house': 10000},
+    {'rubber': 4000},
+    {'tire': 5200},
+    {'engine': 7000},
+    {'car': 15000},
+    {'watersoda': 3300},
+    {'bananajuice': 4500},
+    {'orangejuice': 4500},
+    {'steel': 4700},
+    {'cans': 5700},
+    {'bananasmoothie': 6000},
   ];
   var langs = [
     'ENG',
@@ -182,14 +185,14 @@ class _GameState extends State<Game> {
       });
     });
   }
-  List<Map<String,int>> findupgradableitems(int money, List<String> olditems){
-   
-    List<Map<String,int>> temp = [];
-    for(var item in upgradelistviewitems){
-       
-      if(money >= item.values.first && olditems.every((element) => element != item.keys.first)) {
+
+  List<Map<String, int>> findupgradableitems(int money, List<String> olditems) {
+    List<Map<String, int>> temp = [];
+    for (var item in upgradelistviewitems) {
+      if (money >= item.values.first &&
+          olditems.every((element) => element != item.keys.first)) {
         temp.add(item);
-        print(temp);
+        //print(temp);
       }
     }
     return temp;
@@ -202,7 +205,7 @@ class _GameState extends State<Game> {
   }
 
   Future<void> updateBought() async {
-    //await FBOp.resetTimesFB(boughttimes); //RESETS TIMES FB---RESET!!!
+    //await FBOp.resetTimesAndBoughtFB(boughttimes,bought); //RESETS TIMES AND BOUGHT FB---RESET!!!
     //await FBOp.updateCountryOwners(); //ADDS OWNER FIELDS TO ALL COUNTRIES FB---RESET!!!
     //await FBOp.updateBoughtColorsFB(List<bool>.filled(CountryImageNames.countryandcitynumber, false)); // ALL COUNTRIES ARE NOT BOUGHT---RESET!!!
     //await FBOp.updateCountriesIncomesFB(); // MAKE ALL INCOMES 20% OF THE PRICES FB---RESET!!!
@@ -230,13 +233,33 @@ class _GameState extends State<Game> {
     //await FBOp.updateCountriesPriceAndIncomesFB();// UPDATE COUNTRIES PRICES AND INCOMES FB---RESET!!!
     //await FBOp.updateProductionsFB();// UPDATE COUNTRIES PRODUCTIONS to LISTs FB---RESET
     //await FBOp.updateAllPricesFB(upgradelistviewitems);// UPDATE COUNTRIES PRICES AND INCOMES FB---RESET
-    
-    List<String> temp = [];
-    CountryImageNames.countryImageNames.forEach((element) {
-      temp.add(element.split('/')[1].split('.')[0]);
-    });
-    //print(temp.length);
-    //await FBOp.allCountryManagementFB(temp);// UPDATE COUNTRIES PRICES AND INCOMES FB---RESET
+    List<List<dynamic>> newcountries = [];
+    await GSheet().getAllRows().then((value) => newcountries = value);
+    //for (var doc in countriessnapshot.data!.docs) {
+    //  countries.add(
+    //    Country(
+    //        name: doc.data()['name'],
+    //        price: doc.data()['price'],
+    //        income: doc.data()['income'],
+    //        owners: List<String>.from(doc.data()['owners']),
+    //        productions:
+    //            List<String>.from(doc.data()['productions'])),
+    //  );
+    //}
+
+    for (var coun in newcountries) {
+      print(coun);
+      setState(() {
+        countries.add(Country(
+          name: coun[1],
+          price: int.parse(coun[2]),
+          income: int.parse(coun[3]),
+          owners: [coun[4]],
+          productions: [coun[5]],
+        ));
+      });
+    }
+
     await FBOp.fetchBoughtColorsFB().then((value) {
       setState(() {
         bought = value;
@@ -290,242 +313,329 @@ class _GameState extends State<Game> {
             ));
     // Go back to the sign-in screen
   }
-  TextStyle detailtextstyle = TextStyle(fontWeight: FontWeight.bold,color: Colors.blue,shadows: [Shadow(color: Colors.yellow,offset: Offset(0.1, 0.1),blurRadius: 2)]);
+
+  TextStyle detailtextstyle = TextStyle(
+      fontWeight: FontWeight.bold,
+      color: Colors.blue,
+      shadows: [
+        Shadow(color: Colors.yellow, offset: Offset(0.1, 0.1), blurRadius: 2)
+      ]);
   _showCountryDetails(BuildContext context, Country country, bool canbeboughtt,
       int index) async {
-       // print(country.productions);
+    // print(country.productions);
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Center(child: Text(country.name,style: detailtextstyle,)),
-          content: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text('${Languages.price[langindex]}: ',style: detailtextstyle),
-                  Text('\$${country.price.floor()}'),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text('${Languages.income[langindex]}: ',style: detailtextstyle),
-                  Text('\$${country.income.floor()}'),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text('${Languages.owners[langindex]}: ',style: detailtextstyle),
-                  Text(country.owners.isEmpty
-                  ? Languages.yok[langindex] : country.owners.join(', ')),
-                ],
-              ),
-            // Text(country.owners.isEmpty
-            //     ? '${Languages.owners[langindex]}: ${Languages.yok[langindex]}'
-            //     : '${Languages.owners[langindex]}: ${country.owners.join(', ')}'),
-              Text('${Languages.productions[langindex]}:',style: detailtextstyle),
-              Text(country.productions.length > 3 ?  country.productions.map((e) => country.productions.indexOf(e) % 5 == 4 ? e = e+'\n' : e = e).join(', ')
-                  : 
-                  '${country.productions.join(', ')}'),
-              Image.asset(
-                CountryImageNames.countryImageNames[index],
-                alignment: Alignment.center,
-              ),
-              SizedBox(
-                  child: Container(
-                height: 10,
-              )),
-              Center(
-                  child: Text(
-                Languages.youshouldreloadReminderBuying[langindex],
-                style: const TextStyle(
-                    fontSize: 15,
-                    color: Colors.red,
-                    fontWeight: FontWeight.bold),
-              )),
-              Text(wrongproductionerror,
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(10.0))),
+          title: Center(
+              child: Text(
+            country.name,
+            style: detailtextstyle,
+          )),
+          content: Container(
+            width: MediaQuery.of(context).size.width * 0.9,
+            //height: MediaQuery.of(context).size.height * 0.5,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text('${Languages.price[langindex]}: ',
+                        style: detailtextstyle),
+                    Text('\$${country.price.floor()}'),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text('${Languages.income[langindex]}: ',
+                        style: detailtextstyle),
+                    Text('\$${country.income.floor()}'),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text('${Languages.owners[langindex]}: ',
+                        style: detailtextstyle),
+                    Text(country.owners[0] == 'No owner'
+                        ? Languages.yok[langindex]
+                        : country.owners[0].split(',').length > 2
+                            ? country.owners[0]
+                                .split(',')
+                                .map((e) =>
+                                    country.owners[0].split(',').indexOf(e) %
+                                                2 ==
+                                            1
+                                        ? e = e + '\n'
+                                        : e = e)
+                                .join(' , ')
+                            : country.owners[0]),
+                  ],
+                ),
+                // Text(country.owners.isEmpty
+                //     ? '${Languages.owners[langindex]}: ${Languages.yok[langindex]}'
+                //     : '${Languages.owners[langindex]}: ${country.owners.join(', ')}'),
+                Text('${Languages.productions[langindex]}:',
+                    style: detailtextstyle),
+                Text(country.productions[0] == 'water'
+                        ? Languages.water[langindex]
+                        :
+                        country.productions[0].split(',').length > 3
+                    ? country.productions[0].split(',')
+                        .map((e) => country.productions[0].split(',').indexOf(e) % 3 == 2
+                            ? e = e + '\n'
+                            : e = e)
+                        .join(' , ')
+                    : '${country.productions[0].split(',').join(' , ')}'),
+                Image.asset(
+                  CountryImageNames.countryImageNames[index],
+                  alignment: Alignment.center,
+                  width: MediaQuery.of(context).size.width * 0.99,
+                ),
+                SizedBox(
+                    child: Container(
+                  height: 10,
+                )),
+                Center(
+                    child: Text(
+                  Languages.youshouldreloadReminderBuying[langindex],
                   style: const TextStyle(
-                    color: Colors.red,
-                  )),
-            ],
+                      fontSize: 15,
+                      color: Colors.red,
+                      fontWeight: FontWeight.bold),
+                )),
+                Text(wrongproductionerror,
+                    style: const TextStyle(
+                      color: Colors.red,
+                    )),
+              ],
+            ),
           ),
           actions: [
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 !bought[index]
                     ? const Text('')
                     : TextButton(
-                        onPressed: money < country.price.floor() || !canbebought
-                            ? null
-                            : () async {
-                                ///////////////// SECOND DIALOG ////////////////////////
-                                await showDialog(
-                                  context: context,
-                                  builder: (context) {
-                                    return AlertDialog(
-                                        backgroundColor: Color.fromARGB(240, 27, 29, 27),
-                                        title: Center(
-                                            child: Text(Languages
-                                                    .youcanbuythese[langindex] +
-                                                ' : ',style: TextStyle(color: Colors.white),)),
-                                        content: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              Center(
-                                                child: SizedBox(
-                                                  height: 60 *
-                                                              upgradelistviewitems
-                                                                  .length
-                                                                  .toDouble() <
-                                                          MediaQuery.of(context)
-                                                                  .size
-                                                                  .height *
-                                                              0.5
-                                                      ? 60 *
-                                                          upgradelistviewitems
-                                                              .length
-                                                              .toDouble()
-                                                      : MediaQuery.of(context)
-                                                              .size
-                                                              .height *
-                                                          0.5,
-                                                  width: MediaQuery.of(context)
-                                                          .size
-                                                          .width *
-                                                      0.5,
-                                                  child: ListView.builder(
-                                                      itemCount:
-                                                          findupgradableitems(money,country.productions)
-                                                              .length,
-                                                      scrollDirection:
-                                                          Axis.vertical,
-                                                      itemBuilder:
-                                                          (context, listviewindex) {
-                                                        return Card(
-                                                            child: InkWell(
-                                                          onTap: () async {
-                                                            /////////////// UPGRADE LAST CHECK DIALOG /////////////////////
-                                                            await showDialog(
-                                                                context:
-                                                                    context,
-                                                                builder:
-                                                                    (context) {
-                                                                  return AlertDialog(
-                                                                    title: Center(
-                                                                        child: Column(
+                        onPressed:
+                            //money < country.price.floor() || !canbebought
+                            //? null
+                            //:
+                            () async {
+                          ///////////////// SECOND DIALOG ////////////////////////
+                          await showDialog(
+                            context: context,
+                            builder: (context) {
+                              return AlertDialog(
+                                backgroundColor:
+                                    Color.fromARGB(240, 27, 29, 27),
+                                title: Center(
+                                    child: Text(
+                                  Languages.youcanbuythese[langindex] + ' : ',
+                                  style: TextStyle(color: Colors.white),
+                                )),
+                                content: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      findupgradableitems(money,
+                                                      country.productions)
+                                                  .length ==
+                                              0
+                                          ? Center(
+                                              child: Text(
+                                                  '${Languages.youdonthaveenoughmoney[langindex]}',
+                                                  style: TextStyle(
+                                                      color: Colors.red,
+                                                      fontSize: 20)),
+                                            )
+                                          : Center(
+                                              child: SizedBox(
+                                                height: 60 *
+                                                            upgradelistviewitems
+                                                                .length
+                                                                .toDouble() <
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .height *
+                                                            0.5
+                                                    ? 60 *
+                                                        upgradelistviewitems
+                                                            .length
+                                                            .toDouble()
+                                                    : MediaQuery.of(context)
+                                                            .size
+                                                            .height *
+                                                        0.5,
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.5,
+                                                child: ListView.builder(
+                                                    itemCount:
+                                                        findupgradableitems(
+                                                                money,
+                                                                country
+                                                                    .productions)
+                                                            .length,
+                                                    scrollDirection:
+                                                        Axis.vertical,
+                                                    itemBuilder: (context,
+                                                        listviewindex) {
+                                                      return Card(
+                                                          child: InkWell(
+                                                              onTap: () async {
+                                                                /////////////// UPGRADE LAST CHECK DIALOG /////////////////////
+                                                                await showDialog(
+                                                                    context:
+                                                                        context,
+                                                                    builder:
+                                                                        (context) {
+                                                                      return AlertDialog(
+                                                                        title: Center(
+                                                                            child: Column(
                                                                           children: [
-                                                                            Text(findupgradableitems(money,country.productions)[listviewindex].keys.first,style: const TextStyle(fontSize: 20,fontWeight: FontWeight.bold,color: Color.fromARGB(158, 33, 149, 243),),),
-                                                                            Text(findupgradableitems(money,country.productions)[listviewindex].values.first.toString() + "\$",style: const TextStyle(fontSize: 20,fontWeight: FontWeight.bold,color: Colors.orange),),
-                                                                            SizedBox(height: 10,),
-                                                                            Text(Languages.doyouwanttoupgrade[langindex] +
-                                                                                ' : ',style: const TextStyle(fontSize: 20,fontWeight: FontWeight.bold,color: Color.fromARGB(158, 33, 149, 243),),),
+                                                                            Text(
+                                                                              findupgradableitems(money, country.productions)[listviewindex].keys.first,
+                                                                              style: const TextStyle(
+                                                                                fontSize: 20,
+                                                                                fontWeight: FontWeight.bold,
+                                                                                color: Color.fromARGB(158, 33, 149, 243),
+                                                                              ),
+                                                                            ),
+                                                                            Text(
+                                                                              findupgradableitems(money, country.productions)[listviewindex].values.first.toString() + "\$",
+                                                                              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.orange),
+                                                                            ),
+                                                                            SizedBox(
+                                                                              height: 10,
+                                                                            ),
+                                                                            Text(
+                                                                              Languages.doyouwanttoupgrade[langindex] + ' : ',
+                                                                              style: const TextStyle(
+                                                                                fontSize: 20,
+                                                                                fontWeight: FontWeight.bold,
+                                                                                color: Color.fromARGB(158, 33, 149, 243),
+                                                                              ),
+                                                                            ),
                                                                           ],
                                                                         )),
-                                                                    actions: [
-                                                                      Row(
-                                                                        mainAxisAlignment:
-                                                                            MainAxisAlignment.spaceEvenly,
-                                                                        children: [
-                                                                          TextButton(
-                                                                            onPressed:
-                                                                                () async {
-                                                                                 await FBOp.upgradeCountryItemFB(index,findupgradableitems(money,country.productions)[listviewindex]).
-                                                                                                       then((value) => {Navigator.push(context, MaterialPageRoute(builder: (context) => const Game()))});
-                                                                            },
-                                                                            child:
-                                                                                Text(
-                                                                              Languages.upgrade[langindex],
-                                                                              style: const TextStyle(color: Colors.green, fontSize: 20),
-                                                                            ),
-                                                                          ),
-                                                                          TextButton(
-                                                                            onPressed:
-                                                                                () {
-                                                                              playSampleSound('assets/sounds/close.mp3');
-                                                                              Navigator.of(context).pop();
-                                                                            },
-                                                                            child:
-                                                                                Text(
-                                                                              Languages.cancel[langindex],
-                                                                              style: const TextStyle(color: Colors.red, fontSize: 20),
-                                                                            ),
-                                                                          ),
+                                                                        actions: [
+                                                                          Row(
+                                                                            mainAxisAlignment:
+                                                                                MainAxisAlignment.spaceEvenly,
+                                                                            children: [
+                                                                              TextButton(
+                                                                                onPressed: () async {
+                                                                                  await FBOp.upgradeCountryItemFB(index, findupgradableitems(money, country.productions)[listviewindex]).then((value) => {
+                                                                                        Navigator.push(context, MaterialPageRoute(builder: (context) => const Game()))
+                                                                                      });
+                                                                                },
+                                                                                child: Text(
+                                                                                  Languages.upgrade[langindex] == "アップグレード" ? Languages.upgrade[langindex].substring(0, 3) + '\n' + Languages.upgrade[langindex].substring(3) : Languages.upgrade[langindex],
+                                                                                  style: const TextStyle(color: Colors.green, fontSize: 20),
+                                                                                ),
+                                                                              ),
+                                                                              TextButton(
+                                                                                onPressed: () {
+                                                                                  playSampleSound('assets/sounds/close.mp3');
+                                                                                  Navigator.of(context).pop();
+                                                                                },
+                                                                                child: Text(
+                                                                                  Languages.cancel[langindex],
+                                                                                  style: const TextStyle(color: Colors.red, fontSize: 20),
+                                                                                ),
+                                                                              ),
+                                                                            ],
+                                                                          )
                                                                         ],
-                                                                      )
-                                                                    ],
-                                                                  );
-                                                                });
+                                                                      );
+                                                                    });
                                                                 //////////////// END OF THE THIRD DIALOG /////////////////
-                                                          },
-                                                          child: ListTile(
-                                                            //title: Center(child: Text(myCountryList[index].name,style: const TextStyle(fontSize: 22,color: Colors.blue,fontWeight: FontWeight.bold),)),
-                                                            subtitle: Center(
-                                                              child: Padding(
-                                                                padding:
-                                                                    const EdgeInsets
-                                                                        .all(
-                                                                        8.0),
-                                                                child: Column(
-                                                                  children: [
-                                                                    Text(
-                                                                        findupgradableitems(money,country.productions)[listviewindex].keys.first.toString()
-                                                                        , style: TextStyle(fontSize: 20,color: Colors.green, fontWeight: FontWeight.bold),
+                                                              },
+                                                              child: ListTile(
+                                                                //title: Center(child: Text(myCountryList[index].name,style: const TextStyle(fontSize: 22,color: Colors.blue,fontWeight: FontWeight.bold),)),
+                                                                subtitle:
+                                                                    Center(
+                                                                  child:
+                                                                      Padding(
+                                                                    padding:
+                                                                        const EdgeInsets
+                                                                            .all(
+                                                                            8.0),
+                                                                    child:
+                                                                        Column(
+                                                                      children: [
+                                                                        Text(
+                                                                          findupgradableitems(money, country.productions)[listviewindex]
+                                                                              .keys
+                                                                              .first
+                                                                              .toString(),
+                                                                          style: TextStyle(
+                                                                              fontSize: 20,
+                                                                              color: Colors.green,
+                                                                              fontWeight: FontWeight.bold),
+                                                                        ),
+                                                                        Text(
+                                                                          findupgradableitems(money, country.productions)[listviewindex].values.first.toString() +
+                                                                              "\$",
+                                                                          style: TextStyle(
+                                                                              fontSize: 18,
+                                                                              color: Colors.orange,
+                                                                              fontWeight: FontWeight.bold),
+                                                                        ),
+                                                                      ],
                                                                     ),
-                                                                    Text(
-                                                                        findupgradableitems(money,country.productions)[listviewindex].values.first.toString() + "\$"
-                                                                        , style: TextStyle(fontSize: 18,color: Colors.orange, fontWeight: FontWeight.bold),
-                                                                    ),
-                                                                  ],
+                                                                  ),
                                                                 ),
-                                                            ),
-                                                          ),
-                                                        )
-                                                        )
-                                                        );
-                                      
-                                                      }
-                                                      ),
-                                                ),
+                                                              )));
+                                                    }),
                                               ),
-                                              SizedBox(
-                                                height: 10,
-                                              )
-                                            ]),
-                                            actions: [
-                                              Center(
-                                                child: TextButton(
-                                                  onPressed: () {
-                                                    playSampleSound('assets/sounds/close.mp3');
-                                                    Navigator.of(context).pop();
-                                                  },
-                                                  child: Text(
-                                                    Languages.cancel[langindex],
-                                                    style: TextStyle(
-                                                        color: Colors.red,
-                                                        fontSize: 19,letterSpacing: 2),
-                                                  )
-                                                ),
-                                              )
-                                            ],
-                                            );
-                                  },
-                                );
-                                ////////////// END OF THE SECOND DIALOG  //////////////////////
-                              },
+                                            ),
+                                      SizedBox(
+                                        height: 10,
+                                      )
+                                    ]),
+                                actions: [
+                                  Center(
+                                    child: TextButton(
+                                        onPressed: () {
+                                          playSampleSound(
+                                              'assets/sounds/close.mp3');
+                                          Navigator.of(context).pop();
+                                        },
+                                        child: Text(
+                                          Languages.cancel[langindex],
+                                          style: TextStyle(
+                                              color: Colors.red,
+                                              fontSize: 19,
+                                              letterSpacing: 2),
+                                        )),
+                                  )
+                                ],
+                              );
+                            },
+                          );
+                          ////////////// END OF THE SECOND DIALOG  //////////////////////
+                        },
                         child: Text(
-                          Languages.upgrade[langindex],
+                          Languages.upgrade[langindex] == "アップグレード"
+                              ? Languages.upgrade[langindex].substring(0, 3) +
+                                  '\n' +
+                                  Languages.upgrade[langindex].substring(3)
+                              : Languages.upgrade[langindex],
                           style: TextStyle(
-                              color: money >= country.price.floor()
-                                  ? Colors.green
-                                  : Colors.red,
+                              color: // money >= country.price.floor()
+                                  //?
+                                  Colors.green,
+                              // : Colors.red,
                               fontSize: 20),
                         ),
                       ),
@@ -554,7 +664,9 @@ class _GameState extends State<Game> {
                                   await FBOp.updateUserTimesAndOwnersFB(
                                       boughttimes,
                                       index); // UPDATE TIMES AND OWNER IN FB
-                                  await greenBGColorFiller(); // WHEN COUNTRY IS BOUGHT UPDATE COLORS IN FB
+                                  await greenBGColorFiller().then((value) =>
+                                      Navigator.of(context)
+                                          .pop()); // WHEN COUNTRY IS BOUGHT UPDATE COLORS IN FB
                                   await Navigator.pushReplacement(
                                       context,
                                       MaterialPageRoute(
@@ -744,6 +856,7 @@ class _GameState extends State<Game> {
   @override
   Widget build(BuildContext context) {
     FBOp.updateCountriesNewIncomesFB();
+    //FBOp.allCountryManagementFB(temp);// UPDATE COUNTRIES PRICES AND INCOMES FB---RESET
     return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
       stream: FirebaseFirestore.instance.collection('users').snapshots(),
       builder: (context, AsyncSnapshot<QuerySnapshot> userssnapshot) {
@@ -796,25 +909,15 @@ class _GameState extends State<Game> {
               }
               money = player.money!;
 
-              if (!countryBreaker) {
-                for (var doc in countriessnapshot.data!.docs) {
-                  countries.add(
-                    Country(
-                        name: doc.data()['name'],
-                        price: doc.data()['price'],
-                        income: doc.data()['income'],
-                        owners: List<String>.from(doc.data()['owners']),
-                        productions:
-                            List<String>.from(doc.data()['productions'])),
-                  );
+              // if (!countryBreaker) {
+
+              for (var element in countries) {
+                if (money >= element.price.floor()) {
+                  buyablecountries.add(countries.indexOf(element));
                 }
-                for (var element in countries) {
-                  if (money >= element.price.floor()) {
-                    buyablecountries.add(countries.indexOf(element));
-                  }
-                }
-                countryBreaker = true;
               }
+              //  countryBreaker = true;
+              //}
               //countries.forEach((element) { print(element.owner);});
               return Scaffold(
                 backgroundColor: bgcolor,
@@ -901,7 +1004,7 @@ class _GameState extends State<Game> {
                         crossAxisSpacing: 8.0,
                         mainAxisSpacing: 8.0,
                       ),
-                      itemCount: bought.length,
+                      itemCount: CountryImageNames.countryandcitynumber,
                       itemBuilder: (context, index) {
                         return GestureDetector(
                             onTap: () async {
@@ -913,7 +1016,6 @@ class _GameState extends State<Game> {
                                           .first
                                           .toString())
                                   .then((value) {
-                                print('game value $value');
                                 value.keys.first == true
                                     ? setState(() {
                                         canbebought = true;
@@ -970,24 +1072,34 @@ class _GameState extends State<Game> {
                                               : countries[index].name,
                                           style: bought[index]
                                               ? const TextStyle(
-                                                  fontSize: 15,
+                                                  fontSize: 12,
                                                   color: Colors.white,
                                                   fontWeight: FontWeight.bold,
                                                   letterSpacing: 1)
                                               : const TextStyle(
-                                                  fontSize: 15,
+                                                  fontSize: 12,
                                                   color: Colors.black),
                                         ),
                                       ),
                                       Center(
-                                        child: Text(
-                                          countries[index]
-                                                  .productions.length > 3  ? 
-                                          countries[index].productions[0] + '\n' + countries[index].productions[1] + '\n' +  countries[index].productions[2] + "\n  :+: "
-                                          :
-                                          countries[index]
-                                                 .productions
-                                                  .join('\n') + "\n   + ",
+                                        child: Text(countries[index].productions[0] == 'water'
+                                           ? Languages.water[langindex]
+                                           :
+                                          countries[index].productions.length >
+                                                  3
+                                              ? countries[index]
+                                                      .productions[0] +
+                                                  '\n' +
+                                                  countries[index]
+                                                      .productions[1] +
+                                                  '\n' +
+                                                  countries[index]
+                                                      .productions[2] +
+                                                  "\n  ::::: "
+                                              : countries[index]
+                                                      .productions
+                                                      .join('\n') +
+                                                  "\n   + ",
                                           //maxLines: 3,
                                           overflow: TextOverflow.fade,
                                           style: bought[index]

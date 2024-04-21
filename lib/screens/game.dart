@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:zone_trader/authentication/signin.dart';
 import 'package:zone_trader/constants/countryImageNames.dart';
@@ -37,56 +36,56 @@ class _GameState extends State<Game> {
   bool canbebought = false;
   String wrongproductionerror = '';
   Color buttoncolor = Colors.red;
-  List<Map<String, int>> upgradelistviewitems = [
-    {'water': 1200},
-    {'sugar': 1500},
-    {'salt': 1800},
-    {'orange': 2100},
-    {'banana': 2400},
-    {'flour': 1900},
-    {'yeast': 2200},
-    {'milk': 1400},
-    {'honey': 2500},
-    {'cocoa': 2800},
-    {'potato': 3100},
-    {'olives': 3400},
-    {'tomato': 3700},
-    {'bread': 4100},
-    {'bronze': 4400},
-    {'silver': 4700},
-    {'gold': 5000},
-    {'iron': 4300},
-    {'copper': 4600},
-    {'coal': 4200},
-    {'meat': 3300},
-    {'eggs': 3100},
-    {'beef': 3600},
-    {'leather': 4000},
-    {'mutton': 4100},
-    {'wool': 3800},
-    {'wood': 2400},
-    {'timber': 4000},
-    {'chair': 5000},
-    {'table': 5200},
-    {'ceramic': 3400},
-    {'washroom': 5500},
-    {'door': 5200},
-    {'plastic': 3300},
-    {'bottle': 4000},
-    {'glass': 4000},
-    {'window': 6000},
-    {'house': 10000},
-    {'rubber': 4000},
-    {'tire': 5200},
-    {'engine': 7000},
-    {'car': 15000},
-    {'watersoda': 3300},
-    {'bananajuice': 4500},
-    {'orangejuice': 4500},
-    {'steel': 4700},
-    {'cans': 5700},
-    {'bananasmoothie': 6000},
-  ];
+  //List<Map<String, int>> upgradelistviewitems = [
+  //  {'water': 1200},
+  //  {'sugar': 1500},
+  //  {'salt': 1800},
+  //  {'orange': 2100},
+  //  {'banana': 2400},
+  //  {'flour': 1900},
+  //  {'yeast': 2200},
+  //  {'milk': 1400},
+  //  {'honey': 2500},
+  //  {'cocoa': 2800},
+  //  {'potato': 3100},
+  //  {'olives': 3400},
+  //  {'tomato': 3700},
+  //  {'bread': 4100},
+  //  {'bronze': 4400},
+  //  {'silver': 4700},
+  //  {'gold': 5000},
+  //  {'iron': 4300},
+  //  {'copper': 4600},
+  //  {'coal': 4200},
+  //  {'meat': 3300},
+  //  {'eggs': 3100},
+  //  {'beef': 3600},
+  //  {'leather': 4000},
+  //  {'mutton': 4100},
+  //  {'wool': 3800},
+  //  {'wood': 2400},
+  //  {'timber': 4000},
+  //  {'chair': 5000},
+  //  {'table': 5200},
+  //  {'ceramic': 3400},
+  //  {'washroom': 5500},
+  //  {'door': 5200},
+  //  {'plastic': 3300},
+  //  {'bottle': 4000},
+  //  {'glass': 4000},
+  //  {'window': 6000},
+  //  {'house': 10000},
+  //  {'rubber': 4000},
+  //  {'tire': 5200},
+  //  {'engine': 7000},
+  //  {'car': 15000},
+  //  {'watersoda': 3300},
+  //  {'bananajuice': 4500},
+  //  {'orangejuice': 4500},
+  //  {'steel': 4700},
+  //  {'cans': 5700},
+  //  {'bananasmoothie': 6000},
+  //];
   var langs = [
     'ENG',
     'TR',
@@ -100,37 +99,100 @@ class _GameState extends State<Game> {
       'watersoda': ['water', 'sugar']
     },
     {
+      'beet': ['sugar', 'water']
+    },
+    {
       'orangejuice': ['orange', 'water']
     },
     {
       'bananajuice': ['banana', 'milk']
     },
     {
-      'bread': ['floor', 'yeast', 'water', 'milk', 'salt', 'sugar']
+      'yoghurt': ['water', 'milk']
     },
     {
-      'timber': ['wood']
+      'cheese': ['yeast', 'milk', 'salt']
     },
     {
-      'chair': ['timber']
+      'butter': ['water', 'oil']
     },
     {
-      'table': ['timber']
+      'yeast': ['water', 'floor']
     },
     {
-      'washroom': ['ceramic']
+      'meat': ['cow']
     },
     {
-      'bananasmoothie': ['bananajuice', 'sugar']
+      'sandwich': ['bread', 'meat']
     },
     {
-      'door': ['wood']
+      'pizza': ['bread', 'tomato', 'cheese']
+    },
+    {
+      'melonjuice': ['melon', 'water']
+    },
+    {
+      'bread': ['floor', 'yeast', 'water', 'milk', 'salt']
+    },
+    {
+      'paste': ['yeast', 'water', 'salt']
+    },
+    {
+      'wood': ['tree']
+    },
+    {
+      'timber': ['wood', 'axe']
+    },
+    {
+      'chair': ['timber', 'glue']
+    },
+    {
+      'table': ['timber', 'shave']
+    },
+    {
+      'washroom': ['ceramic', 'mirror', 'faucet']
+    },
+    {
+      'mirror': ['glass', 'silver']
+    },
+    {
+      'mud': ['clay', 'water']
+    },
+    {
+      'ceramic': ['mud', 'kiln']
+    },
+    {
+      'bananasmoothie': ['bananajuice', 'sugar', 'ice']
+    },
+    {
+      'door': ['wood', 'hinge']
     },
     {
       'window': ['glass', 'plastic']
     },
     {
+      'glass': ['lime', 'sand', 'watersoda']
+    },
+    {
+      'lime': ['limestone']
+    },
+    {
+      'sand': ['limestone']
+    },
+    {
+      'plastic': ['gas', 'coal', 'petrol']
+    },
+    {
+      'hotwater': ['gas']
+    },
+    {
+      'electric': ['coal']
+    },
+    {
       'tire': ['rubber']
+    },
+    {
+      'window': ['hinge', 'plastic', 'glass']
     },
     {
       'house': ['window', 'table', 'chair', 'washroom', 'door']
@@ -142,13 +204,79 @@ class _GameState extends State<Game> {
       'cans': ['steel']
     },
     {
-      'bottle': ['plastic']
+      'conserve': ['cans', 'tin']
     },
     {
-      'engine': ['steel', 'plastic']
+      'bottle': ['plastic', 'label']
     },
     {
-      'car': ['engine', 'tire', 'plastic']
+      'engine': ['steel', 'plastic', 'piston']
+    },
+    {
+      'car': ['engine', 'tire', 'plastic', 'steel', 'key']
+    },
+    {
+      'cement': ['marn', 'clay', 'lime']
+    },
+    {
+      'concrete': ['agrega', 'cement', 'water']
+    },
+    {
+      'tile': ['clay']
+    },
+    {
+      'roof': ['tile', 'concrete', 'plastic']
+    },
+    {
+      'cement': ['marn', 'clay', 'lime']
+    },
+    {
+      'building': ['steel', 'roof', 'concrete', 'house']
+    },
+    {
+      'asphalt': ['sand', 'gravel', 'cement', 'petrol']
+    },
+    {
+      'chalk': ['calcite']
+    },
+    {
+      'blackboard': ['chalk', 'laminate']
+    },
+    {
+      'cellulose': ['wood']
+    },
+    {
+      'paper': ['cellulose']
+    },
+    {
+      'book': ['cover', 'paper']
+    },
+    {
+      'pencil': ['coal', 'wood']
+    },
+    {
+      'school': ['blackboard', 'building', 'book', 'pencil']
+    },
+    {
+      'greengrocer': ['building', 'vegetables']
+    },
+    {
+      'grocery': [
+        'building',
+        'refrigerator',
+        'vegetables',
+        'orangejuice',
+        'bananajuice',
+        'melonjuice',
+        'bread',
+        'meat'
+      ]
+    },
+    {
+      'barber': ['building', 'scissors', 'mirror', 'chair']
+    },
+    {
+      'bedroom': ['window', 'bed', 'door']
     },
   ];
 
@@ -186,17 +314,17 @@ class _GameState extends State<Game> {
     });
   }
 
-  List<Map<String, int>> findupgradableitems(int money, List<String> olditems) {
-    List<Map<String, int>> temp = [];
-    for (var item in upgradelistviewitems) {
-      if (money >= item.values.first &&
-          olditems.every((element) => element != item.keys.first)) {
-        temp.add(item);
-        //print(temp);
-      }
-    }
-    return temp;
-  }
+  //List<Map<String, int>> findupgradableitems(int money, List<String> olditems) {
+  //  List<Map<String, int>> temp = [];
+  //  for (var item in upgradelistviewitems) {
+  //    if (money >= item.values.first &&
+  //        olditems.every((element) => element != item.keys.first)) {
+  //      temp.add(item);
+  //      //print(temp);
+  //    }
+  //  }
+  //  return temp;
+  //}
 
   void playSampleSound(String path) async {
     AudioPlayer player = AudioPlayer();
@@ -233,8 +361,9 @@ class _GameState extends State<Game> {
     //await FBOp.updateCountriesPriceAndIncomesFB();// UPDATE COUNTRIES PRICES AND INCOMES FB---RESET!!!
     //await FBOp.updateProductionsFB();// UPDATE COUNTRIES PRODUCTIONS to LISTs FB---RESET
     //await FBOp.updateAllPricesFB(upgradelistviewitems);// UPDATE COUNTRIES PRICES AND INCOMES FB---RESET
+    //await GSheet().updateIncomesByPrices(); // UPDATE COUNTRIES INCOMES GSHEETS---RESET
     List<List<dynamic>> newcountries = [];
-    await GSheet().getAllRows().then((value) => newcountries = value);
+    await GSheet().getAllRows(0).then((value) => newcountries = value);
     //for (var doc in countriessnapshot.data!.docs) {
     //  countries.add(
     //    Country(
@@ -248,7 +377,7 @@ class _GameState extends State<Game> {
     //}
 
     for (var coun in newcountries) {
-      print(coun);
+      //print(coun);
       setState(() {
         countries.add(Country(
           name: coun[1],
@@ -259,12 +388,47 @@ class _GameState extends State<Game> {
         ));
       });
     }
+    //List<String> player = [];
+    int userrowindex =
+        await GSheet().findCurrentUserRowIndex().then((value) => value + 1);
+    List<String> userinfo =
+        await GSheet().getRowValues(1, userrowindex).then((value) => value);
 
-    await FBOp.fetchBoughtColorsFB().then((value) {
+    //for (var doc in countriessnapshot.data!.docs) {
+    //  countries.add(
+    //    Country(
+    //        name: doc.data()['name'],
+    //        price: doc.data()['price'],
+    //        income: doc.data()['income'],
+    //        owners: List<String>.from(doc.data()['owners']),
+    //        productions:
+    //            List<String>.from(doc.data()['productions'])),
+    //  );
+    //}
+
+   // for (var info in userinfo) {
+      //print(coun);
       setState(() {
-        bought = value;
+        player = Player(
+          userinfo[6],
+          userinfo[3],
+          int.parse(userinfo[5]),
+          List<bool>.from(userinfo[2].split(',').map((e) => e == 'true').toList()),
+          List<Map<String, dynamic>>.from(userinfo[7].split(',').map((e) => {e.split(':')[0] : e.split(':')[1]}).toList()),
+          List<int>.from(userinfo[0].split(',').map((e) => int.parse(e)).toList()),
+          List<int>.from(userinfo[1].split(',').map((e) => int.parse(e)).toList()),
+          userinfo[4]
+        ).getPlayer;
+      });
+   // }
+
+    await GSheet().getBoughtValues().then((value) {
+      print('value: ' + value.toString());
+      setState(() {
+        bought = value.map((e) => e == "true" ? true : false).toList();
       });
     });
+
     DateTime now = DateTime.now();
     List<Map<String, int>> oldtimelist = [];
     int moneychange = 0;
@@ -300,7 +464,7 @@ class _GameState extends State<Game> {
 
   //void updateFirebase
   Future<void> greenBGColorFiller() async {
-    await FBOp.updateBoughtColorsFB(bought);
+    await GSheet().updateBoughtColorsGS(bought);
     //print(countries);
   }
 
@@ -383,15 +547,18 @@ class _GameState extends State<Game> {
                 Text('${Languages.productions[langindex]}:',
                     style: detailtextstyle),
                 Text(country.productions[0] == 'water'
-                        ? Languages.water[langindex]
-                        :
-                        country.productions[0].split(',').length > 3
-                    ? country.productions[0].split(',')
-                        .map((e) => country.productions[0].split(',').indexOf(e) % 3 == 2
-                            ? e = e + '\n'
-                            : e = e)
-                        .join(' , ')
-                    : '${country.productions[0].split(',').join(' , ')}'),
+                    ? Languages.water[langindex]
+                    : country.productions[0].split(',').length > 3
+                        ? country.productions[0]
+                            .split(',')
+                            .map((e) =>
+                                country.productions[0].split(',').indexOf(e) %
+                                            3 ==
+                                        2
+                                    ? e = e + '\n'
+                                    : e = e)
+                            .join(' , ')
+                        : '${country.productions[0].split(',').join(' , ')}'),
                 Image.asset(
                   CountryImageNames.countryImageNames[index],
                   alignment: Alignment.center,
@@ -420,6 +587,7 @@ class _GameState extends State<Game> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
+                /*
                 !bought[index]
                     ? const Text('')
                     : TextButton(
@@ -639,6 +807,7 @@ class _GameState extends State<Game> {
                               fontSize: 20),
                         ),
                       ),
+                */
                 bought[index]
                     ? const Text('')
                     : TextButton(
@@ -651,7 +820,9 @@ class _GameState extends State<Game> {
                                       ? null
                                       : buythiscard(context, country, index);
                                   playSampleSound('assets/sounds/bought.mp3');
+                                  /*
                                   DateTime now = DateTime.now();
+                                  
                                   await FBOp.fetchUserTimesFB().then((value) {
                                     //FETCH TIMES FROM FB
                                     setState(() {
@@ -664,13 +835,19 @@ class _GameState extends State<Game> {
                                   await FBOp.updateUserTimesAndOwnersFB(
                                       boughttimes,
                                       index); // UPDATE TIMES AND OWNER IN FB
+                                  
+                                }
+                                */
+                                  await GSheet().countryOwnerUpdate(
+                                      country.name,
+                                      FirebaseAuth
+                                          .instance.currentUser!.displayName!);
                                   await greenBGColorFiller().then((value) =>
-                                      Navigator.of(context)
-                                          .pop()); // WHEN COUNTRY IS BOUGHT UPDATE COLORS IN FB
-                                  await Navigator.pushReplacement(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => const Game()));
+                                      Navigator.pushReplacement(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  const Game()))); // WHEN COUNTRY IS BOUGHT UPDATE COLORS IN FB
                                 }
                               },
                         child: Text(
@@ -847,7 +1024,7 @@ class _GameState extends State<Game> {
     setState(() {
       bought[index] = true;
     });
-    await FBOp.updateMoneyFB(money);
+    await GSheet().updateUserMoney(money.toString());
   }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -889,24 +1066,24 @@ class _GameState extends State<Game> {
                   ),
                 );
               }
-              for (var doc in userssnapshot.data!.docs) {
-                var map = doc.data() as Map<String, dynamic>;
-
-                if (map['nickname'] ==
-                    FirebaseAuth.instance.currentUser!.displayName) {
-                  //print(map['bought'].runtimeType);
-                  player = Player(
-                          map['nickname'],
-                          map['email'],
-                          map['money'],
-                          List<bool>.from(map['bought']),
-                          List<Map<String, dynamic>>.from(map['times']),
-                          List<int>.from(map['appcolorTheme']),
-                          List<int>.from(map['bgcolorTheme']),
-                          map['language'])
-                      .getPlayer;
-                }
-              }
+              //for (var doc in userssnapshot.data!.docs) {
+              //  var map = doc.data() as Map<String, dynamic>;
+//
+              //  if (map['nickname'] ==
+              //      FirebaseAuth.instance.currentUser!.displayName) {
+              //    //print(map['bought'].runtimeType);
+              //    player = Player(
+              //            map['nickname'],
+              //            map['email'],
+              //            map['money'],
+              //            List<bool>.from(map['bought']),
+              //            List<Map<String, dynamic>>.from(map['times']),
+              //            List<int>.from(map['appcolorTheme']),
+              //            List<int>.from(map['bgcolorTheme']),
+              //            map['language'])
+              //        .getPlayer;
+              //  }
+              //}
               money = player.money!;
 
               // if (!countryBreaker) {
@@ -997,130 +1174,153 @@ class _GameState extends State<Game> {
                 ),
                 body: SizedBox(
                     height: MediaQuery.of(context).size.height,
-                    child: GridView.builder(
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 4,
-                        crossAxisSpacing: 8.0,
-                        mainAxisSpacing: 8.0,
-                      ),
-                      itemCount: CountryImageNames.countryandcitynumber,
-                      itemBuilder: (context, index) {
-                        return GestureDetector(
-                            onTap: () async {
-                              await FBOp.checkNeededProductionsBoughtBefore(
-                                      countriessnapshot,
-                                      productionpairs,
-                                      countries[index]
-                                          .productions
-                                          .first
-                                          .toString())
-                                  .then((value) {
-                                value.keys.first == true
-                                    ? setState(() {
-                                        canbebought = true;
-                                      })
-                                    : setState(() {
-                                        canbebought = false; ////
+                    child: countries.isEmpty
+                        ? const Center(
+                            child: CircularProgressIndicator(
+                                strokeWidth: 10, color: Colors.amber),
+                          )
+                        : GridView.builder(
+                            gridDelegate:
+                                const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 4,
+                              crossAxisSpacing: 8.0,
+                              mainAxisSpacing: 8.0,
+                            ),
+                            itemCount: CountryImageNames.countryandcitynumber,
+                            itemBuilder: (context, index) {
+                              return GestureDetector(
+                                  onTap: () async {
+                                    await FBOp
+                                            .checkNeededProductionsBoughtBefore(
+                                                countriessnapshot,
+                                                productionpairs,
+                                                countries[index]
+                                                    .productions
+                                                    .first
+                                                    .toString())
+                                        .then((value) {
+                                      value.keys.first == true
+                                          ? setState(() {
+                                              canbebought = true;
+                                            })
+                                          : setState(() {
+                                              canbebought = false; ////
+                                            });
+                                      setState(() {
+                                        canbebought
+                                            ? wrongproductionerror = ''
+                                            : wrongproductionerror = Languages
+                                                        .wrongproductionerror[
+                                                    langindex] +
+                                                ':    ${value.values.first}';
+                                        canbebought
+                                            ? buttoncolor = Colors.green
+                                            : buttoncolor = Colors.red;
                                       });
-                                setState(() {
-                                  canbebought
-                                      ? wrongproductionerror = ''
-                                      : wrongproductionerror = Languages
-                                              .wrongproductionerror[langindex] +
-                                          ':    ${value.values.first}';
-                                  canbebought
-                                      ? buttoncolor = Colors.green
-                                      : buttoncolor = Colors.red;
-                                });
-                              }).then((value) => _showCountryDetails(context,
-                                      countries[index], canbebought, index));
-                            },
-                            child: Container(
-                              height: 100,
-                              width: 100,
-                              decoration: BoxDecoration(
-                                //image: index != 0 ? null :
-                                //Image.asset('images/australia.jpg',fit: BoxFit.fill, scale: 1.5),
+                                    }).then((value) => _showCountryDetails(
+                                            context,
+                                            countries[index],
+                                            canbebought,
+                                            index));
+                                  },
+                                  child: Container(
+                                    height: 100,
+                                    width: 100,
+                                    decoration: BoxDecoration(
+                                      //image: index != 0 ? null :
+                                      //Image.asset('images/australia.jpg',fit: BoxFit.fill, scale: 1.5),
 
-                                color: bought[index]
-                                    ? Colors.green
-                                    : buyablecountries.contains(index)
-                                        ? Colors.blue
-                                        : Colors.red,
-                                border:
-                                    Border.all(color: Colors.blue, width: 0.1),
-                                shape: BoxShape.rectangle,
-                                borderRadius: const BorderRadius.all(
-                                    Radius.circular(10.0)),
-                              ),
-                              child: Card(
-                                color:
-                                    bought[index] ? Colors.green : Colors.white,
-                                elevation: 5,
-                                child: Center(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Center(
-                                        child: Text(
-                                          countries[index].name.contains(' ')
-                                              ? countries[index]
-                                                  .name
-                                                  .split(' ')
-                                                  .join('\n')
-                                              : countries[index].name,
-                                          style: bought[index]
-                                              ? const TextStyle(
-                                                  fontSize: 12,
-                                                  color: Colors.white,
-                                                  fontWeight: FontWeight.bold,
-                                                  letterSpacing: 1)
-                                              : const TextStyle(
-                                                  fontSize: 12,
-                                                  color: Colors.black),
+                                      color: bought[index]
+                                          ? Colors.green
+                                          : buyablecountries.contains(index)
+                                              ? Colors.blue
+                                              : Colors.red,
+                                      border: Border.all(
+                                          color: Colors.blue, width: 0.1),
+                                      shape: BoxShape.rectangle,
+                                      borderRadius: const BorderRadius.all(
+                                          Radius.circular(10.0)),
+                                    ),
+                                    child: Card(
+                                      color: bought[index]
+                                          ? Colors.green
+                                          : Colors.white,
+                                      elevation: 5,
+                                      child: Center(
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Center(
+                                              child: Text(
+                                                countries[index]
+                                                        .name
+                                                        .contains(' ')
+                                                    ? countries[index]
+                                                        .name
+                                                        .split(' ')
+                                                        .join('\n')
+                                                    : countries[index].name,
+                                                style: bought[index]
+                                                    ? const TextStyle(
+                                                        fontSize: 12,
+                                                        color: Colors.white,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        letterSpacing: 1)
+                                                    : const TextStyle(
+                                                        fontSize: 12,
+                                                        color: Colors.black),
+                                              ),
+                                            ),
+                                            Center(
+                                              child: Text(
+                                                countries[index]
+                                                            .productions[0] ==
+                                                        'water'
+                                                    ? Languages.water[langindex]
+                                                    : countries[index]
+                                                                .productions
+                                                                .length >
+                                                            3
+                                                        ? countries[index]
+                                                                    .productions[
+                                                                0] +
+                                                            '\n' +
+                                                            countries[index]
+                                                                    .productions[
+                                                                1] +
+                                                            '\n' +
+                                                            countries[index]
+                                                                    .productions[
+                                                                2] +
+                                                            "\n  ::::: "
+                                                        : countries[index]
+                                                                .productions
+                                                                .join('\n') +
+                                                            "\n   + ",
+                                                //maxLines: 3,
+                                                overflow: TextOverflow.fade,
+                                                style: bought[index]
+                                                    ? const TextStyle(
+                                                        fontSize: 10,
+                                                        color: Colors.white,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        letterSpacing: 1)
+                                                    : const TextStyle(
+                                                        fontSize: 10,
+                                                        color: Color.fromARGB(
+                                                            255, 255, 64, 0)),
+                                              ),
+                                            ),
+                                          ],
                                         ),
                                       ),
-                                      Center(
-                                        child: Text(countries[index].productions[0] == 'water'
-                                           ? Languages.water[langindex]
-                                           :
-                                          countries[index].productions.length >
-                                                  3
-                                              ? countries[index]
-                                                      .productions[0] +
-                                                  '\n' +
-                                                  countries[index]
-                                                      .productions[1] +
-                                                  '\n' +
-                                                  countries[index]
-                                                      .productions[2] +
-                                                  "\n  ::::: "
-                                              : countries[index]
-                                                      .productions
-                                                      .join('\n') +
-                                                  "\n   + ",
-                                          //maxLines: 3,
-                                          overflow: TextOverflow.fade,
-                                          style: bought[index]
-                                              ? const TextStyle(
-                                                  fontSize: 10,
-                                                  color: Colors.white,
-                                                  fontWeight: FontWeight.bold,
-                                                  letterSpacing: 1)
-                                              : const TextStyle(
-                                                  fontSize: 10,
-                                                  color: Color.fromARGB(
-                                                      255, 255, 64, 0)),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ));
-                      },
-                    )),
+                                    ),
+                                  ));
+                            },
+                          )),
               );
             });
       },

@@ -116,7 +116,6 @@ flutter:
     - images/Norway.jpeg
     - images/Poland.jpeg
     - images/Italy.jpeg
-    - images/Nepal.jpeg
     - images/Sudan.jpeg
     - images/Algiers.png
     - images/Ankara.png
@@ -129,7 +128,6 @@ flutter:
     - images/Moscow.png
     - images/NewDelhi.png
     - images/Ottawa.png
-    - images/Putrajaya.png
     - images/Riyadh.png
     - images/AddisAbaba.png
     - images/Ashgabat.png
@@ -146,6 +144,7 @@ flutter:
     - images/Khartoum.png
     - images/Kinshasa.png
     - images/Kyiv.png
+    - images/KualaLumpur.png
     - images/Lima.png
     - images/Madrid.png
     - images/Manila.png

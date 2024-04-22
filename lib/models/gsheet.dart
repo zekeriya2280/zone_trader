@@ -1,4 +1,6 @@
 
+import 'dart:convert';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:gsheets/gsheets.dart';
 
@@ -200,6 +202,16 @@ Future<int> findCurrentUserRowIndex()async{
 Future<void> updateBoughtColorsGS(List<bool> bought) async {
   int userrowindex = await findCurrentUserRowIndex().then((value) => value + 1);
   await updateCellValue(1,userrowindex, 4, bought.map((e) => e ? 'true' : 'false').toList().join(',').toLowerCase());
+}
+// Retrieves and returns the user times data from the Google Sheets based on the current user's row index.
+Future<List<Map<String,String>>> fetchUserTimesGS() async {
+  int userrowindex = await findCurrentUserRowIndex().then((value) => value + 1);
+  List<Map<String,String>> times =  await getCellValue(1,userrowindex, 9).then((value) => value.split(',').map((e) => {e.split(':')[0]: e.split(':')[1]}).toList());
+  return times;
+}
+Future<void> updateUserTimesGS(List<Map<String,dynamic>> times) async {
+  int userrowindex = await findCurrentUserRowIndex().then((value) => value + 1);
+  await updateCellValue(1,userrowindex, 9, times.map((e) => e.keys.first + ':' + e.values.first).toList().join(','));
 }
 
 }

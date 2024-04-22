@@ -27,8 +27,8 @@ class _GameState extends State<Game> {
   Player player = Player('', '', 0, [], [], [], [], 'ENG');
   List<bool> bought =
       List<bool>.filled(CountryImageNames.countryandcitynumber, false);
-  List<Map<String, dynamic>> boughttimes = List<Map<String, dynamic>>.filled(
-      CountryImageNames.countryandcitynumber, {'60': 60});
+  List<Map<String, String>> boughttimes = List<Map<String, String>>.filled(
+      CountryImageNames.countryandcitynumber, {'60': '60'});
   Color appBarColor = Colors.blue;
   Color bgcolor = Colors.white;
   int langindex = 0;
@@ -430,36 +430,36 @@ class _GameState extends State<Game> {
     });
 
     DateTime now = DateTime.now();
-    List<Map<String, int>> oldtimelist = [];
+    List<Map<String, String>> oldtimelist = [];
     int moneychange = 0;
-    await FBOp.fetchBoughtIndexHourAndMinutesFB()
+    await GSheet().fetchUserTimesGS()
         .then((value) => oldtimelist = value);
-    //print('oldtimelist $oldtimelist');
+   //print('oldtimelist $oldtimelist');
     List<int> allsubmin = [];
     for (var time in oldtimelist) {
       if (now.hour < int.parse(time.keys.first)) {
         allsubmin.add(
             (now.minute + (24 - (int.parse(time.keys.first) - now.hour)) * 60) -
-                time.values.first);
+                int.parse(time.values.first));
       } else {
         allsubmin.add(
             ((now.minute + (now.hour - int.parse(time.keys.first)) * 60) -
-                time.values.first));
+                int.parse(time.values.first)));
       }
     }
-    //print('allsubmin $allsubmin');
+    
     List<double> howmanyincomes = [];
     for (var submin in allsubmin) {
-      howmanyincomes.add(submin / 10);
+      howmanyincomes.add(submin / 2);
     }
-
-    await FBOp.findCountryIncomeAndAddFB(howmanyincomes)
-        .then((value) => moneychange = value);
-    playSampleSound('assets/sounds/homeinitpopup.mp3');
-    //AudioCache cache = AudioCache();
-    //const alarmAudioPath = "sounds/homeinitpopup.mp3";
-    //await cache.load(alarmAudioPath).then((value) => cache.clear(alarmAudioPath));
-    moneychange != 0 ? _showMoneyChange(context, moneychange) : false;
+    print('howmanyincomes : $howmanyincomes');
+   //await FBOp.findCountryIncomeAndAddFB(howmanyincomes)
+   //    .then((value) => moneychange = value);
+   //playSampleSound('assets/sounds/homeinitpopup.mp3');
+   ////AudioCache cache = AudioCache();
+   ////const alarmAudioPath = "sounds/homeinitpopup.mp3";
+   ////await cache.load(alarmAudioPath).then((value) => cache.clear(alarmAudioPath));
+   //moneychange != 0 ? _showMoneyChange(context, moneychange) : false;
   }
 
   //void updateFirebase
@@ -820,18 +820,21 @@ class _GameState extends State<Game> {
                                       ? null
                                       : buythiscard(context, country, index);
                                   playSampleSound('assets/sounds/bought.mp3');
-                                  /*
+                                  
                                   DateTime now = DateTime.now();
                                   
-                                  await FBOp.fetchUserTimesFB().then((value) {
+                                  await GSheet().fetchUserTimesGS().then((value) {
                                     //FETCH TIMES FROM FB
                                     setState(() {
                                       boughttimes = value;
                                     });
                                   });
+                                  
                                   boughttimes[index] = {
-                                    now.hour.toString().trim(): now.minute
+                                    now.hour.toString().trim() : now.minute.toString().trim()
                                   };
+                                  await GSheet().updateUserTimesGS(boughttimes);
+                                  /*
                                   await FBOp.updateUserTimesAndOwnersFB(
                                       boughttimes,
                                       index); // UPDATE TIMES AND OWNER IN FB
@@ -876,7 +879,11 @@ class _GameState extends State<Game> {
               ],
             ),
             money < country.price.floor()
-                ? Center(
+                ? bought[index]
+                    ? 
+                    const Text('')
+                    : 
+                    Center(
                     child: TextButton(
                       onPressed: () {
                         Navigator.of(context).pop();
@@ -1032,7 +1039,7 @@ class _GameState extends State<Game> {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   @override
   Widget build(BuildContext context) {
-    FBOp.updateCountriesNewIncomesFB();
+    //FBOp.updateCountriesNewIncomesFB();
     //FBOp.allCountryManagementFB(temp);// UPDATE COUNTRIES PRICES AND INCOMES FB---RESET
     return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
       stream: FirebaseFirestore.instance.collection('users').snapshots(),

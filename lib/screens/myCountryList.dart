@@ -92,7 +92,7 @@ class _MyCountryListState extends State<MyCountryList> {
               income: data['income'],
               price: data['price'],
               owners: List<String>.from(data['owners']),
-              productions: List<String>.from(data['productions']),
+              production: data['productions'],
             ));
           }
         }
@@ -187,18 +187,9 @@ class _MyCountryListState extends State<MyCountryList> {
                                 // Text(country.owners.isEmpty
                                 //     ? '${Languages.owners[langindex]}: ${Languages.yok[langindex]}'
                                 //     : '${Languages.owners[langindex]}: ${country.owners.join(', ')}'),
-                                Text('${Languages.productions[langindex]}:',
+                                Text('${Languages.production[langindex]}:',
                                     style: detailtextstyle),
-                                Text(myCountryList[index].productions.length > 3
-                                    ? myCountryList[index].productions
-                                        .map((e) =>
-                                            myCountryList[index].productions.indexOf(e) %
-                                                        5 ==
-                                                    4
-                                                ? e = e + '\n'
-                                                : e = e)
-                                        .join(', ')
-                                    : '${myCountryList[index].productions.join(', ')}'),
+                                Text('${myCountryList[index].production}'),
                               ]),
                         ),
                       ),
@@ -228,7 +219,7 @@ class _MyCountryListState extends State<MyCountryList> {
                 Text('${Languages.income[langindex]}: ${country.income}'),
                 Text('${Languages.owners[langindex]}: ${country.owners}'),
                 Text(
-                    '${Languages.productions[langindex]}: ${country.productions}'),
+                    '${Languages.production[langindex]}: ${country.production}'),
                 //Expanded(child: Container()),
                 //SizedBox(height: 30),
                 Center(

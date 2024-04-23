@@ -3,7 +3,7 @@ class Player{
   final String? email;
   final int? money;
   final List<bool>? bought;
-  final List<Map<String,dynamic>>? times;
+  final List<Map<String,String>>? times;
   final List<int>? appcolorTheme;
   final List<int>? bgcolorTheme;
   final String? language;

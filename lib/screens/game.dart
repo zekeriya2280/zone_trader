@@ -32,10 +32,12 @@ class _GameState extends State<Game> {
   Color appBarColor = Colors.blue;
   Color bgcolor = Colors.white;
   int langindex = 0;
-  List<int> buyablecountries = [];
+  List<int> enoughmoneycountries = [];
   bool canbebought = false;
   String wrongproductionerror = '';
   Color buttoncolor = Colors.red;
+ //List<String> productionsGS = [];
+ //List<List<String>> ownersGS = [];
   //List<Map<String, int>> upgradelistviewitems = [
   //  {'water': 1200},
   //  {'sugar': 1500},
@@ -288,6 +290,11 @@ class _GameState extends State<Game> {
     colorProducer();
     super.initState();
   }
+  @override
+  void dispose() {
+    
+    super.dispose();
+  }
 
   void getLang() async {
     await FBOp.getLanguage().then((value) {
@@ -364,6 +371,8 @@ class _GameState extends State<Game> {
     //await GSheet().updateIncomesByPrices(); // UPDATE COUNTRIES INCOMES GSHEETS---RESET
     List<List<dynamic>> newcountries = [];
     await GSheet().getAllRows(0).then((value) => newcountries = value);
+   //productionsGS = await GSheet().getColumnValues(0, 6).then((value) => value);
+   //ownersGS = await GSheet().getColumnValues(0, 5).then((value) => value.map((e) => e.split(',')).toList());
     //for (var doc in countriessnapshot.data!.docs) {
     //  countries.add(
     //    Country(
@@ -384,7 +393,7 @@ class _GameState extends State<Game> {
           price: int.parse(coun[2]),
           income: int.parse(coun[3]),
           owners: [coun[4]],
-          productions: [coun[5]],
+          production: coun[5],
         ));
       });
     }
@@ -414,7 +423,7 @@ class _GameState extends State<Game> {
           userinfo[3],
           int.parse(userinfo[5]),
           List<bool>.from(userinfo[2].split(',').map((e) => e == 'true').toList()),
-          List<Map<String, dynamic>>.from(userinfo[7].split(',').map((e) => {e.split(':')[0] : e.split(':')[1]}).toList()),
+          List<Map<String, String>>.from(userinfo[7].split(',').map((e) => {e.split(':')[0] : e.split(':')[1]}).toList()),
           List<int>.from(userinfo[0].split(',').map((e) => int.parse(e)).toList()),
           List<int>.from(userinfo[1].split(',').map((e) => int.parse(e)).toList()),
           userinfo[4]
@@ -423,7 +432,7 @@ class _GameState extends State<Game> {
    // }
 
     await GSheet().getBoughtValues().then((value) {
-      print('value: ' + value.toString());
+      //print('value: ' + value.toString());
       setState(() {
         bought = value.map((e) => e == "true" ? true : false).toList();
       });
@@ -450,16 +459,22 @@ class _GameState extends State<Game> {
     
     List<double> howmanyincomes = [];
     for (var submin in allsubmin) {
-      howmanyincomes.add(submin / 2);
+      if(submin > 0) {
+        howmanyincomes.add(submin / 5);
+      }
+      else {
+        howmanyincomes.add(0.0);
+      }
+      
     }
-    print('howmanyincomes : $howmanyincomes');
-   //await FBOp.findCountryIncomeAndAddFB(howmanyincomes)
-   //    .then((value) => moneychange = value);
-   //playSampleSound('assets/sounds/homeinitpopup.mp3');
+    //print('howmanyincomes : $howmanyincomes');
+    await GSheet().findCountryIncomeAndAddGS(howmanyincomes)
+        .then((value) => moneychange = value);
+    moneychange != 0 ? playSampleSound('assets/sounds/homeinitpopup.mp3') : false;
    ////AudioCache cache = AudioCache();
    ////const alarmAudioPath = "sounds/homeinitpopup.mp3";
    ////await cache.load(alarmAudioPath).then((value) => cache.clear(alarmAudioPath));
-   //moneychange != 0 ? _showMoneyChange(context, moneychange) : false;
+    moneychange != 0 ? _showMoneyChange(context, moneychange) : false;
   }
 
   //void updateFirebase
@@ -544,21 +559,11 @@ class _GameState extends State<Game> {
                 // Text(country.owners.isEmpty
                 //     ? '${Languages.owners[langindex]}: ${Languages.yok[langindex]}'
                 //     : '${Languages.owners[langindex]}: ${country.owners.join(', ')}'),
-                Text('${Languages.productions[langindex]}:',
+                Text('${Languages.production[langindex]}:',
                     style: detailtextstyle),
-                Text(country.productions[0] == 'water'
+                Text(country.production == 'water'
                     ? Languages.water[langindex]
-                    : country.productions[0].split(',').length > 3
-                        ? country.productions[0]
-                            .split(',')
-                            .map((e) =>
-                                country.productions[0].split(',').indexOf(e) %
-                                            3 ==
-                                        2
-                                    ? e = e + '\n'
-                                    : e = e)
-                            .join(' , ')
-                        : '${country.productions[0].split(',').join(' , ')}'),
+                    : '${country.production}'),
                 Image.asset(
                   CountryImageNames.countryImageNames[index],
                   alignment: Alignment.center,
@@ -568,14 +573,14 @@ class _GameState extends State<Game> {
                     child: Container(
                   height: 10,
                 )),
-                Center(
-                    child: Text(
-                  Languages.youshouldreloadReminderBuying[langindex],
-                  style: const TextStyle(
-                      fontSize: 15,
-                      color: Colors.red,
-                      fontWeight: FontWeight.bold),
-                )),
+               //Center(
+               //    child: Text(
+               //  Languages.youshouldreloadReminderBuying[langindex],
+               //  style: const TextStyle(
+               //      fontSize: 15,
+               //      color: Colors.red,
+               //      fontWeight: FontWeight.bold),
+               //)),
                 Text(wrongproductionerror,
                     style: const TextStyle(
                       color: Colors.red,
@@ -939,7 +944,8 @@ class _GameState extends State<Game> {
             Center(
               child: TextButton(
                 onPressed: () {
-                  Navigator.of(context).pop();
+                  Navigator.of(context).pushReplacement(MaterialPageRoute(
+                      builder: (context) => const Game()));
                 },
                 child: Center(
                   child: Text(
@@ -1097,7 +1103,7 @@ class _GameState extends State<Game> {
 
               for (var element in countries) {
                 if (money >= element.price.floor()) {
-                  buyablecountries.add(countries.indexOf(element));
+                  enoughmoneycountries.add(countries.indexOf(element));
                 }
               }
               //  countryBreaker = true;
@@ -1197,14 +1203,13 @@ class _GameState extends State<Game> {
                             itemBuilder: (context, index) {
                               return GestureDetector(
                                   onTap: () async {
-                                    await FBOp
-                                            .checkNeededProductionsBoughtBefore(
-                                                countriessnapshot,
+                                    
+                                    await GSheet()
+                                            .checkNeededProductionsBoughtBeforeGS(
                                                 productionpairs,
                                                 countries[index]
-                                                    .productions
-                                                    .first
-                                                    .toString())
+                                                    .production,
+                                                countries.map((e) => e.production).toList(),countries.map((e) => e.owners).toList())
                                         .then((value) {
                                       value.keys.first == true
                                           ? setState(() {
@@ -1213,6 +1218,7 @@ class _GameState extends State<Game> {
                                           : setState(() {
                                               canbebought = false; ////
                                             });
+                                      
                                       setState(() {
                                         canbebought
                                             ? wrongproductionerror = ''
@@ -1239,7 +1245,7 @@ class _GameState extends State<Game> {
 
                                       color: bought[index]
                                           ? Colors.green
-                                          : buyablecountries.contains(index)
+                                          : enoughmoneycountries.contains(index)
                                               ? Colors.blue
                                               : Colors.red,
                                       border: Border.all(
@@ -1283,29 +1289,11 @@ class _GameState extends State<Game> {
                                             Center(
                                               child: Text(
                                                 countries[index]
-                                                            .productions[0] ==
+                                                            .production ==
                                                         'water'
                                                     ? Languages.water[langindex]
                                                     : countries[index]
-                                                                .productions
-                                                                .length >
-                                                            3
-                                                        ? countries[index]
-                                                                    .productions[
-                                                                0] +
-                                                            '\n' +
-                                                            countries[index]
-                                                                    .productions[
-                                                                1] +
-                                                            '\n' +
-                                                            countries[index]
-                                                                    .productions[
-                                                                2] +
-                                                            "\n  ::::: "
-                                                        : countries[index]
-                                                                .productions
-                                                                .join('\n') +
-                                                            "\n   + ",
+                                                                .production,
                                                 //maxLines: 3,
                                                 overflow: TextOverflow.fade,
                                                 style: bought[index]

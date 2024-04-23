@@ -45,7 +45,7 @@ class FBOp {
         price: e.data()['price'],
         income: e.data()['income'],
         owners: e.data()['owners'],
-        productions: e.data()['productions']))));
+        production: e.data()['productions']))));
     return cl;
   }
 

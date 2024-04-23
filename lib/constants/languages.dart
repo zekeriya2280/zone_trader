@@ -13,7 +13,7 @@ class Languages {
   static var price = ['Price', 'Fiyat', 'Precio', '価格'];
   static var income = ['Income', 'Gelir', 'Ingresos', '収入'];
   static var owners = ['Owners', 'Sahibleri', 'Duenos', '所有者達'];
-  static var productions = ['Productions', 'Üretimler', 'Producciónes', '生産'];
+  static var production = ['Production', 'Üretim', 'Producción', '生産'];
   static var wrongproductionerror = ["You can't buy this country without buying necessary item(s)",
     "Bu ülkeyi satın almak için gerekli item(ler)i satın almalısınız",
     "No puedes comprar este país sin comprar el (los) item necesario",

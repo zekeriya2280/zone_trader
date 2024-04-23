@@ -3,13 +3,13 @@ class Country {
   final int price;
   final int income;
   final List<String> owners;
-  final List<String> productions;
+  final String production;
 
   Country({
     required this.name,
     required this.price,
     required this.income,
     required this.owners,
-    required this.productions
+    required this.production
   });
 }

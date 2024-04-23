@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:gsheets/gsheets.dart';
+import 'package:zone_trader/constants/countryImageNames.dart';
 
 class GSheet {
 
@@ -213,6 +214,104 @@ Future<void> updateUserTimesGS(List<Map<String,dynamic>> times) async {
   int userrowindex = await findCurrentUserRowIndex().then((value) => value + 1);
   await updateCellValue(1,userrowindex, 9, times.map((e) => e.keys.first + ':' + e.values.first).toList().join(','));
 }
+
+
+Future<List<int>> fetchBoughtIndexGS() async {
+    List<int> a = [];
+    List<Map<String, String>> times =
+        await fetchUserTimesGS().then((value) => value);
+    for (int i = 0; i < times.length; i++) {
+      times[i].forEach((key, value) {
+        if (value != "60") {
+          a.add(i);
+        }
+      });
+    }
+    return a;
+  }
+ Future<int> findCountryIncomeAndAddGS(
+      List<double> howmanyincomes) async {
+    List<int> indexes = [];
+    await fetchBoughtIndexGS().then((value) {
+      indexes = value;
+    });
+
+    List<int> incomes = [];
+    await getColumnValues(0, 4).then((value) => incomes = value.map((e) => int.parse(e)).toList());
+    //for (var i = 0; i < indexes.length; i++) {
+    //  incomes.add(await countries
+    //      .get()
+    //      .then((value) => value.docs[indexes[i]].data()['income']));
+    //}
+    int userrowindex = await findCurrentUserRowIndex().then((value) => value + 1);
+    int oldmoney = await getCellValue(1, userrowindex, 7).then((value) => int.parse(value));
+    //int oldmoney = await users
+    //    .doc(FirebaseAuth.instance.currentUser!.displayName)
+    //    .get()
+    //    .then((value) => Map<String, dynamic>.from(value.data()!)['money']);
+    List<Map<String, String>> test = List<Map<String, String>>.filled(CountryImageNames.countryandcitynumber, {'60': '60'});
+    for (var i = 0; i < indexes.length; i++) {
+      test[indexes[i]] = {
+        DateTime.now().hour.toString() : DateTime.now().minute.toString()
+      };
+    }
+    int sum = 0;
+    for (var i = 0; i < incomes.length; i++) {
+      sum = sum + (incomes[i] * howmanyincomes[i]).floor();
+    }
+    await updateCellValue(1, userrowindex, 7, (oldmoney + sum).toString());
+    await updateCellValue(1, userrowindex, 9, test.map((e) => e.keys.first + ':' + e.values.first).toList().join(','));
+    //print('sum $sum');
+   //users.doc(FirebaseAuth.instance.currentUser!.displayName).update({
+   //  'money': (oldmoney + sum),
+   //  'times': test,
+   //});
+    return sum;
+  }
+  Future<List<String>> counterHelper(Map<String,List<String>> element, List<String> productions, List<List<String>> owners)async{
+    List<String> counter = [];
+    element.values.first.forEach((neededitem) async {
+            
+            
+            
+            for (var i = 0; i < productions.length; i++) {
+                
+                if (productions[i] == neededitem && !owners[i].contains(FirebaseAuth.instance.currentUser!.displayName)) {
+                  counter.add(neededitem);
+                }
+                else if(productions[i] == neededitem && owners[i].contains(FirebaseAuth.instance.currentUser!.displayName)){
+                  counter.remove(neededitem);
+                  
+                  break;
+                }
+                
+            }
+          });
+          return counter;
+  }
+  Future<Map<bool, String>> checkNeededProductionsBoughtBeforeGS(
+      List<Map<String, List<String>>> pairs,
+      String wanttobuyproduct,
+      List<String> productions,
+      List<List<String>> owners) async {
+    List<String> counter = [];
+    
+    if (pairs.every((element) => element.keys.first != wanttobuyproduct)) {
+      
+      return {true: 'You successfully bought all needed productions!'};
+    } else {
+      for (var element in pairs) {
+        if (element.keys.first == wanttobuyproduct) {
+          counter = await counterHelper(element,productions,owners).then((value) => value);
+          print(counter);
+        }
+      }
+      
+    }
+    return counter == [] || counter.isEmpty
+        ? {true: ''}
+        : {false: '\n     ' + counter.toSet().join('  ,  ').toUpperCase()};
+  }
 
 }
 /*

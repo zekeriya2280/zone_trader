@@ -1,4 +1,3 @@
-
 import 'dart:convert';
 
 import 'package:firebase_auth/firebase_auth.dart';
@@ -168,7 +167,7 @@ Future<void> countryOwnerUpdate(String countryname,String username) async {
   
   countries.forEach((element)async { 
     if (element == countryname) {
-     print('countries.indexOf(element) + 1: '+(countries.indexOf(element) + 1).toString());
+     //print('countries.indexOf(element) + 1: '+(countries.indexOf(element) + 1).toString());
      String ownervalue = await getCellValue(0,countries.indexOf(element) + 2,5).then((value) => value);
       
      List<String> oldusers = ownervalue.split(',');
@@ -184,58 +183,61 @@ Future<void> countryOwnerUpdate(String countryname,String username) async {
     }
   });
 }
-Future<List<String>> getBoughtValues() async {
+Future<List<String>> getBoughtValues(int currentUserRowIndexGS) async {
   //List<String> usernames = await getColumnValues(1,1).then((value) => value);
   
-  int userrowindex = await findCurrentUserRowIndex().then((value) => value + 1);
+  //int userrowindex = await findCurrentUserRowIndex().then((value) => value + 1);
   //print('userrowindex: '+userrowindex.toString());
-  return await getCellValue(1,userrowindex, 4).then((value) => value.split(','));
+  return await getCellValue(1,currentUserRowIndexGS, 4).then((value) => value.split(','));
 }
-Future<void> updateUserMoney(String money)async{
-  int userrowindex = await findCurrentUserRowIndex().then((value) => value + 1);
-  await updateCellValue(1,userrowindex, 7, money);
+Future<void> updateUserMoney(String money,int currentUserRowIndexGS)async{
+  //int userrowindex = await findCurrentUserRowIndex().then((value) => value + 1);
+  await updateCellValue(1,currentUserRowIndexGS, 7, money);
 }
 Future<int> findCurrentUserRowIndex()async{
   List<String> usernames = await getColumnValues(1,1).then((value) => value);
  // print(usernames);
   return usernames.indexOf(FirebaseAuth.instance.currentUser!.displayName!) + 1;
 }
-Future<void> updateBoughtColorsGS(List<bool> bought) async {
-  int userrowindex = await findCurrentUserRowIndex().then((value) => value + 1);
-  await updateCellValue(1,userrowindex, 4, bought.map((e) => e ? 'true' : 'false').toList().join(',').toLowerCase());
+Future<void> updateBoughtColorsGS(List<bool> bought,int currentUserRowIndexGS) async {
+  //int userrowindex = await findCurrentUserRowIndex().then((value) => value + 1);
+  await updateCellValue(1,currentUserRowIndexGS, 4, bought.map((e) => e ? 'true' : 'false').toList().join(',').toLowerCase());
 }
 // Retrieves and returns the user times data from the Google Sheets based on the current user's row index.
-Future<List<Map<String,String>>> fetchUserTimesGS() async {
-  int userrowindex = await findCurrentUserRowIndex().then((value) => value + 1);
-  List<Map<String,String>> times =  await getCellValue(1,userrowindex, 9).then((value) => value.split(',').map((e) => {e.split(':')[0]: e.split(':')[1]}).toList());
+Future<List<List<String>>> fetchUserTimesGS(int currentUserRowIndexGS) async {
+  //int userrowindex = await findCurrentUserRowIndex().then((value) => value + 1);
+  List<List<String>> times =  await getCellValue(1,currentUserRowIndexGS, 9).then((value) => value.split(',').map((e) => e.split(' ')[0].split('-')+e.split(' ')[1].split(':')).toList());
   return times;
 }
-Future<void> updateUserTimesGS(List<Map<String,dynamic>> times) async {
-  int userrowindex = await findCurrentUserRowIndex().then((value) => value + 1);
-  await updateCellValue(1,userrowindex, 9, times.map((e) => e.keys.first + ':' + e.values.first).toList().join(','));
+Future<void> updateUserTimesGS(List<List<String>> times,int currentUserRowIndexGS) async {
+  
+  await updateCellValue(1,currentUserRowIndexGS, 9, times.map((e)=> e[0] + '-' + e[1] + '-' + e[2] + ' ' + e[3] + ':' + e[4] + ':' + e[5]).toList().join(','));
 }
 
 
-Future<List<int>> fetchBoughtIndexGS() async {
+Future<List<int>> fetchBoughtIndexGS(int currentUserRowIndexGS) async {
     List<int> a = [];
-    List<Map<String, String>> times =
-        await fetchUserTimesGS().then((value) => value);
+    List<List<String>> times =
+        await fetchUserTimesGS(currentUserRowIndexGS).then((value) => value);
     for (int i = 0; i < times.length; i++) {
-      times[i].forEach((key, value) {
-        if (value != "60") {
+      //times.forEach((element) { 
+        
+        if (times[i][0] != "9999") {
           a.add(i);
         }
-      });
+      //});
     }
+    a.toSet().toList();
+    
     return a;
   }
  Future<int> findCountryIncomeAndAddGS(
-      List<double> howmanyincomes) async {
+      List<double> howmanyincomes,int currentUserRowIndexGS) async {
     List<int> indexes = [];
-    await fetchBoughtIndexGS().then((value) {
+    await fetchBoughtIndexGS(currentUserRowIndexGS).then((value) {
       indexes = value;
     });
-
+    
     List<int> incomes = [];
     await getColumnValues(0, 4).then((value) => incomes = value.map((e) => int.parse(e)).toList());
     //for (var i = 0; i < indexes.length; i++) {
@@ -243,30 +245,42 @@ Future<List<int>> fetchBoughtIndexGS() async {
     //      .get()
     //      .then((value) => value.docs[indexes[i]].data()['income']));
     //}
-    int userrowindex = await findCurrentUserRowIndex().then((value) => value + 1);
-    int oldmoney = await getCellValue(1, userrowindex, 7).then((value) => int.parse(value));
+    //int userrowindex = await findCurrentUserRowIndex().then((value) => value + 1);
+    int oldmoney = await getCellValue(1, currentUserRowIndexGS, 7).then((value) => int.parse(value));
     //int oldmoney = await users
     //    .doc(FirebaseAuth.instance.currentUser!.displayName)
     //    .get()
     //    .then((value) => Map<String, dynamic>.from(value.data()!)['money']);
-    List<Map<String, String>> test = List<Map<String, String>>.filled(CountryImageNames.countryandcitynumber, {'60': '60'});
-    for (var i = 0; i < indexes.length; i++) {
-      test[indexes[i]] = {
-        DateTime.now().hour.toString() : DateTime.now().minute.toString()
-      };
-    }
+   // List<List<String>> test = List<List<String>>.filled(CountryImageNames.countryandcitynumber, ['9999','99','99','60','60','60']);
+   // for (var i = 0; i < indexes.length; i++) {
+   //   test[indexes[i]] = [DateTime.now().year.toString(), DateTime.now().month.toString(), DateTime.now().day.toString(), DateTime.now().hour.toString(), DateTime.now().minute.toString(), DateTime.now().second.toString()];
+   // }
     int sum = 0;
-    for (var i = 0; i < incomes.length; i++) {
-      sum = sum + (incomes[i] * howmanyincomes[i]).floor();
-    }
-    await updateCellValue(1, userrowindex, 7, (oldmoney + sum).toString());
-    await updateCellValue(1, userrowindex, 9, test.map((e) => e.keys.first + ':' + e.values.first).toList().join(','));
+    //indexes.forEach((element) {
+      for (var i = 0; i < indexes.length; i++) {
+        sum = sum + (incomes[indexes[i]] * howmanyincomes[indexes[i]]).floor();
+      }
+    //});
+    
+    await updateCellValue(1, currentUserRowIndexGS, 7, (oldmoney + sum).toString());
+    //await updateUserTimesGS(test, currentUserRowIndexGS);
     //print('sum $sum');
    //users.doc(FirebaseAuth.instance.currentUser!.displayName).update({
    //  'money': (oldmoney + sum),
    //  'times': test,
    //});
     return sum;
+  }
+  Future<void> updateIndexedTimesGS(int currentUserRowIndexGS)async{
+    List<int> indexes = [];
+    await fetchBoughtIndexGS(currentUserRowIndexGS).then((value) {
+      indexes = value;
+    });
+     List<List<String>> test = List<List<String>>.filled(CountryImageNames.countryandcitynumber, ['9999','99','99','60','60','60']);
+    for (var i = 0; i < indexes.length; i++) {
+      test[indexes[i]] = [DateTime.now().year.toString(), DateTime.now().month.toString(), DateTime.now().day.toString(), DateTime.now().hour.toString(), DateTime.now().minute.toString(), DateTime.now().second.toString()];
+    }
+    await updateUserTimesGS(test, currentUserRowIndexGS);
   }
   Future<List<String>> counterHelper(Map<String,List<String>> element, List<String> productions, List<List<String>> owners)async{
     List<String> counter = [];
@@ -303,7 +317,7 @@ Future<List<int>> fetchBoughtIndexGS() async {
       for (var element in pairs) {
         if (element.keys.first == wanttobuyproduct) {
           counter = await counterHelper(element,productions,owners).then((value) => value);
-          print(counter);
+          //print(counter);
         }
       }
       

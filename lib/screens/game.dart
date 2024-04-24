@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zone_trader/authentication/signin.dart';
 import 'package:zone_trader/constants/countryImageNames.dart';
 import 'package:zone_trader/constants/languages.dart';
@@ -27,8 +28,8 @@ class _GameState extends State<Game> {
   Player player = Player('', '', 0, [], [], [], [], 'ENG');
   List<bool> bought =
       List<bool>.filled(CountryImageNames.countryandcitynumber, false);
-  List<Map<String, String>> boughttimes = List<Map<String, String>>.filled(
-      CountryImageNames.countryandcitynumber, {'60': '60'});
+  List<List<String>> boughttimes = List<List<String>>.filled(
+      CountryImageNames.countryandcitynumber, ['9999','99','99','60','60','60']);
   Color appBarColor = Colors.blue;
   Color bgcolor = Colors.white;
   int langindex = 0;
@@ -36,58 +37,8 @@ class _GameState extends State<Game> {
   bool canbebought = false;
   String wrongproductionerror = '';
   Color buttoncolor = Colors.red;
- //List<String> productionsGS = [];
- //List<List<String>> ownersGS = [];
-  //List<Map<String, int>> upgradelistviewitems = [
-  //  {'water': 1200},
-  //  {'sugar': 1500},
-  //  {'salt': 1800},
-  //  {'orange': 2100},
-  //  {'banana': 2400},
-  //  {'flour': 1900},
-  //  {'yeast': 2200},
-  //  {'milk': 1400},
-  //  {'honey': 2500},
-  //  {'cocoa': 2800},
-  //  {'potato': 3100},
-  //  {'olives': 3400},
-  //  {'tomato': 3700},
-  //  {'bread': 4100},
-  //  {'bronze': 4400},
-  //  {'silver': 4700},
-  //  {'gold': 5000},
-  //  {'iron': 4300},
-  //  {'copper': 4600},
-  //  {'coal': 4200},
-  //  {'meat': 3300},
-  //  {'eggs': 3100},
-  //  {'beef': 3600},
-  //  {'leather': 4000},
-  //  {'mutton': 4100},
-  //  {'wool': 3800},
-  //  {'wood': 2400},
-  //  {'timber': 4000},
-  //  {'chair': 5000},
-  //  {'table': 5200},
-  //  {'ceramic': 3400},
-  //  {'washroom': 5500},
-  //  {'door': 5200},
-  //  {'plastic': 3300},
-  //  {'bottle': 4000},
-  //  {'glass': 4000},
-  //  {'window': 6000},
-  //  {'house': 10000},
-  //  {'rubber': 4000},
-  //  {'tire': 5200},
-  //  {'engine': 7000},
-  //  {'car': 15000},
-  //  {'watersoda': 3300},
-  //  {'bananajuice': 4500},
-  //  {'orangejuice': 4500},
-  //  {'steel': 4700},
-  //  {'cans': 5700},
-  //  {'bananasmoothie': 6000},
-  //];
+  int currentUserRowIndexGS = 0;
+  //Timer boughttimer = Timer(const Duration(seconds: 0), () {});
   var langs = [
     'ENG',
     'TR',
@@ -281,6 +232,36 @@ class _GameState extends State<Game> {
       'bedroom': ['window', 'bed', 'door']
     },
   ];
+  DateTime oldboughttime = DateTime.now();
+  DateTime newboughttime = DateTime.now();
+  /*
+  Timer boughttimer = new Timer(new Duration(seconds: 0), () {});
+  int timeticker = 30;
+
+  void startTimer() {
+    const oneSec = const Duration(seconds: 1);
+    boughttimer = new Timer.periodic(
+      oneSec,
+      (Timer timer) {
+        if (timeticker == 0) {
+          setState(() {
+            timer.cancel();
+          });
+        } else {
+          setState(() {
+            timeticker--;
+          });
+        }
+      },
+    );
+  }
+ */
+
+//@override
+//void dispose() {
+//  _timer.cancel();
+//  super.dispose();
+//}
 
   @override
   void initState() {
@@ -398,10 +379,13 @@ class _GameState extends State<Game> {
       });
     }
     //List<String> player = [];
-    int userrowindex =
+   // setState(() async{
+      currentUserRowIndexGS =
         await GSheet().findCurrentUserRowIndex().then((value) => value + 1);
+    //});
+    
     List<String> userinfo =
-        await GSheet().getRowValues(1, userrowindex).then((value) => value);
+        await GSheet().getRowValues(1, currentUserRowIndexGS).then((value) => value);
 
     //for (var doc in countriessnapshot.data!.docs) {
     //  countries.add(
@@ -423,7 +407,7 @@ class _GameState extends State<Game> {
           userinfo[3],
           int.parse(userinfo[5]),
           List<bool>.from(userinfo[2].split(',').map((e) => e == 'true').toList()),
-          List<Map<String, String>>.from(userinfo[7].split(',').map((e) => {e.split(':')[0] : e.split(':')[1]}).toList()),
+          List<List<String>>.from(userinfo[7].split(',').map((e) => e.split(' ')[0].split('-')+e.split(' ')[1].split(':')).toList()),
           List<int>.from(userinfo[0].split(',').map((e) => int.parse(e)).toList()),
           List<int>.from(userinfo[1].split(',').map((e) => int.parse(e)).toList()),
           userinfo[4]
@@ -431,55 +415,68 @@ class _GameState extends State<Game> {
       });
    // }
 
-    await GSheet().getBoughtValues().then((value) {
+    await GSheet().getBoughtValues(currentUserRowIndexGS).then((value) {
       //print('value: ' + value.toString());
       setState(() {
         bought = value.map((e) => e == "true" ? true : false).toList();
       });
     });
 
-    DateTime now = DateTime.now();
-    List<Map<String, String>> oldtimelist = [];
+    //DateTime now = DateTime.now();
+    List<List<String>> oldtimelist = [];
     int moneychange = 0;
-    await GSheet().fetchUserTimesGS()
-        .then((value) => oldtimelist = value);
+    //await GSheet().fetchUserTimesGS(currentUserRowIndexGS)
+    //    .then((value) => oldtimelist = value);
+    oldtimelist = player.times;
    //print('oldtimelist $oldtimelist');
     List<int> allsubmin = [];
     for (var time in oldtimelist) {
-      if (now.hour < int.parse(time.keys.first)) {
-        allsubmin.add(
-            (now.minute + (24 - (int.parse(time.keys.first) - now.hour)) * 60) -
-                int.parse(time.values.first));
-      } else {
-        allsubmin.add(
-            ((now.minute + (now.hour - int.parse(time.keys.first)) * 60) -
-                int.parse(time.values.first)));
-      }
+      String month = time[1].length == 1?'0'+time[1]:time[1];
+      String day = time[2].length == 1?'0'+time[2]:time[2];
+      String hour = time[3].length == 1?'0'+time[3]:time[3];
+      String minute = time[4].length == 1?'0'+time[4]:time[4];
+      String second = time[5].length == 1?'0'+time[5]:time[5]; 
+      allsubmin.add(DateTime.now().difference(DateTime.parse(time[0]+'-'+month+'-'+day+' '+hour+':'+minute+':'+second)).inMinutes);
+      //if (now.hour < int.parse(time.keys.first)) {
+      //  allsubmin.add(
+      //      (now.minute + (24 - (int.parse(time.keys.first) - now.hour)) * 60) -
+      //          int.parse(time.values.first));
+      //if (now.hour < int.parse(time.keys.first)) {
+      //  allsubmin.add(
+      //      (now.minute + (24 - (int.parse(time.keys.first) - now.hour)) * 60) -
+      //          int.parse(time.values.first));
+      //} else {
+      //  allsubmin.add(
+      //      ((now.minute + (now.hour - int.parse(time.keys.first)) * 60) -
+      //          int.parse(time.values.first)));
+      //}
     }
-    
+    print('allsubmin : '+allsubmin.toString());
     List<double> howmanyincomes = [];
     for (var submin in allsubmin) {
       if(submin > 0) {
-        howmanyincomes.add(submin / 5);
+        howmanyincomes.add(submin % 2 == 0 ? submin / 2 : 0.0);
       }
       else {
         howmanyincomes.add(0.0);
       }
       
     }
-    //print('howmanyincomes : $howmanyincomes');
-    await GSheet().findCountryIncomeAndAddGS(howmanyincomes)
+    print('howmanyincomes : $howmanyincomes');
+    await GSheet().findCountryIncomeAndAddGS(howmanyincomes,currentUserRowIndexGS)
         .then((value) => moneychange = value);
     moneychange != 0 ? playSampleSound('assets/sounds/homeinitpopup.mp3') : false;
    ////AudioCache cache = AudioCache();
    ////const alarmAudioPath = "sounds/homeinitpopup.mp3";
    ////await cache.load(alarmAudioPath).then((value) => cache.clear(alarmAudioPath));
+    howmanyincomes.any((element) => element != 0.0) ? await GSheet().updateIndexedTimesGS(currentUserRowIndexGS) : false;
     moneychange != 0 ? _showMoneyChange(context, moneychange) : false;
+    
   }
 
   //void updateFirebase
   Future<void> greenBGColorFiller() async {
-    await GSheet().updateBoughtColorsGS(bought);
+    await GSheet().updateBoughtColorsGS(bought,currentUserRowIndexGS);
     //print(countries);
   }
 
@@ -826,19 +823,21 @@ class _GameState extends State<Game> {
                                       : buythiscard(context, country, index);
                                   playSampleSound('assets/sounds/bought.mp3');
                                   
-                                  DateTime now = DateTime.now();
+                                  //DateTime now = new DateTime.now();
                                   
-                                  await GSheet().fetchUserTimesGS().then((value) {
+                                  await GSheet().fetchUserTimesGS(currentUserRowIndexGS).then((value) {
                                     //FETCH TIMES FROM FB
                                     setState(() {
                                       boughttimes = value;
                                     });
                                   });
-                                  
-                                  boughttimes[index] = {
-                                    now.hour.toString().trim() : now.minute.toString().trim()
-                                  };
-                                  await GSheet().updateUserTimesGS(boughttimes);
+                                  //print(boughttimes);
+                                  setState(() {
+                                    boughttimes[index] = 
+                                    [DateTime.now().year.toString(), DateTime.now().month.toString(), DateTime.now().day.toString(), DateTime.now().hour.toString(), DateTime.now().minute.toString(), DateTime.now().second.toString()];
+                                  });
+                                  print('last boughttimes : '+boughttimes.toString());
+                                  await GSheet().updateUserTimesGS(boughttimes,currentUserRowIndexGS);
                                   /*
                                   await FBOp.updateUserTimesAndOwnersFB(
                                       boughttimes,
@@ -943,7 +942,8 @@ class _GameState extends State<Game> {
           actions: [
             Center(
               child: TextButton(
-                onPressed: () {
+                onPressed: () async{
+                  //await GSheet().updateIndexedTimesGS(currentUserRowIndexGS);
                   Navigator.of(context).pushReplacement(MaterialPageRoute(
                       builder: (context) => const Game()));
                 },
@@ -958,7 +958,9 @@ class _GameState extends State<Game> {
           ],
         );
       },
-    );
+
+    );//.whenComplete(() async=> await GSheet().updateIndexedTimesGS(currentUserRowIndexGS));
+
   }
 
   void _userNameChange(BuildContext context) {
@@ -1037,9 +1039,37 @@ class _GameState extends State<Game> {
     setState(() {
       bought[index] = true;
     });
-    await GSheet().updateUserMoney(money.toString());
+    await GSheet().updateUserMoney(money.toString(),currentUserRowIndexGS);
+    //setState(() {
+    //  oldboughttime = DateTime.now();
+    //});
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      oldboughttime = DateTime.now();
+      //print('oldtime : '+ oldboughttime.toString());
+      //print('newtime : '+ newboughttime.toString());
+      //print('oldtime - newtime : '+ oldboughttime!.difference(newboughttime).inSeconds.toString());
+      //print('oldtime - newtime : '+ oldboughttime!.difference(newboughttime).inSeconds.toString());
+    });
+    String month = oldboughttime.month.toString().characters.length==1?'0'+oldboughttime.month.toString():oldboughttime.month.toString();
+    String day = oldboughttime.day.toString().characters.length==1?'0'+oldboughttime.day.toString():oldboughttime.day.toString();
+    String hour = oldboughttime.hour.toString().characters.length==1?'0'+oldboughttime.hour.toString():oldboughttime.hour.toString();
+    String minute = oldboughttime.minute.toString().characters.length==1?'0'+oldboughttime.minute.toString():oldboughttime.minute.toString();
+    String second = oldboughttime.second.toString().characters.length==1?'0'+oldboughttime.second.toString():oldboughttime.second.toString();
+    await prefs.setString('oldboughttime', oldboughttime.year.toString()+'-'+
+                                     month+'-'+day+' '+hour+':'+minute+':'+second);
+    //print('prefsgetoldtime : ' + prefs.getString('oldboughttime').toString());
   }
-
+  Future<void> timerManager() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    //print(prefs.getString('oldboughttime'));
+    setState(() {
+      newboughttime = DateTime.now();
+      oldboughttime = DateTime.parse(prefs.getString('oldboughttime') ?? DateTime.now().add(Duration(days: 365)).toString());
+    });
+   // print('oldtime : '+ oldboughttime.toString());
+   
+  }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   ///
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1047,6 +1077,11 @@ class _GameState extends State<Game> {
   Widget build(BuildContext context) {
     //FBOp.updateCountriesNewIncomesFB();
     //FBOp.allCountryManagementFB(temp);// UPDATE COUNTRIES PRICES AND INCOMES FB---RESET
+    timerManager();
+    //print(oldboughttime!.difference(newboughttime).inSeconds);
+    bool appbarbool = newboughttime.difference(oldboughttime).inSeconds > Duration(seconds: 30).inSeconds;
+    //print('newboughttime :'+newboughttime.toString());
+    //print('oldboughttime :'+oldboughttime.toString());
     return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
       stream: FirebaseFirestore.instance.collection('users').snapshots(),
       builder: (context, AsyncSnapshot<QuerySnapshot> userssnapshot) {
@@ -1118,7 +1153,7 @@ class _GameState extends State<Game> {
                     children: [
                       SizedBox(
                         //color: Colors.red,
-                        width: 120,
+                        width: 80,
                         height: 50,
                         child: Center(
                           child: Text(
@@ -1130,6 +1165,19 @@ class _GameState extends State<Game> {
                           ),
                         ),
                       ),
+                     SizedBox(
+                       width: 40,
+                       height: 50,
+                       child: Center(
+                         child: Text(
+                           '${newboughttime.difference(oldboughttime).inSeconds > 30 || newboughttime.difference(oldboughttime).inSeconds < 0 ? 'BUY': (30 - newboughttime.difference(oldboughttime).inSeconds).toString()}',
+                           style: const TextStyle(
+                               fontSize: 18,
+                               color: Colors.yellow,
+                               fontWeight: FontWeight.bold),
+                         ),
+                       ),
+                     ),
                       SizedBox(
                           width: 90,
                           height: 50,
@@ -1202,7 +1250,7 @@ class _GameState extends State<Game> {
                             itemCount: CountryImageNames.countryandcitynumber,
                             itemBuilder: (context, index) {
                               return GestureDetector(
-                                  onTap: () async {
+                                  onTap: !appbarbool && oldboughttime.isBefore(new DateTime.now()) ? null : () async {
                                     
                                     await GSheet()
                                             .checkNeededProductionsBoughtBeforeGS(

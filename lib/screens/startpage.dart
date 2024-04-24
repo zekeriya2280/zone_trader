@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zone_trader/screens/intropage.dart';
 
 class StartPage extends StatefulWidget {
@@ -15,6 +16,7 @@ class _StartPageState extends State<StartPage> {
   
   @override
   void initState() {
+    SharedPreferences.setMockInitialValues({});
     startTimer();
     super.initState();
   }

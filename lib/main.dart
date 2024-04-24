@@ -1,7 +1,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:zone_trader/models/gsheet.dart';
 import 'package:zone_trader/screens/wrapper.dart';
 
 void main() async {

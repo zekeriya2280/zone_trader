@@ -455,7 +455,7 @@ class _GameState extends State<Game> {
     List<double> howmanyincomes = [];
     for (var submin in allsubmin) {
       if(submin > 0) {
-        howmanyincomes.add(submin % 2 == 0 ? submin / 2 : 0.0);
+        howmanyincomes.add(submin % 5 == 0 ? submin / 5 : 0.0);
       }
       else {
         howmanyincomes.add(0.0);

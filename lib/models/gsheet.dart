@@ -1,13 +1,8 @@
-import 'dart:convert';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:gsheets/gsheets.dart';
 import 'package:zone_trader/constants/countryImageNames.dart';
-
 class GSheet {
-
   static final gsheets = GSheets(_credentials);
-
   static const _credentials = r''' 
 {
   "type": "service_account",
@@ -22,22 +17,8 @@ class GSheet {
   "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/zone-trader-service%40zelix-zonetrader.iam.gserviceaccount.com",
   "universe_domain": "googleapis.com"
 }
-
 ''';
 static const _spreadsheetID = '1WnlNxxLam9pK5taT2WmxLY-skoE8hyGLJzDn9lp5E1A';
-
-
-// Future<List<String>> getColumn(int worksheetindex,String columnname) async {
-//  final sheet = await gsheets.spreadsheet(_spreadsheetID);
-//  final worksheet = await sheet.worksheetByIndex(worksheetindex);
-//  return await worksheet!.values.map.columnByKey(columnname).then((value) => value!.values.map((e) => e).toList());
-//}
-//Future<List<String>> getRow(int worksheetindex,String rowname) async {
-//  final sheet = await gsheets.spreadsheet(_spreadsheetID);
-//  final worksheet = await sheet.worksheetByIndex(worksheetindex);
-//  return await worksheet!.values.map.columnByKey(rowname).then((value) => value!.values.map((e) => e).toList());
-//}
-
 Future<List<List<dynamic>>> getAllRows(int worksheetindex) async {
   final sheet = await gsheets.spreadsheet(_spreadsheetID);
   final worksheet = await sheet.worksheetByIndex(worksheetindex);
@@ -50,28 +31,24 @@ Future<int> findRowIndexByValue(String columnValue, int columnIndex) async {
   final columnData = await worksheet!.values.column(columnIndex);
   return columnData.indexOf(columnValue) + 1; // indeks 0'dan başladığı için +1 ekliyoruz
 }
-
 // Belirli bir sütundaki tüm değerleri getirme fonksiyonu
 Future<List<String>> getColumnValues(int worksheetindex,int columnIndex) async {
   final sheet = await gsheets.spreadsheet(_spreadsheetID);
   final worksheet = await sheet.worksheetByIndex(worksheetindex);
   return await worksheet!.values.column(fromRow: 2,columnIndex);
 }
-
 // Belirli bir satırdaki tüm değerleri getirme fonksiyonu
 Future<List<String>> getRowValues(int worksheetindex,int rowIndex) async {
   final sheet = await gsheets.spreadsheet(_spreadsheetID);
   final worksheet = await sheet.worksheetByIndex(worksheetindex);
   return await worksheet!.values.row(fromColumn: 2,rowIndex);
 }
-
 // Belirli bir hücredeki değeri getirme fonksiyonu
 Future<String> getCellValue(int worksheetindex,int rowIndex, int columnIndex) async {
   final sheet = await gsheets.spreadsheet(_spreadsheetID);
   final worksheet = await sheet.worksheetByIndex(worksheetindex);
   return await worksheet!.values.value(column: columnIndex, row: rowIndex);
 }
-
 // Belirli bir hücreyi güncelleme fonksiyonu
 Future<void> updateCellValue(int worksheetindex,int rowIndex, int columnIndex, String newValue) async {
   final sheet = await gsheets.spreadsheet(_spreadsheetID);
@@ -84,14 +61,12 @@ Future<void> updateColumnValues(int worksheetindex,int columnIndex, List<dynamic
   final worksheet = await sheet.worksheetByIndex(worksheetindex);
   await worksheet!.values.insertColumn(fromRow: 2,columnIndex, newValues);
 }
-
 // Belirli bir satırdaki tüm değerleri güncelleme fonksiyonu
-Future<void> updateRowValues(int rowIndex, List<dynamic> newValues) async {
+Future<void> updateRowValues(int worksheetindex,int rowIndex, List<dynamic> newValues) async {
   final sheet = await gsheets.spreadsheet(_spreadsheetID);
-  final worksheet = await sheet.worksheetByIndex(0);
+  final worksheet = await sheet.worksheetByIndex(worksheetindex);
   await worksheet!.values.insertRow(fromColumn: 2,rowIndex, newValues);
 }
-
 // Yeni bir çalışma sayfası oluşturma fonksiyonu
 Future<void> createNewWorksheet(String sheetName) async {
   final ss = await gsheets.spreadsheet(_spreadsheetID);
@@ -104,52 +79,47 @@ Future<List<String>> getAllWorksheetNames() async {
   final ss = await gsheets.spreadsheet(_spreadsheetID);
   return ss.sheets.map((e) => e.title).toList();
 }
-
 // Belirli bir çalışma sayfasını adına göre getirme fonksiyonu
 Future<Worksheet?> getWorksheetByName(String sheetName) async {
   final ss = await gsheets.spreadsheet(_spreadsheetID);
   return ss.worksheetByTitle(sheetName);
 }
-
 // Bir çalışma sayfasındaki tüm verileri temizleme fonksiyonu
 Future<void> clearWorksheet(String sheetName) async {
   final worksheet = await getWorksheetByName(sheetName);
   await worksheet!.clear();
 }
-
 // Bir çalışma sayfasını kopyalama fonksiyonu
 Future<Worksheet?> copyWorksheet(String originalSheetName, String copySheetName) async {
   final original = await getWorksheetByName(originalSheetName);
   final ss = await gsheets.spreadsheet(_spreadsheetID);
   return ss.copyWorksheet(original!, copySheetName);
 }
-
 // Bir çalışma sayfasını yeniden adlandırma fonksiyonu
 Future<void> renameWorksheet(String sheetName, String newSheetName) async {
   final worksheet = await getWorksheetByName(sheetName);
   worksheet!.updateTitle(newSheetName);
 }
-Future<void> addRow(List<dynamic> values) async {
+Future<void> addRow(int worksheetindex,List<dynamic> values) async {
   final sheet = await gsheets.spreadsheet(_spreadsheetID);
-  final worksheet = await sheet.worksheetByIndex(0);
+  final worksheet = await sheet.worksheetByIndex(worksheetindex);
   await worksheet!.values.appendRow(values);
 }
-
 // Satır silme fonksiyonu
-Future<void> deleteRow(int index) async {
+Future<void> deleteRow(int worksheetindex,int index) async {
   final sheet = await gsheets.spreadsheet(_spreadsheetID);
-  final worksheet = await sheet.worksheetByIndex(0);
+  final worksheet = await sheet.worksheetByIndex(worksheetindex);
   await worksheet!.deleteRow(index);
 }
 // E-posta adresine göre satır bulma ve değiştirme fonksiyonu
-Future<void> findAndUpdateByEmail(String email, List<dynamic> newValues) async {
+Future<void> findAndUpdateByEmail(int worksheetindex,String email, List<dynamic> newValues) async {
   final sheet = await gsheets.spreadsheet(_spreadsheetID);
-  final worksheet = await sheet.worksheetByIndex(1);
+  final worksheet = await sheet.worksheetByIndex(worksheetindex);
   final emailColumnIndex = 2; // E-posta adreslerinin bulunduğu sütunun indeksi
   final emails = await worksheet!.values.column(emailColumnIndex);
   final index = emails.indexOf(email);
   if (index != -1) {
-    await updateRowValues(index + 1, newValues);
+    await updateRowValues(1,index + 1, newValues);
   }
 }
 // INCOME RESET
@@ -167,7 +137,6 @@ Future<void> countryOwnerUpdate(String countryname,String username) async {
   
   countries.forEach((element)async { 
     if (element == countryname) {
-     //print('countries.indexOf(element) + 1: '+(countries.indexOf(element) + 1).toString());
      String ownervalue = await getCellValue(0,countries.indexOf(element) + 2,5).then((value) => value);
       
      List<String> oldusers = ownervalue.split(',');
@@ -184,23 +153,16 @@ Future<void> countryOwnerUpdate(String countryname,String username) async {
   });
 }
 Future<List<String>> getBoughtValues(int currentUserRowIndexGS) async {
-  //List<String> usernames = await getColumnValues(1,1).then((value) => value);
-  
-  //int userrowindex = await findCurrentUserRowIndex().then((value) => value + 1);
-  //print('userrowindex: '+userrowindex.toString());
   return await getCellValue(1,currentUserRowIndexGS, 4).then((value) => value.split(','));
 }
 Future<void> updateUserMoney(String money,int currentUserRowIndexGS)async{
-  //int userrowindex = await findCurrentUserRowIndex().then((value) => value + 1);
   await updateCellValue(1,currentUserRowIndexGS, 7, money);
 }
 Future<int> findCurrentUserRowIndex()async{
   List<String> usernames = await getColumnValues(1,1).then((value) => value);
- // print(usernames);
   return usernames.indexOf(FirebaseAuth.instance.currentUser!.displayName!) + 1;
 }
 Future<void> updateBoughtColorsGS(List<bool> bought,int currentUserRowIndexGS) async {
-  //int userrowindex = await findCurrentUserRowIndex().then((value) => value + 1);
   await updateCellValue(1,currentUserRowIndexGS, 4, bought.map((e) => e ? 'true' : 'false').toList().join(',').toLowerCase());
 }
 // Retrieves and returns the user times data from the Google Sheets based on the current user's row index.
@@ -210,25 +172,18 @@ Future<List<List<String>>> fetchUserTimesGS(int currentUserRowIndexGS) async {
   return times;
 }
 Future<void> updateUserTimesGS(List<List<String>> times,int currentUserRowIndexGS) async {
-  
   await updateCellValue(1,currentUserRowIndexGS, 9, times.map((e)=> e[0] + '-' + e[1] + '-' + e[2] + ' ' + e[3] + ':' + e[4] + ':' + e[5]).toList().join(','));
 }
-
-
 Future<List<int>> fetchBoughtIndexGS(int currentUserRowIndexGS) async {
     List<int> a = [];
     List<List<String>> times =
         await fetchUserTimesGS(currentUserRowIndexGS).then((value) => value);
     for (int i = 0; i < times.length; i++) {
-      //times.forEach((element) { 
-        
         if (times[i][0] != "9999") {
           a.add(i);
         }
-      //});
     }
     a.toSet().toList();
-    
     return a;
   }
  Future<int> findCountryIncomeAndAddGS(
@@ -237,38 +192,14 @@ Future<List<int>> fetchBoughtIndexGS(int currentUserRowIndexGS) async {
     await fetchBoughtIndexGS(currentUserRowIndexGS).then((value) {
       indexes = value;
     });
-    
     List<int> incomes = [];
     await getColumnValues(0, 4).then((value) => incomes = value.map((e) => int.parse(e)).toList());
-    //for (var i = 0; i < indexes.length; i++) {
-    //  incomes.add(await countries
-    //      .get()
-    //      .then((value) => value.docs[indexes[i]].data()['income']));
-    //}
-    //int userrowindex = await findCurrentUserRowIndex().then((value) => value + 1);
     int oldmoney = await getCellValue(1, currentUserRowIndexGS, 7).then((value) => int.parse(value));
-    //int oldmoney = await users
-    //    .doc(FirebaseAuth.instance.currentUser!.displayName)
-    //    .get()
-    //    .then((value) => Map<String, dynamic>.from(value.data()!)['money']);
-   // List<List<String>> test = List<List<String>>.filled(CountryImageNames.countryandcitynumber, ['9999','99','99','60','60','60']);
-   // for (var i = 0; i < indexes.length; i++) {
-   //   test[indexes[i]] = [DateTime.now().year.toString(), DateTime.now().month.toString(), DateTime.now().day.toString(), DateTime.now().hour.toString(), DateTime.now().minute.toString(), DateTime.now().second.toString()];
-   // }
     int sum = 0;
-    //indexes.forEach((element) {
-      for (var i = 0; i < indexes.length; i++) {
-        sum = sum + (incomes[indexes[i]] * howmanyincomes[indexes[i]]).floor();
-      }
-    //});
-    
+    for (var i = 0; i < indexes.length; i++) {
+      sum = sum + (incomes[indexes[i]] * howmanyincomes[indexes[i]]).floor();
+    }
     await updateCellValue(1, currentUserRowIndexGS, 7, (oldmoney + sum).toString());
-    //await updateUserTimesGS(test, currentUserRowIndexGS);
-    //print('sum $sum');
-   //users.doc(FirebaseAuth.instance.currentUser!.displayName).update({
-   //  'money': (oldmoney + sum),
-   //  'times': test,
-   //});
     return sum;
   }
   Future<void> updateIndexedTimesGS(int currentUserRowIndexGS)async{
@@ -326,117 +257,4 @@ Future<List<int>> fetchBoughtIndexGS(int currentUserRowIndexGS) async {
         ? {true: ''}
         : {false: '\n     ' + counter.toSet().join('  ,  ').toUpperCase()};
   }
-
 }
-/*
-// Çalışma sayfasını silme fonksiyonu
-Future<void> deleteWorksheet(String sheetName) async {
-  final ss = await gsheets.spreadsheet(_spreadsheetID);
-  final worksheet = ss.worksheetByTitle(sheetName);
-  if (worksheet != null) {
-    await ss.removeWorksheet(worksheet);
-  }
-}
-*/
-/*
-// Belirli bir hücre aralığını getirme fonksiyonu
-Future<List<List<String>>> getRangeValues(String range) async {
-  final sheet = await gsheets.spreadsheet(_spreadsheetID);
-  final worksheet = await sheet.worksheetByIndex(0);
-  return await worksheet!.values.allInRange(range);
-}
-*/
-/*
- // Belirli bir hücreyi boşaltma fonksiyonu
-Future<void> clearCell(int rowIndex, int columnIndex) async {
-  final sheet = await gsheets.spreadsheet(_spreadsheetID);
-  final worksheet = await sheet.worksheetByIndex(0);
-  await worksheet!.values.clearCell(column: columnIndex, row: rowIndex);
-}
-*/
-/*
-// Belirli bir sütunu boşaltma fonksiyonu
-Future<void> clearColumn(int columnIndex) async {
-  final sheet = await gsheets.spreadsheet(_spreadsheetID);
-  final worksheet = await sheet.worksheetByIndex(0);
-  await worksheet!.values.clearColumn(columnIndex);
-}
-
-// Belirli bir satırı boşaltma fonksiyonu
-Future<void> clearRow(int rowIndex) async {
-  final sheet = await gsheets.spreadsheet(_spreadsheetID);
-  final worksheet = await sheet.worksheetByIndex(0);
-  await worksheet!.values.clearRow(rowIndex);
-}
-
-// Belirli bir hücre aralığını boşaltma fonksiyonu
-Future<void> clearRange(String range) async {
-  await sheet!.values.clearRange(range);
-}
-
-// Belirli bir hücreye not ekleme fonksiyonu
-Future<void> addNoteToCell(int rowIndex, int columnIndex, String note) async {
-  final sheet = await gsheets.spreadsheet(_spreadsheetID);
-  final worksheet = await sheet.worksheetByIndex(0);
-  await worksheet!.values.insertNote(note, column: columnIndex, row: rowIndex);
-}
-
-// Belirli bir satıra not ekleme fonksiyonu
-Future<void> addNoteToRow(int rowIndex, String note) async {
-  await sheet!.values.insertNoteRow(note, row: rowIndex);
-}
-
-// Belirli bir sütuna not ekleme fonksiyonu
-Future<void> addNoteToColumn(int columnIndex, String note) async {
-  await sheet!.values.insertNoteColumn(note, column: columnIndex);
-}
-*/
-
-/*
-// Belirli bir hücre aralığını sıralama fonksiyonu
-Future<void> sortRange(String range, bool ascending) async {
-  final sheet = await gsheets.spreadsheet(_spreadsheetID);
-  final worksheet = await sheet.worksheetByIndex(0);
-  final sortedRange = await worksheet!.values. sortRange(range, ascending: ascending);
-  return sortedRange;
-}
-
-// Bir çalışma sayfasındaki belirli bir sütunu alfabetik olarak sıralama fonksiyonu
-Future<void> sortColumnAlphabetically(int columnIndex) async {
-  await sheet!.values.sortColumn(columnIndex, ascending: true);
-}
-
-// Bir çalışma sayfasındaki belirli bir satırı alfabetik olarak sıralama fonksiyonu
-Future<void> sortRowAlphabetically(int rowIndex) async {
-  await sheet!.values.sortRow(rowIndex, ascending: true);
-}
-
-// Bir çalışma sayfasındaki belirli bir hücre aralığındaki verileri toplama fonksiyonu
-Future<double> sumRange(String range) async {
-  final sheet = await gsheets.spreadsheet(_spreadsheetID);
-  final worksheet = await sheet.worksheetByIndex(0);
-  final values = await worksheet!.values. allInRange(range);
-  return values.map((row) => row.map(double.parse).reduce((a, b) => a + b)).reduce((a, b) => a + b);
-}
-
-// Bir çalışma sayfasındaki belirli bir sütundaki verileri toplama fonksiyonu
-Future<double> sumColumn(int columnIndex) async {
-  final values = await sheet!.values.column(columnIndex);
-  return values.map(double.parse).reduce((a, b) => a + b);
-}
-
-// Bir çalışma sayfasındaki belirli bir satırdaki verileri toplama fonksiyonu
-Future<double> sumRow(int rowIndex) async {
-  final values = await sheet!.values.row(rowIndex);
-  return values.map(double.parse).reduce((a, b) => a + b);
-}
-*/
-
-
-// Tüm satırları getirme fonksiyonu
-//Future<List<Map<String, dynamic>>> getAllRows() async {
-//  final sheet = await gsheets.spreadsheet(_spreadsheetID);
-//  final worksheet = await sheet.worksheetByIndex(0);
-//  final rows = await worksheet!.values.map.allRows();
-//  return rows ?? [];
-//}

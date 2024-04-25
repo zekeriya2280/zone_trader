@@ -4,7 +4,6 @@ class Country {
   final int income;
   final List<String> owners;
   final String production;
-
   Country({
     required this.name,
     required this.price,

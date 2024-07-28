@@ -127,7 +127,7 @@ Future<void> updateIncomesByPrices() async {
   List<String> prices = await getColumnValues(0,3).then((value) => value);
   List<String> incomes = [];
   prices.forEach((element) {
-    incomes.add((int.parse(element) * 0.15).floor().toString());
+    incomes.add((int.parse(element) * 0.01).floor().toString());
   });
   await updateColumnValues(0,4, incomes);
 }

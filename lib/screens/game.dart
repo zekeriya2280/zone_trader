@@ -345,7 +345,7 @@ class _GameState extends State<Game> {
               second))
           .inMinutes);
     }
-    print('allsubmin : ' + allsubmin.toString());
+    //print('allsubmin : ' + allsubmin.toString());
     List<double> howmanyincomes = [];
     for (var submin in allsubmin) {
       if (submin > 0) {
@@ -354,7 +354,7 @@ class _GameState extends State<Game> {
         howmanyincomes.add(0.0);
       }
     }
-    print('howmanyincomes : $howmanyincomes');
+    //print('howmanyincomes : $howmanyincomes');
     await GSheet()
         .findCountryIncomeAndAddGS(howmanyincomes, currentUserRowIndexGS)
         .then((value) => moneychange = value);

@@ -232,10 +232,8 @@ flutter:
     - assets/sounds/homeinitpopup.mp3
     - assets/sounds/pagechanged.mp3
     - assets/sounds/close.mp3
-   #- images/Poland.jpeg
-   #- images/Spain.jpeg
-   #- images/France.jpeg
-   #- images/Italy.jpeg
+    
+    - lib/data.json
 
   #   - images/a_dot_ham.jpeg
 

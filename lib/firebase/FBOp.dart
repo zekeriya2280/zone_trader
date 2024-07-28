@@ -47,22 +47,35 @@ class FBOp {
     }
   }
 
-  static addCountryTOusers(String name, int price, int income) async {
-    countries.add({
-      'name': name,
-      'price': price,
-      'income': income,
-    });
-  }
+ //static addCountryTOusers(String name, int price, int income) async {
+ //  countries.add({
+ //    'name': name,
+ //    'price': price,
+ //    'income': income,
+ //  });
+ //}
 
   static Future<List<Country>> fetchFromFBTOCountry() async {
     List<Country> cl = [];
-    await countries.get().then((value) => value.docs.map((e) => cl.add(Country(
+   // await countries.get().then((value) {
+   //   value.docs.forEach((e) {
+   //     countries.doc(e.id).update({'production': 'water', 'productions': FieldValue.delete()});
+   //   });
+   // });
+    await countries.get().then((value) {
+      
+      return value.docs.forEach((e) {
+        
+        cl.add(Country(
         name: e.data()['name'],
         price: e.data()['price'],
         income: e.data()['income'],
-        owners: e.data()['owners'],
-        production: e.data()['productions']))));
+        owners: e.data()['owners'].cast<String>(),
+        production: e.data()['production']));
+          
+      });
+    });
+    //print('cl: ' + cl.toString());
     return cl;
   }
 
@@ -76,6 +89,13 @@ class FBOp {
     await users
         .doc(FirebaseAuth.instance.currentUser!.displayName)
         .update({'bought': bought});
+  }
+
+  static Future<Map<String,dynamic>> getUserInfoFB() async {
+    return await users
+        .doc(FirebaseAuth.instance.currentUser!.displayName)
+        .get()
+        .then((value) => value.data()!);
   }
 
   static Future<void> resetTimesAndBoughtFB(List<Map<String, dynamic>> times,List<bool> bought) async {  /////RESET
@@ -134,6 +154,19 @@ class FBOp {
     owners.add(FirebaseAuth.instance.currentUser!.displayName!);
     await countries.get().then((value) =>
         countries.doc(value.docs[index].id).update({'owners': owners}));
+  }
+  static Future<void> updateUserTimesFB() async { // RESET USER NEW TYPE TIMES
+    List<Map<String,dynamic>> lls = [];
+    for (var i = 0; i < 96; i++) {
+      lls.add({
+        i.toString() : 
+        [DateTime.now().year, DateTime.now().month, DateTime.now().day, DateTime.now().hour, DateTime.now().minute, DateTime.now().second]
+      
+      });
+    }
+    await users.doc(FirebaseAuth.instance.currentUser!.displayName).update({
+          'times': lls
+        });
   }
 
   static Future<List<String>> fetchownersFB(int index) async {

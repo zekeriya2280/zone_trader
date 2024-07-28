@@ -1,0 +1,31 @@
+{
+    "countries": [
+        {
+            "name": "Afghanistan",
+            "price": 200,
+            "income": 100,
+            "owners": ["Nobody"
+            ],
+            "production": 
+                "water"
+        },
+        {
+            "name": "Albania",
+            "price": 300,
+            "income": 200,
+            "owners": ["Nobody"
+            ],
+            "production":
+                "water"
+        },
+        {
+            "name": "Algeria",
+            "price": 400,
+            "income": 300,
+            "owners": ["Nobody"
+            ],
+            "production":
+                "water"
+        }
+    ]
+}

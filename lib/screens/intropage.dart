@@ -39,6 +39,7 @@ class _IntroPageState extends State<IntroPage> {
    //});
    //print(temp.length);
    //await FBOp.allCountryManagementFB(temp);// UPDATE COUNTRIES PRICES AND INCOMES FB---RESET
+    //await FBOp.updateUserTimesFB(); NEW TYPE TIMES OF THE USER--RESET
     await FBOp.getLanguage().then((value) {
       setState(() {
         langindex = langs.indexOf(value);

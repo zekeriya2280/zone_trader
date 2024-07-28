@@ -12,6 +12,8 @@ import 'package:zone_trader/models/gsheet.dart';
 import 'package:zone_trader/models/player.dart';
 import 'package:zone_trader/screens/intropage.dart';
 import 'package:zone_trader/screens/myCountryList.dart';
+//import 'dart:convert';
+//import 'package:flutter/services.dart' show rootBundle;
 
 class Game extends StatefulWidget {
   const Game({super.key});
@@ -278,44 +280,57 @@ class _GameState extends State<Game> {
   }
 
   Future<void> updateBought() async {
+
     //await GSheet().updateIncomesByPrices(); // UPDATE COUNTRIES INCOMES GSHEETS---RESET
-    List<List<dynamic>> newcountries = [];
-    await GSheet().getAllRows(0).then((value) => newcountries = value);
-    for (var coun in newcountries) {
-      setState(() {
-        countries.add(Country(
-          name: coun[1],
-          price: int.parse(coun[2]),
-          income: int.parse(coun[3]),
-          owners: [coun[4]],
-          production: coun[5],
-        ));
-      });
-    }
-    currentUserRowIndexGS =
-        await GSheet().findCurrentUserRowIndex().then((value) => value + 1);
-    List<String> userinfo = await GSheet()
-        .getRowValues(1, currentUserRowIndexGS)
-        .then((value) => value);
+
+    //String jsonString = await rootBundle.loadString('lib/data.json');
+    //List<Country> countries = [];
+    //Map<String, dynamic> jsonData = json.decode(jsonString);
+//
+    //for (Map<String, dynamic> coun in jsonData.values.first) {
+    //  setState(() {
+    //    countries.add(Country(
+    //      name: coun['name'],
+    //      price: coun['price'],
+    //      income: coun['income'],
+    //      owners: coun['owners'].cast<String>(),
+    //      production: coun['production'],
+    //    ));
+    //  });
+    //}
+    await FBOp.fetchFromFBTOCountry().then((value) => setState(() {
+       //print('value : '+value.toString());
+      countries = value;
+    }));
+   // print('countries : '+countries.map((e) => e.price).toList().toString());
+
+   //currentUserRowIndexGS =
+   //    await GSheet().findCurrentUserRowIndex().then((value) => value + 1);
+   //List<String> userinfo = await GSheet()
+   //    .getRowValues(1, currentUserRowIndexGS)
+   //    .then((value) => value);
+    Map<String,dynamic> userinfo = await FBOp.getUserInfoFB().then((value) => value); 
+    List<List<String>> fetchedtimes = [];
+    List<Map<String,dynamic>>.from(userinfo['times']).forEach((element) {
+          element.values.forEach((e) => fetchedtimes.add([e[0].toString(),e[1].toString(),e[2].toString(),e[3].toString(),e[4].toString(),e[5].toString()]));
+    });
+    
     setState(() {
       player = Player(
-              userinfo[6],
-              userinfo[3],
-              int.parse(userinfo[5]),
+              userinfo['nickname'],
+              userinfo['email'],
+              userinfo['money'],
               List<bool>.from(
-                  userinfo[2].split(',').map((e) => e == 'true').toList()),
-              List<List<String>>.from(userinfo[7]
-                  .split(',')
-                  .map((e) =>
-                      e.split(' ')[0].split('-') + e.split(' ')[1].split(':'))
-                  .toList()),
+                  userinfo['bought']),
+              fetchedtimes,
               List<int>.from(
-                  userinfo[0].split(',').map((e) => int.parse(e)).toList()),
+                  userinfo['appcolorTheme']),
               List<int>.from(
-                  userinfo[1].split(',').map((e) => int.parse(e)).toList()),
-              userinfo[4])
+                  userinfo['bgcolorTheme']),
+              userinfo['language'])
           .getPlayer;
     });
+    print('player money : '+player.money.toString());
     await GSheet().getBoughtValues(currentUserRowIndexGS).then((value) {
       setState(() {
         bought = value.map((e) => e == "true" ? true : false).toList();
@@ -736,6 +751,7 @@ class _GameState extends State<Game> {
           DateTime.now().add(Duration(days: 365)).toString());
     });
   }
+
   GradientTransform? RotationGradientTransform(double angle) {
     return angle == 0.0
         ? null
@@ -802,17 +818,22 @@ class _GameState extends State<Game> {
                         '${newboughttime.difference(oldboughttime).inSeconds > 30 || newboughttime.difference(oldboughttime).inSeconds < 0 ? 'BUY' : (30 - newboughttime.difference(oldboughttime).inSeconds).toString()}',
                         style: TextStyle(
                             background: Paint()
-                              ..shader = LinearGradient(
-                                      begin: Alignment.topLeft,
-                                      end: Alignment.bottomRight,
-                                      stops: [0.0, 1.0],
-                                      tileMode: TileMode.repeated,
-                                      transform: RotationGradientTransform(30.0),
-                                      colors: [Colors.yellow.shade800, Colors.brown.shade800])
-                                  .createShader(
-                                      Rect.fromLTWH(0.0, 0.0, 5.0, 2.0)),
+                              ..shader =
+                                  LinearGradient(
+                                          begin: Alignment.topLeft,
+                                          end: Alignment.bottomRight,
+                                          stops: [0.0, 1.0],
+                                          tileMode: TileMode.repeated,
+                                          transform:
+                                              RotationGradientTransform(30.0),
+                                          colors: [
+                                            Colors.yellow.shade800,
+                                            Colors.brown.shade800
+                                          ])
+                                      .createShader(
+                                          Rect.fromLTWH(0.0, 0.0, 5.0, 2.0)),
                             fontSize: 18,
-                            color:Colors.white,
+                            color: Colors.white,
                             fontWeight: FontWeight.bold),
                       ),
                     ),

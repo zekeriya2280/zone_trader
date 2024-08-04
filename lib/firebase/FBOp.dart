@@ -4,7 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:zone_trader/constants/countryImageNames.dart';
 import 'package:zone_trader/models/country.dart';
-import 'package:zone_trader/models/gsheet.dart';
+//import 'package:zone_trader/models/gsheet.dart';
 
 class FBOp {
   static CollectionReference<Map<String, dynamic>> users =
@@ -14,33 +14,33 @@ class FBOp {
   static Future<String> registerUserFB(
       String nickname, String email, String dropdownvalue) async {
       List<String> names = [];
-      String boughtvalues = List<String>.filled(CountryImageNames.countryandcitynumber, 'false').join(',');
-      String timervalues = List<String>.filled(CountryImageNames.countryandcitynumber, '9999-99-99 60:60:60').join(',');
-      await GSheet().getColumnValues(1, 1).then((value) => names = value);
+      //String boughtvalues = List<String>.filled(CountryImageNames.countryandcitynumber, 'false').join(',');
+      List<String> timervalues = List<String>.generate(CountryImageNames.countryandcitynumber, (i) => '9999-99-99 60:60:60');
+      //await GSheet().getColumnValues(1, 1).then((value) => names = value);
     if (names.every((element) => element != nickname)) {
       print('aaaaa');
-      await GSheet().addRow(1, 
-          [
-           nickname, 
-           '176,176,176',
-           '110,110,110',
-           boughtvalues.substring(0, boughtvalues.length - 1),
-           email,
-           'EN',
-           '3000',
-           nickname,
-           timervalues.substring(0, timervalues.length - 1),
-          ]);
-     //await users.doc(nickname).set({
-     //  'nickname': nickname,
-     //  'email': email,
-     //  'money': 2000,
-     //  'bought': List<bool>.filled(CountryImageNames.countryandcitynumber, false),
-     //  'times': List<Map<String, dynamic>>.filled(CountryImageNames.countryandcitynumber, {'60': 60}),
-     //  'language': dropdownvalue,
-     //  'appcolorTheme': [],
-     //  'bgcolorTheme': []
-     //});
+      //await GSheet().addRow(1, 
+      //    [
+      //     nickname, 
+      //     '176,176,176',
+      //     '110,110,110',
+      //     boughtvalues.substring(0, boughtvalues.length - 1),
+      //     email,
+      //     'EN',
+      //     '3000',
+      //     nickname,
+      //     timervalues.substring(0, timervalues.length - 1),
+      //    ]);
+      await users.doc(nickname).set({
+        'nickname': nickname,
+        'email': email,
+        'money': 2000,
+        'language':'EN',
+        'bought': List<bool>.filled(CountryImageNames.countryandcitynumber, false),
+        'times': timervalues,
+        'appcolorTheme': [176,176,176],
+        'bgcolorTheme': [100,100,100]
+      });
       return '';
     } else {
       return 'Nickname already exists';

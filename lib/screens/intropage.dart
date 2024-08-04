@@ -20,7 +20,7 @@ class _IntroPageState extends State<IntroPage> {
   Color bgcolor = Colors.white;
   int langindex = 0;
   var langs = [
-    'ENG',
+    'EN',
     'TR',
     'ES',
     'JP',

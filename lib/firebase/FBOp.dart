@@ -13,15 +13,16 @@ class FBOp {
       FirebaseFirestore.instance.collection('countries');
   static Future<String> registerUserFB(
       String nickname, String email, String dropdownvalue) async {
-      List<String> names = [];
-      //String boughtvalues = List<String>.filled(CountryImageNames.countryandcitynumber, 'false').join(',');
-      List<String> timervalues = List<String>.generate(CountryImageNames.countryandcitynumber, (i) => '9999-99-99 60:60:60');
-      //await GSheet().getColumnValues(1, 1).then((value) => names = value);
+    List<String> names = [];
+    //String boughtvalues = List<String>.filled(CountryImageNames.countryandcitynumber, 'false').join(',');
+    List<String> timervalues = List<String>.generate(
+        CountryImageNames.countryandcitynumber, (i) => '9999-99-99 60:60:60');
+    //await GSheet().getColumnValues(1, 1).then((value) => names = value);
     if (names.every((element) => element != nickname)) {
       print('aaaaa');
-      //await GSheet().addRow(1, 
+      //await GSheet().addRow(1,
       //    [
-      //     nickname, 
+      //     nickname,
       //     '176,176,176',
       //     '110,110,110',
       //     boughtvalues.substring(0, boughtvalues.length - 1),
@@ -35,11 +36,12 @@ class FBOp {
         'nickname': nickname,
         'email': email,
         'money': 2000,
-        'language':'EN',
-        'bought': List<bool>.filled(CountryImageNames.countryandcitynumber, false),
+        'language': 'EN',
+        'bought':
+            List<bool>.filled(CountryImageNames.countryandcitynumber, false),
         'times': timervalues,
-        'appcolorTheme': [176,176,176],
-        'bgcolorTheme': [100,100,100]
+        'appcolorTheme': [176, 176, 176],
+        'bgcolorTheme': [100, 100, 100]
       });
       return '';
     } else {
@@ -47,32 +49,29 @@ class FBOp {
     }
   }
 
- //static addCountryTOusers(String name, int price, int income) async {
- //  countries.add({
- //    'name': name,
- //    'price': price,
- //    'income': income,
- //  });
- //}
+  //static addCountryTOusers(String name, int price, int income) async {
+  //  countries.add({
+  //    'name': name,
+  //    'price': price,
+  //    'income': income,
+  //  });
+  //}
 
   static Future<List<Country>> fetchFromFBTOCountry() async {
     List<Country> cl = [];
-   // await countries.get().then((value) {
-   //   value.docs.forEach((e) {
-   //     countries.doc(e.id).update({'production': 'water', 'productions': FieldValue.delete()});
-   //   });
-   // });
+    // await countries.get().then((value) {
+    //   value.docs.forEach((e) {
+    //     countries.doc(e.id).update({'production': 'water', 'productions': FieldValue.delete()});
+    //   });
+    // });
     await countries.get().then((value) {
-      
       return value.docs.forEach((e) {
-        
         cl.add(Country(
-        name: e.data()['name'],
-        price: e.data()['price'],
-        income: e.data()['income'],
-        owners: e.data()['owners'].cast<String>(),
-        production: e.data()['production']));
-          
+            name: e.data()['name'],
+            price: e.data()['price'],
+            income: e.data()['income'],
+            owners: e.data()['owners'].cast<String>(),
+            production: e.data()['production']));
       });
     });
     //print('cl: ' + cl.toString());
@@ -91,19 +90,26 @@ class FBOp {
         .update({'bought': bought});
   }
 
-  static Future<Map<String,dynamic>> getUserInfoFB() async {
+  static Future<Map<String, dynamic>> getUserInfoFB() async {
     return await users
         .doc(FirebaseAuth.instance.currentUser!.displayName)
         .get()
         .then((value) => value.data()!);
   }
 
-  static Future<void> resetTimesAndBoughtFB(List<Map<String, dynamic>> times,List<bool> bought) async {  /////RESET
+  static Future<void> resetTimesAndBoughtFB(
+      List<Map<String, dynamic>> times, List<bool> bought) async {
+    /////RESET
     await users
         .doc(FirebaseAuth.instance.currentUser!.displayName)
-        .update({'times': times,'bought':bought});
+        .update({'times': times, 'bought': bought});
   }
 
+  ///////////////////////////RESET//////////////////////////////////
+  /// Updates the country owners in the `countries` collection.
+  /// This function retrieves all the documents in the `countries` collection and
+  /// updates each document by setting the `owners` field to an empty list and
+  /// deleting the `owner` field.
   static Future<void> updateCountryOwners() async {
     await countries.get().then((value) => value.docs.forEach((e) => countries
             .doc(e.id)
@@ -113,6 +119,8 @@ class FBOp {
         })));
   }
 
+///////////////////////////RESET//////////////////////////////////
+/////CHANGE PRODUCTION TO PRODUCTIONS //////////////
   static Future<void> updateProductionsFB() async {
     List<String> productions = [];
     await countries.get().then((value) => value.docs.forEach((e) {
@@ -136,6 +144,19 @@ class FBOp {
     });
   }
 
+  ////////////////////////////////////////////////////////////////////////////////////
+  /// Fetches the index of the current user in the `users` collection.
+  /// This function retrieves all the documents in the `users` collection and
+  /// returns the index of the document with an `id` equal to the current user's
+  /// display name.
+  static Future<int> fetchUserIndexOfUsersFB() async {
+    return await users.get().then((value) => value.docs.indexWhere((element) =>
+        element.id == FirebaseAuth.instance.currentUser!.displayName));
+  }
+
+  ////////////////////////////////////////////////////////////////////////////////////
+  /// Fetches the list of boolean values representing whether a color has been bought
+  /// from the Firestore database.
   static Future<List<bool>> fetchBoughtColorsFB() async {
     return List<bool>.from(await users
         .doc(FirebaseAuth.instance.currentUser!.displayName)
@@ -143,8 +164,11 @@ class FBOp {
         .then((value) => value.data()!['bought']));
   }
 
-  static Future<void> updateUserTimesAndOwnersFB(
-      List<Map<String, dynamic>> times, int index) async {
+  ////////////////////////////////////////////////////////////////////////////////////
+  // Updates the user's times and country owners in the Firestore database.
+  static Future<void> updateUserTimesAndCountryOwnersFB(
+      List<String> times) async {
+    int index = await fetchUserIndexOfUsersFB();
     await users
         .doc(FirebaseAuth.instance.currentUser!.displayName)
         .update({'times': times});
@@ -155,20 +179,29 @@ class FBOp {
     await countries.get().then((value) =>
         countries.doc(value.docs[index].id).update({'owners': owners}));
   }
-  static Future<void> updateUserTimesFB() async { // RESET USER NEW TYPE TIMES
-    List<Map<String,dynamic>> lls = [];
+
+  static Future<void> updateUserTimesFB() async {
+    // RESET USER NEW TYPE TIMES
+    List<Map<String, dynamic>> lls = [];
     for (var i = 0; i < 96; i++) {
       lls.add({
-        i.toString() : 
-        [DateTime.now().year, DateTime.now().month, DateTime.now().day, DateTime.now().hour, DateTime.now().minute, DateTime.now().second]
-      
+        i.toString(): [
+          DateTime.now().year,
+          DateTime.now().month,
+          DateTime.now().day,
+          DateTime.now().hour,
+          DateTime.now().minute,
+          DateTime.now().second
+        ]
       });
     }
-    await users.doc(FirebaseAuth.instance.currentUser!.displayName).update({
-          'times': lls
-        });
+    await users
+        .doc(FirebaseAuth.instance.currentUser!.displayName)
+        .update({'times': lls});
   }
 
+  ////////////////////////////////////////////////////////////////////////////////////
+  // Fetches the owners of a specific index from the Firestore database.
   static Future<List<String>> fetchownersFB(int index) async {
     List<String> owners = [];
     await countries.get().then((value) =>
@@ -176,42 +209,28 @@ class FBOp {
     return owners;
   }
 
-  static Future<List<Map<String, dynamic>>> fetchUserTimesFB() async {
-    return List<Map<String, dynamic>>.from(await users
+  ////////////////////////////////////////////////////////////////////////////////////
+  /// Fetches the user's times from the Firestore database.
+  /// This function retrieves the user's times from the Firestore database by
+  /// querying the document with the user's display name.
+  static Future<List<String>> fetchUserTimesFB() async {
+    return await users
         .doc(FirebaseAuth.instance.currentUser!.displayName)
         .get()
-        .then((value) => Map<String, dynamic>.from(value.data()!)['times']));
+        .then((value) => value.data()!['times']);
   }
 
-  static Future<List<Map<String, int>>>
-      fetchBoughtIndexHourAndMinutesFB() async {
-    List<Map<String, int>> a = [];
-
-    List<Map<String, dynamic>> times =
-        await fetchUserTimesFB().then((value) => value);
-    for (int i = 0; i < times.length; i++) {
-      times[i].forEach((key, value) {
-        if (value != 60) {
-          a.add({times[i].keys.first: times[i].values.first});
-        }
-      });
-    }
-    return a;
-  }
-
+  ////////////////////////////////////////////////////////////////////////////////////
+  /// Fetches the indexes of the countries that have been bought by the user from the Firestore database.
   static Future<List<int>> fetchBoughtIndexFB() async {
-    List<int> a = [];
-    List<Map<String, dynamic>> times =
-        await fetchUserTimesFB().then((value) => value);
-    for (int i = 0; i < times.length; i++) {
-      times[i].forEach((key, value) {
-        if (value != 60) {
-          a.add(i);
-        }
-      });
+    List<int> indxs = [];
+    List<String> times = await fetchUserTimesFB().then((value) => value);
+    for (var i = 0; i < times.length; i++) {
+      if (times[i].split(' ')[0].split('-')[0] != '9999') {
+        indxs.add(i);
+      }
     }
-
-    return a;
+    return indxs;
   }
 
   static Future<int> findCountryIncomeAndAddFB(
@@ -230,21 +249,20 @@ class FBOp {
     int oldmoney = await users
         .doc(FirebaseAuth.instance.currentUser!.displayName)
         .get()
-        .then((value) => Map<String, dynamic>.from(value.data()!)['money']);
-    List<Map<String, int>> test = List<Map<String, int>>.filled(CountryImageNames.countryandcitynumber, {'60': 60});
+        .then((value) => value.data()!['money']);
+    List<String> updatedtimes = List<String>.filled(
+        CountryImageNames.countryandcitynumber, '9999-99-99 60:60:60');
     for (var i = 0; i < indexes.length; i++) {
-      test[indexes[i]] = {
-        DateTime.now().hour.toString(): DateTime.now().minute
-      };
+      updatedtimes[indexes[i]] = '${DateTime.now().year}-${DateTime.now().month}-${DateTime.now().day} ${DateTime.now().hour}:${DateTime.now().minute}:${DateTime.now().second}';
     }
     int sum = 0;
     for (var i = 0; i < incomes.length; i++) {
       sum = sum + (incomes[i] * howmanyincomes[i]).floor();
     }
     //print('sum $sum');
-    users.doc(FirebaseAuth.instance.currentUser!.displayName).update({
+    await users.doc(FirebaseAuth.instance.currentUser!.displayName).update({
       'money': (oldmoney + sum),
-      'times': test,
+      'times': updatedtimes,
     });
     return sum;
   }
@@ -307,17 +325,16 @@ class FBOp {
       }
       List<String> owners = await fetchownersFB(index);
       owners.remove(FirebaseAuth.instance.currentUser!.displayName);
-      owners.isEmpty ? 
-      await countries.doc(value.docs[index].id).update({
-        'owners': owners,
-        'productions': ["water"],
-        'income': 144,
-        'price': 1200,
-      })
-      :
-      await countries.doc(value.docs[index].id).update({
-        'owners': owners,
-      });
+      owners.isEmpty
+          ? await countries.doc(value.docs[index].id).update({
+              'owners': owners,
+              'productions': ["water"],
+              'income': 144,
+              'price': 1200,
+            })
+          : await countries.doc(value.docs[index].id).update({
+              'owners': owners,
+            });
     });
     await users.get().then((value) => users
         .doc(FirebaseAuth.instance.currentUser!.displayName)
@@ -346,10 +363,11 @@ class FBOp {
     return returnvalue;
   }
 
-  static Future<void> updateColorTheme(List<int> c1, List<int> c2) async {
+  static Future<void> updateColorTheme(
+      List<int> color1, List<int> color2) async {
     await users
         .doc(FirebaseAuth.instance.currentUser!.displayName)
-        .update({'appcolorTheme': c1, 'bgcolorTheme': c2});
+        .update({'appcolorTheme': color1, 'bgcolorTheme': color2});
   }
 
   static Future<List<int>> getAppColorTheme() async {
@@ -497,21 +515,19 @@ class FBOp {
       for (var element in pairs) {
         if (element.keys.first == wanttobuyproduct) {
           element.values.first.forEach((value0) async {
-            for (var value2 in snapshot.data!.docs)  {
-              if(value2.data()['productions'].contains(value0) && !value2
-                    .data()['owners']
-                    .contains(FirebaseAuth.instance.currentUser!.displayName)  ){
-                     //print('a');
+            for (var value2 in snapshot.data!.docs) {
+              if (value2.data()['productions'].contains(value0) &&
+                  !value2.data()['owners'].contains(
+                      FirebaseAuth.instance.currentUser!.displayName)) {
+                //print('a');
                 counter.add(value0);
-              }
-              else if(value2.data()['productions'].contains(value0) && value2
-                    .data()['owners']
-                    .contains(FirebaseAuth.instance.currentUser!.displayName)){
-                      //print('b');
-                      counter.remove(value0);
-                      break;
-              }
-              else{
+              } else if (value2.data()['productions'].contains(value0) &&
+                  value2.data()['owners'].contains(
+                      FirebaseAuth.instance.currentUser!.displayName)) {
+                //print('b');
+                counter.remove(value0);
+                break;
+              } else {
                 //print('c');
               }
             }
@@ -525,21 +541,22 @@ class FBOp {
         : {false: '\n     ' + counter.toSet().join('  ,  ').toUpperCase()};
   }
 
-  
-  static Future<List<String>> fetchIndexProductions(int index)async{
+  static Future<List<String>> fetchIndexProductions(int index) async {
     List<String> items = [];
     await countries.get().then((value) {
       items = List<String>.from(value.docs[index].data()['productions']);
     });
     return items;
   }
-  static Future<int> fetchIndexPrice(int index)async{
+
+  static Future<int> fetchIndexPrice(int index) async {
     int price = 0;
     await countries.get().then((value) {
       price = value.docs[index].data()['price'];
     });
     return price;
   }
+
   static Future<void> updateCountriesNewIncomesFB() async {
     await countries.get().then((value) {
       for (var i = 0; i < value.docs.length; i++) {
@@ -549,60 +566,67 @@ class FBOp {
       }
     });
   }
-  static Future<void> upgradeCountryItemFB(int index, Map<String,int> newitem)async{
+
+  static Future<void> upgradeCountryItemFB(
+      int index, Map<String, int> newitem) async {
     print('index' + index.toString() + 'newitem' + newitem.toString());
     List<String> items = [];
-    await fetchIndexProductions(index).then((value) => items = value).then((value) => {
-      items.add(newitem.keys.first),
-    });
+    await fetchIndexProductions(index)
+        .then((value) => items = value)
+        .then((value) => {
+              items.add(newitem.keys.first),
+            });
     await countries.get().then((value) {
-      countries
-          .doc(value.docs[index].id)
-          .update({'productions': items});
+      countries.doc(value.docs[index].id).update({'productions': items});
     });
     await fetchIndexPrice(index).then((oldprice) => {
-      countries.get().then((value) => countries
-          .doc(value.docs[index].id)
-          .update({'price': oldprice + newitem.values.first}),
-    )});
-    
-    
+          countries.get().then(
+                (value) => countries
+                    .doc(value.docs[index].id)
+                    .update({'price': oldprice + newitem.values.first}),
+              )
+        });
   }
-  static Future<void> updateAllPricesFB(List<Map<String, int>> pricesmaps)async{
+
+  static Future<void> updateAllPricesFB(
+      List<Map<String, int>> pricesmaps) async {
     await countries.get().then((value) {
       for (var i = 0; i < value.docs.length; i++) {
-        countries.doc(value.docs[i].id).update({
-          'price': pricesmaps[i].values.first
-        });
+        countries
+            .doc(value.docs[i].id)
+            .update({'price': pricesmaps[i].values.first});
       }
     });
   }
-  static Future<void> allCountryManagementFB(List<String> names)async{
+
+  static Future<void> allCountryManagementFB(List<String> names) async {
     //List<Country> co = [];
-   //await countries.get().then((value) {
-   //  for (var i = 0; i < value.docs.length; i++) {
-   //    co.add(Country(
-   //      name: value.docs[i].data()['name'],
-   //      price: value.docs[i].data()['price'],
-   //      income: value.docs[i].data()['income'],
-   //      owners: List<String>.from(value.docs[i].data()['owners']),
-   //      productions: List<String>.from(value.docs[i].data()['productions']),
-   //    ));
-   //  }
-   //  
-   //});
-   //co = co.toList() + co.toList();
-  //await countries.doc('Australia').update({
-  //     'price': 1300,});
+    //await countries.get().then((value) {
+    //  for (var i = 0; i < value.docs.length; i++) {
+    //    co.add(Country(
+    //      name: value.docs[i].data()['name'],
+    //      price: value.docs[i].data()['price'],
+    //      income: value.docs[i].data()['income'],
+    //      owners: List<String>.from(value.docs[i].data()['owners']),
+    //      productions: List<String>.from(value.docs[i].data()['productions']),
+    //    ));
+    //  }
+    //
     //});
-   for (var i = 0; i < names.length; i++) {  //<-----------------------------------
-     await countries.doc(names[i]).set({  //<-----------------------------------
-       'price': 1200,  //<-----------------------------------
-       'income': 144,  //<-----------------------------------
-       'owners': [],  //<-----------------------------------
-       'productions': ['water'],  //<-----------------------------------
-       'name': names[i]  //<-----------------------------------
-     });  //<-----------------------------------
-   }
+    //co = co.toList() + co.toList();
+    //await countries.doc('Australia').update({
+    //     'price': 1300,});
+    //});
+    for (var i = 0; i < names.length; i++) {
+      //<-----------------------------------
+      await countries.doc(names[i]).set({
+        //<-----------------------------------
+        'price': 1200, //<-----------------------------------
+        'income': 144, //<-----------------------------------
+        'owners': [], //<-----------------------------------
+        'productions': ['water'], //<-----------------------------------
+        'name': names[i] //<-----------------------------------
+      }); //<-----------------------------------
+    }
   }
 }

@@ -25,7 +25,7 @@ class _GameState extends State<Game> {
   List<Country> countries = []; //
   int money = 10000;
   bool countryBreaker = false;
-  Player player = Player('', '', 0, [], [], [], [], 'ENG');
+  Player player = Player('', '', 0, [], [], [], [], 'EN');
   List<bool> bought =
       List<bool>.filled(CountryImageNames.countryandcitynumber, false);
   List<List<String>> boughttimes = List<List<String>>.filled(
@@ -40,7 +40,7 @@ class _GameState extends State<Game> {
   Color buttoncolor = Colors.red;
   int currentUserRowIndexGS = 0;
   var langs = [
-    'ENG',
+    'EN',
     'TR',
     'ES',
     'JP',
@@ -311,10 +311,16 @@ class _GameState extends State<Game> {
    //    .then((value) => value);
     Map<String,dynamic> userinfo = await FBOp.getUserInfoFB().then((value) => value); 
     List<List<String>> fetchedtimes = [];
-    List<Map<String,dynamic>>.from(userinfo['times']).forEach((element) {
-          element.values.forEach((e) => fetchedtimes.add([e[0].toString(),e[1].toString(),e[2].toString(),e[3].toString(),e[4].toString(),e[5].toString()]));
+    List<String>.from(userinfo['times']).forEach((element) {
+          element.split(',').forEach((element) {
+            List<String> temp1 = [];
+            List<String> temp2 = [];
+            temp1 = element.split(' ').first.split('-');
+            temp2 = element.split(' ').last.split(':');
+            fetchedtimes.add(temp1 + temp2);
+          });
     });
-    
+    //print(fetchedtimes);
     setState(() {
       player = Player(
               userinfo['nickname'],
@@ -331,11 +337,15 @@ class _GameState extends State<Game> {
           .getPlayer;
     });
     print('player money : '+player.money.toString());
-    await GSheet().getBoughtValues(currentUserRowIndexGS).then((value) {
-      setState(() {
-        bought = value.map((e) => e == "true" ? true : false).toList();
-      });
-    });
+    await FBOp.fetchBoughtColorsFB().then((value) => setState(() {
+      bought = value; 
+    }));
+    //print('bought : '+bought.toString());
+    //await GSheet().getBoughtValues(currentUserRowIndexGS).then((value) {
+    //  setState(() {
+    //    bought = value.map((e) => e == "true" ? true : false).toList();
+    //  });
+    //});
     List<List<String>> oldtimelist = [];
     int moneychange = 0;
     oldtimelist = player.times;
@@ -370,16 +380,20 @@ class _GameState extends State<Game> {
       }
     }
     //print('howmanyincomes : $howmanyincomes');
-    await GSheet()
-        .findCountryIncomeAndAddGS(howmanyincomes, currentUserRowIndexGS)
-        .then((value) => moneychange = value);
-    moneychange != 0
-        ? playSampleSound('assets/sounds/homeinitpopup.mp3')
-        : false;
-    howmanyincomes.any((element) => element != 0.0)
-        ? await GSheet().updateIndexedTimesGS(currentUserRowIndexGS)
-        : false;
-    moneychange != 0 ? _showMoneyChange(context, moneychange) : false;
+
+    //await FBOp.updateUserTimesAndCountryOwnersFB(times)
+
+    
+   //await GSheet()
+   //    .findCountryIncomeAndAddGS(howmanyincomes, currentUserRowIndexGS)
+   //    .then((value) => moneychange = value);
+   //moneychange != 0
+   //    ? playSampleSound('assets/sounds/homeinitpopup.mp3')
+   //    : false;
+   //howmanyincomes.any((element) => element != 0.0)
+   //    ? await GSheet().updateIndexedTimesGS(currentUserRowIndexGS)
+   //    : false;
+   //moneychange != 0 ? _showMoneyChange(context, moneychange) : false;
   }
 
   //void updateFirebase
@@ -446,7 +460,7 @@ class _GameState extends State<Game> {
                   children: [
                     Text('${Languages.owners[langindex]}: ',
                         style: detailtextstyle),
-                    Text(country.owners[0] == 'No owner'
+                    Text(country.owners.isEmpty
                         ? Languages.yok[langindex]
                         : country.owners[0].split(',').length > 2
                             ? country.owners[0]
@@ -995,7 +1009,7 @@ class _GameState extends State<Game> {
                                         ),
                                         Center(
                                           child: Text(
-                                            countries[index].production ==
+                                            countries[index].production.toLowerCase() ==
                                                     'water'
                                                 ? Languages.water[langindex]
                                                 : countries[index].production,

@@ -20,9 +20,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController _passwordController = TextEditingController();
   String errortext = "";
   int langindex = 0;
-  String dropdownvalue = 'ENG';
+  String dropdownvalue = 'EN';
   var dropdownitems = [
-    'ENG',
+    'EN',
     'TR',
     'ES',
     'JP',

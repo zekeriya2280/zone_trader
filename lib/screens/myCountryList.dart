@@ -21,7 +21,7 @@ class _MyCountryListState extends State<MyCountryList> {
   Color textcolors = Colors.black;
   TextStyle detailtextstyle = TextStyle(fontWeight: FontWeight.bold,color: Colors.blue,shadows: [Shadow(color: Colors.yellow,offset: Offset(0.1, 0.1),blurRadius: 2)]);
   var langs = [
-    'ENG',
+    'EN',
     'TR',
     'ES',
     'JP',

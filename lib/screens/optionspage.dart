@@ -19,17 +19,17 @@ class _OptionsPageState extends State<OptionsPage> {
   Color randcol1 = Colors.blue;
   Color randcol2 = Colors.blue;
   List<Map<Color, Color>> colors = [];
-  String dropdownvalue = 'ENG';
+  String dropdownvalue = 'EN';
   Color textcolors = Colors.black;
   var dropdownitems = [
-    'ENG',
+    'EN',
     'TR',
     'ES',
     'JP',
   ];
    int langindex = 0;
   var langs = [
-    'ENG',
+    'EN',
     'TR',
     'ES',
     'JP',

@@ -18,7 +18,7 @@ class _HowtPlayState extends State<HowtPlay> with TickerProviderStateMixin {
   Color textcolors = Colors.black;
   int langindex = 0;
   var langs = [
-    'ENG',
+    'EN',
     'TR',
     'ES',
     'JP',

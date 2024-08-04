@@ -15,10 +15,10 @@ class _SignInScreenState extends State<SignInScreen> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  String dropdownvalue = 'ENG';
+  String dropdownvalue = 'EN';
   String errortext = "";
   var dropdownitems = [
-    'ENG',
+    'EN',
     'TR',
     'ES',
     'JP',

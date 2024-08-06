@@ -12,8 +12,6 @@ import 'package:zone_trader/models/gsheet.dart';
 import 'package:zone_trader/models/player.dart';
 import 'package:zone_trader/screens/intropage.dart';
 import 'package:zone_trader/screens/myCountryList.dart';
-//import 'dart:convert';
-//import 'package:flutter/services.dart' show rootBundle;
 
 class Game extends StatefulWidget {
   const Game({super.key});
@@ -247,7 +245,6 @@ class _GameState extends State<Game> {
   void dispose() {
     super.dispose();
   }
-
   void getLang() async {
     await FBOp.getLanguage().then((value) {
       setState(() {

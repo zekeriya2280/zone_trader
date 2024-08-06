@@ -4,9 +4,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:zone_trader/constants/countryImageNames.dart';
 import 'package:zone_trader/models/country.dart';
-//import 'package:zone_trader/models/gsheet.dart';
 
 class FBOp {
+
   static CollectionReference<Map<String, dynamic>> users =
       FirebaseFirestore.instance.collection('users');
   static CollectionReference<Map<String, dynamic>> countries =
@@ -253,7 +253,8 @@ class FBOp {
     List<String> updatedtimes = List<String>.filled(
         CountryImageNames.countryandcitynumber, '9999-99-99 60:60:60');
     for (var i = 0; i < indexes.length; i++) {
-      updatedtimes[indexes[i]] = '${DateTime.now().year}-${DateTime.now().month}-${DateTime.now().day} ${DateTime.now().hour}:${DateTime.now().minute}:${DateTime.now().second}';
+      updatedtimes[indexes[i]] =
+          '${DateTime.now().year}-${DateTime.now().month}-${DateTime.now().day} ${DateTime.now().hour}:${DateTime.now().minute}:${DateTime.now().second}';
     }
     int sum = 0;
     for (var i = 0; i < incomes.length; i++) {

@@ -1,11 +1,13 @@
 
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:zone_trader/firebase/FBOp.dart';
 import 'package:zone_trader/screens/wrapper.dart';
 
 void main() async {
-  //GSheet().getColumn('price').then((value) => print(value));
   WidgetsFlutterBinding.ensureInitialized();
+  
   await Firebase.initializeApp(
    options: 
    const FirebaseOptions(

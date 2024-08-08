@@ -159,10 +159,16 @@ class FBOp {
   /// Fetches the list of boolean values representing whether a color has been bought
   /// from the Firestore database.
   static Future<List<bool>> fetchBoughtColorsFB() async {
-    return List<bool>.from(await users
-        .doc(FirebaseAuth.instance.currentUser!.displayName)
-        .get()
-        .then((value) => value.data()!['bought']));
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<String>? bought = prefs.getStringList('bought');
+    if (bought == null) {
+      await prefs.setStringList('bought', List<bool>.filled(CountryImageNames.countryandcitynumber, false).map((e) => e.toString()).toList());
+      return List<bool>.filled(CountryImageNames.countryandcitynumber, false);
+    } 
+    else {
+      return bought.map((e) => e == 'true').toList();
+    }
+    
   }
 
   ////////////////////////////////////////////////////////////////////////////////////

@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
@@ -338,7 +337,7 @@ class _GameState extends State<Game> {
     await FBOp.fetchBoughtColorsFB().then((value) => setState(() {
       bought = value; 
     }));
-    //print('bought : '+bought.toString());
+    print('bought : '+bought.toString());
     //await GSheet().getBoughtValues(currentUserRowIndexGS).then((value) {
     //  setState(() {
     //    bought = value.map((e) => e == "true" ? true : false).toList();
@@ -522,13 +521,13 @@ class _GameState extends State<Game> {
                                       DateTime.now().second.toString()
                                     ];
                                   });
-                                  print('boughttimes : '+ boughttimes.toString());
+                                  //print('boughttimes : '+ boughttimes.toString());
                                   await FBOp.buyCountryFB(boughttimes,index);
 
-                                  await GSheet().countryOwnerUpdate(
-                                      country.name,
-                                      FirebaseAuth
-                                          .instance.currentUser!.displayName!);
+                                  //await GSheet().countryOwnerUpdate(
+                                  //    country.name,
+                                  //    FirebaseAuth
+                                  //        .instance.currentUser!.displayName!);
                                   await greenBGColorFiller().then((value) =>
                                       Navigator.pushReplacement(
                                           context,

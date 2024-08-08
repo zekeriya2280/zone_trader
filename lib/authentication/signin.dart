@@ -133,7 +133,7 @@ class _SignInScreenState extends State<SignInScreen> {
         
       }
     } catch (e) {
-      print("Error signing in: $e");
+      //print("Error signing in: $e");
     }
   }
 

@@ -38,7 +38,7 @@ dependencies:
   rename: ^3.0.1
   intl: ^0.19.0
   gsheets: 
-  shared_preferences: ^2.2.3
+  shared_preferences: ^2.3.1
   encrypt: 
   path_provider: ^2.1.4
   
@@ -234,9 +234,6 @@ flutter:
     - assets/sounds/homeinitpopup.mp3
     - assets/sounds/pagechanged.mp3
     - assets/sounds/close.mp3
-    
-    - lib/data.json
-
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
@@ -333,7 +334,7 @@ class _GameState extends State<Game> {
               userinfo['language'])
           .getPlayer;
     });
-    print('player money : '+player.money.toString());
+    //print('player money : '+player.money.toString());
     await FBOp.fetchBoughtColorsFB().then((value) => setState(() {
       bought = value; 
     }));
@@ -509,15 +510,8 @@ class _GameState extends State<Game> {
                                       ? null
                                       : buythiscard(context, country, index);
                                   playSampleSound('assets/sounds/bought.mp3');
-                                  await GSheet()
-                                      .fetchUserTimesGS(currentUserRowIndexGS)
-                                      .then((value) {
-                                    //FETCH TIMES FROM FB
-                                    setState(() {
-                                      boughttimes = value;
-                                    });
-                                  });
-                                  //print(boughttimes);
+                                  boughttimes = await FBOp.findBoughtTimesFB().then((value) => value);
+                                  
                                   setState(() {
                                     boughttimes[index] = [
                                       DateTime.now().year.toString(),
@@ -528,10 +522,9 @@ class _GameState extends State<Game> {
                                       DateTime.now().second.toString()
                                     ];
                                   });
-                                  print('last boughttimes : ' +
-                                      boughttimes.toString());
-                                  await GSheet().updateUserTimesGS(
-                                      boughttimes, currentUserRowIndexGS);
+                                  print('boughttimes : '+ boughttimes.toString());
+                                  await FBOp.buyCountryFB(boughttimes,index);
+
                                   await GSheet().countryOwnerUpdate(
                                       country.name,
                                       FirebaseAuth

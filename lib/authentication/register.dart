@@ -64,7 +64,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           late UserCredential userCredential;
           await FBOp.registerUserFB(nickname, email, dropdownvalue)
               .then((value) async {
-                print(value);
+                //print(value);
             if (value.isNotEmpty) {
               setState(() {
                 errortext = Languages.nicknameAlreadyInUse[langindex];
@@ -110,7 +110,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         }
       }
     } catch (e) {
-      print("Error signing in: $e");
+      //print("Error signing in: $e");
     }
   }
 

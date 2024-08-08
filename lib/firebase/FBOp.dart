@@ -1,12 +1,13 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zone_trader/constants/countryImageNames.dart';
 import 'package:zone_trader/models/country.dart';
 
 class FBOp {
-
   static CollectionReference<Map<String, dynamic>> users =
       FirebaseFirestore.instance.collection('users');
   static CollectionReference<Map<String, dynamic>> countries =
@@ -19,7 +20,7 @@ class FBOp {
         CountryImageNames.countryandcitynumber, (i) => '9999-99-99 60:60:60');
     //await GSheet().getColumnValues(1, 1).then((value) => names = value);
     if (names.every((element) => element != nickname)) {
-      print('aaaaa');
+      //print('aaaaa');
       //await GSheet().addRow(1,
       //    [
       //     nickname,
@@ -233,6 +234,45 @@ class FBOp {
     return indxs;
   }
 
+  ////////////////////////////////////////////////////////////////////////////
+  ///Updates the ownership and user data after buying a country in the Firestore database.
+  //Retrieves the current owners of the country at the specified index, adds the current user's display name to the owners list,
+  //updates the Firestore document with the new owners list, and stores the bought times and owned countries in the user's SharedPreferences
+  static Future<void> buyCountryFB(
+      List<List<String>> boughttimes, int index) async {
+    List<String> owners = await fetchownersFB(index);
+    owners.add(FirebaseAuth.instance.currentUser!.displayName!);
+    await countries
+        .doc(await countries.get().then((value) => value.docs[index].id))
+        .update({'owners': owners});
+    List<String> ownedcountries = [];
+    await countries.get().then((value) => value.docs.forEach((e) {
+          e
+                  .data()['owners']
+                  .contains(FirebaseAuth.instance.currentUser!.displayName)
+              ? ownedcountries.add(e.data()['name'] +
+                  ',' +
+                  e.data()['price'].toString() +
+                  ',' +
+                  e.data()['income'].toString() +
+                  ',' +
+                  e.data()['production'].toString())
+              : null;
+        }));
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setStringList(
+        'boughttimes', boughttimes.map((e) => e.join(',')).toList());
+    await prefs.setStringList('ownedcountries', ownedcountries);
+  }
+
+  ////////////////////////////////////////////////////////////////////////////
+  //
+  static Future<List<List<String>>> findBoughtTimesFB() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getStringList('boughttimes')?.map((e) => e.split(',')).toList() 
+    ?? 
+    List<List<String>>.generate(CountryImageNames.countryandcitynumber, (i) => ['9999','99','99','60','60','60']);
+  }
   static Future<int> findCountryIncomeAndAddFB(
       List<double> howmanyincomes) async {
     List<int> indexes = [];
@@ -356,7 +396,7 @@ class FBOp {
 
   static Future<String> getLanguage() async {
     String returnvalue = '';
-    print(FirebaseAuth.instance.currentUser!.displayName);
+    //print(FirebaseAuth.instance.currentUser!.displayName);
     await users
         .doc(FirebaseAuth.instance.currentUser!.displayName)
         .get()
@@ -418,93 +458,6 @@ class FBOp {
     });
   }
 
-  static Future<bool> checkOwnerFB(int index) async {
-    await countries.get().then((value) {
-      if (value.docs[index].data()['owners'] != []) {
-        return true;
-      } else {
-        return false;
-      }
-    });
-    return false;
-  }
-
-/*
-  static Future<void> addToCountriesNewVariablesFB(
-      Map<String, String> data,
-      Map<String, String> data2,
-      Map<String, String> data3,
-      Map<String, String> data4,
-      Map<String, String> data5,
-      Map<String, String> data6,
-      Map<String, String> data7,
-      Map<String, String> data8,
-      Map<String, String> data9,
-      Map<String, String> data10,
-      Map<String, String> data11,
-      Map<String, String> data12,
-      Map<String, String> data13,
-      Map<String, String> data14,
-      Map<String, String> data15,
-      Map<String, String> data16,
-      Map<String, String> data17) async {
-    await countries.get().then((value) {
-      for (var i = 0; i < value.docs.length; i++) {
-        if (value.docs[i].data()['price'] >= 1000 &&
-            value.docs[i].data()['price'] < 2000) {
-          countries.doc(value.docs[i].id).update(data);
-        } else if (value.docs[i].data()['price'] >= 2000 &&
-            value.docs[i].data()['price'] < 3000) {
-          countries.doc(value.docs[i].id).update(data2);
-        } else if (value.docs[i].data()['price'] >= 3000 &&
-            value.docs[i].data()['price'] < 4000) {
-          countries.doc(value.docs[i].id).update(data3);
-        } else if (value.docs[i].data()['price'] >= 4000 &&
-            value.docs[i].data()['price'] < 5000) {
-          countries.doc(value.docs[i].id).update(data4);
-        } else if (value.docs[i].data()['price'] >= 5000 &&
-            value.docs[i].data()['price'] < 6000) {
-          countries.doc(value.docs[i].id).update(data5);
-        } else if (value.docs[i].data()['price'] >= 6000 &&
-            value.docs[i].data()['price'] < 7000) {
-          countries.doc(value.docs[i].id).update(data6);
-        } else if (value.docs[i].data()['price'] >= 7000 &&
-            value.docs[i].data()['price'] < 8000) {
-          countries.doc(value.docs[i].id).update(data7);
-        } else if (value.docs[i].data()['price'] >= 8000 &&
-            value.docs[i].data()['price'] < 9000) {
-          countries.doc(value.docs[i].id).update(data8);
-        } else if (value.docs[i].data()['price'] >= 9000 &&
-            value.docs[i].data()['price'] < 10000) {
-          countries.doc(value.docs[i].id).update(data9);
-        } else if (value.docs[i].data()['price'] >= 10000 &&
-            value.docs[i].data()['price'] < 11000) {
-          countries.doc(value.docs[i].id).update(data10);
-        } else if (value.docs[i].data()['price'] >= 11000 &&
-            value.docs[i].data()['price'] < 12000) {
-          countries.doc(value.docs[i].id).update(data11);
-        } else if (value.docs[i].data()['price'] >= 12000 &&
-            value.docs[i].data()['price'] < 13000) {
-          countries.doc(value.docs[i].id).update(data12);
-        } else if (value.docs[i].data()['price'] >= 13000 &&
-            value.docs[i].data()['price'] < 14000) {
-          countries.doc(value.docs[i].id).update(data13);
-        } else if (value.docs[i].data()['price'] >= 14000 &&
-            value.docs[i].data()['price'] < 15000) {
-          countries.doc(value.docs[i].id).update(data14);
-        } else if (value.docs[i].data()['price'] >= 15000 &&
-            value.docs[i].data()['price'] < 16000) {
-          countries.doc(value.docs[i].id).update(data15);
-        } else if (value.docs[i].data()['price'] >= 16000 &&
-            value.docs[i].data()['price'] < 17000) {
-          countries.doc(value.docs[i].id).update(data16);
-        } else if (value.docs[i].data()['price'] >= 17000) {
-          countries.doc(value.docs[i].id).update(data17);
-        }
-      }
-    });
-  }
-*/
   static Future<Map<bool, String>> checkNeededProductionsBoughtBefore(
       AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot,
       List<Map<String, List<String>>> pairs,
@@ -535,7 +488,7 @@ class FBOp {
           });
         }
       }
-      print(counter);
+      //print(counter);
     }
     return counter == [] || counter.isEmpty
         ? {true: ''}
@@ -570,7 +523,7 @@ class FBOp {
 
   static Future<void> upgradeCountryItemFB(
       int index, Map<String, int> newitem) async {
-    print('index' + index.toString() + 'newitem' + newitem.toString());
+    //print('index' + index.toString() + 'newitem' + newitem.toString());
     List<String> items = [];
     await fetchIndexProductions(index)
         .then((value) => items = value)
